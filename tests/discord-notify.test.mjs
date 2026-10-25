@@ -51,6 +51,7 @@ test('stars, forks, releases', () => {
   assert.match(buildEmbed('fork', { sender, repository, forkee: { html_url: 'https://f' } }).description, /3/);
   assert.match(buildEmbed('release', { action: 'published', repository, release: { name: 'Shore 0.8.1', html_url: 'https://r', body: 'notes', author: sender } }).title, /Shore 0\.8\.1 released/);
   assert.equal(buildEmbed('release', { action: 'created', repository, release: {} }), null);
+  assert.match(buildEmbed('workflow_dispatch', { repository, sender }).title, /Test message/);
   assert.equal(buildEmbed('deployment', {}), null);
 });
 

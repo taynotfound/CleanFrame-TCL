@@ -114,6 +114,8 @@ export function buildEmbed(name, e) {
         description: plain(clip(r.body || '', 900)), footer: { text: repo },
       });
     }
+    case 'workflow_dispatch':
+      return embed({ title: '🔔 Test message', description: 'The Discord notifier is connected.', color: COLORS.gold, author: author(e.sender), footer: { text: repo } });
     default:
       return null;
   }
