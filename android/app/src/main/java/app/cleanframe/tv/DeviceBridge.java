@@ -92,6 +92,22 @@ final class DeviceBridge {
     @JavascriptInterface
     public void haCameraHangup(int session) { if (activity != null) HomeAssistant.get(context).hangup(session); }
 
+    /** Screen time: daily limits as {package: minutes}. */
+    @JavascriptInterface
+    public void screenLimits(String json) { if (activity != null) ScreenTime.setLimits(context, json); }
+
+    /** {package: {limit, used}} in minutes for today. */
+    @JavascriptInterface
+    public String screenInfo() { return ScreenTime.info(context); }
+
+    /** More minutes for today, after the PIN on the TV. */
+    @JavascriptInterface
+    public void screenExtend(String pkg, int minutes) { if (activity != null) ScreenTime.extend(context, pkg, minutes); }
+
+    /** The package whose time ran out just now (once), or "". */
+    @JavascriptInterface
+    public String screenTimesUp() { return ScreenTime.takeTimesUp(); }
+
     /** Pi-hole / AdGuard Home add-on: {configured, enabled, kind, url, status, error, at, total, blocked, blocking, until}. Never the password. */
     @JavascriptInterface
     public String adInfo() { return activity == null ? "{}" : AdBlock.get(context).info(); }

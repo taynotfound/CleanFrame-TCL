@@ -501,10 +501,13 @@
     return out;
   }
   /* Parental lock: a hashed 4-digit PIN, whether Settings ask for it, and the apps that do. */
+  var SCREEN_STEPS = [30, 60, 90, 120, 180];
   function lockOf(v) {
     v = v && typeof v === 'object' ? v : {};
     var pin = /^[0-9a-f]{8}$/.test(String(v.pin || '')) ? String(v.pin) : '';
-    return { pin: pin, settings: !!pin && v.settings === true, apps: pin ? idList(v.apps) : [] };
+    var limits = {};
+    if (pin && v.limits && typeof v.limits === 'object') Object.keys(v.limits).forEach(function (id) { var m = +v.limits[id]; if (safeId(id) && SCREEN_STEPS.indexOf(m) >= 0 && Object.keys(limits).length < 100) limits[id] = m; });
+    return { pin: pin, settings: !!pin && v.settings === true, apps: pin ? idList(v.apps) : [], limits: limits };
   }
   function idList(v) { var out = []; (Array.isArray(v) ? v : []).forEach(function (id) { if (safeId(id) && out.indexOf(id) < 0 && out.length < 300) out.push(id); }); return out; }
   function clean(saved) {
@@ -710,6 +713,7 @@
     if (!a || busy) return;
     if (appLocked(id)) { askPin(a.name, function () { S.unlockedApp = id; launch(id); }); return; }
     S.unlockedApp = '';
+    if (S.c.lock.pin && timeUp(id)) { showTimesUp(id); return; }
     c = next(S.c.home.slice(), S.c.recent.slice());
     if (S.c.home.indexOf(id) >= 0) c.lastApp = id;
     if (!a.input) c.used = [id].concat(without(c.used, id)).slice(0, 8);
@@ -949,6 +953,7 @@
     if (kind === 'info') { perform('App info', function (done) { FrameDevice.appInfo(app(id).appId, done); }); return; }
     if (kind === 'icon') { openAppIcon(id, true); return; }
     if (kind === 'name') { openInputName(id, true); return; }
+    if (kind === 'more') { moreTime(id); return; }
     // Move and Remove use Apps on Home, which already has undo, so nothing here is final.
     S.sel = id; if (settingsLocked()) { guarded(function () { openEditor('home'); }); return; } openEditor('home'); t = top(); t.f.zone = 'home'; t.f.i = Math.max(0, S.c.home.indexOf(id));
     if (kind === 'move') { t.f.part = 'name'; t.lifted = { id: id, from: t.f.i, order: S.c.home.slice(), snap: snap() }; }
@@ -1017,6 +1022,40 @@
     else { i = c.lock.apps.indexOf(what); if (i >= 0) c.lock.apps.splice(i, 1); else c.lock.apps.push(what); }
     if (write(c, 'Parental lock')) render();
   }
+  /* ---------- Screen time: a daily limit per app, counted by the Home-button service (ScreenTime.java) ---------- */
+  var SCREEN = ANDROID && FrameDevice.screenTime ? FrameDevice.screenTime : null;
+  function limitName(m) { return !m ? 'No limit' : m < 60 ? m + ' minutes' : m === 60 ? '1 hour' : m === 90 ? '1½ hours' : m / 60 + ' hours'; }
+  function pkgOf(id) { var a = app(id); return a && !a.input && a.appId && PKG_RE.test(a.appId) ? a.appId : ''; }
+  /* Tells the native side the limits by package, after the app catalogue knows the packages. */
+  function syncLimits() {
+    var out = {}, L = S.c.lock.limits;
+    if (!SCREEN) return;
+    Object.keys(L).forEach(function (id) { if (pkgOf(id)) out[pkgOf(id)] = L[id]; });
+    SCREEN.set(out);
+  }
+  function screenUse(id) { var i = SCREEN && pkgOf(id) ? SCREEN.info()[pkgOf(id)] : null; return i && i.limit ? i : null; }
+  function timeUp(id) { var u = screenUse(id); return !!u && u.used >= u.limit; }
+  function setLimit(id, minutes) {
+    var c = next(S.c.home.slice(), S.c.recent.slice());
+    if (minutes) c.lock.limits[id] = minutes; else delete c.lock.limits[id];
+    c.lock = lockOf(c.lock);
+    if (write(c, 'Screen time')) { syncLimits(); render(); }
+  }
+  function showTimesUp(id) {
+    var a = app(id);
+    if (!a) return;
+    if (S.saver) stopSaver();
+    push({ id: 'message', content: { title: 'Time’s up for ' + a.name, line: 'That’s today’s screen time for this app.', note: 'More time needs the PIN.', actions: [['stay', 'OK'], ['quick.more:' + id, 'More time']] }, f: { b: 0 } });
+    render();
+  }
+  /* Shore came up because an app's time ran out (the Home-button service sent it here). */
+  function checkTimesUp() {
+    var pkg = SCREEN ? SCREEN.takeTimesUp() : '', hit;
+    if (!pkg) return;
+    hit = APPS.filter(function (a) { return a.appId === pkg && !a.input; })[0];
+    if (hit) { while (S.stack.length > 1) pop(); showTimesUp(hit.id); }
+  }
+  function moreTime(id) { askPin(app(id).name, function () { if (SCREEN && pkgOf(id)) SCREEN.extend(pkgOf(id), 30); launch(id); }); }
   function lockOff() { var c = next(S.c.home.slice(), S.c.recent.slice()); c.lock = lockOf(null); if (write(c, 'Parental lock')) render(); }
   function openMessage(key) { push({ id: 'message', msg: key, f: { b: 0 } }); }
   function openApps() {
@@ -1373,7 +1412,7 @@
   function closeEditor() { clearSession(); pop(); }
 
   /* ---------- Settings, Layout and messages ---------- */
-  var PARENT = { ha: 'addons', adblock: 'addons', hadoor: 'ha', hadoorcam: 'ha', musicview: 'music', health: 'samsung', updates: 'samsung', saverlook: 'screensaver', rotation: 'background', online: 'background', unsplash: 'online', animated: 'online', fonts: 'typography', icons: 'layout', iconpack: 'icons', iconapps: 'icons', appicon: 'iconapps', input: 'inputs', inputname: 'input', todpart: 'rotation', lock: 'samsung', lockapps: 'lock', remote: 'samsung', remotepick: 'remote', remoteapp: 'remotepick' };
+  var PARENT = { ha: 'addons', adblock: 'addons', hadoor: 'ha', hadoorcam: 'ha', musicview: 'music', health: 'samsung', updates: 'samsung', saverlook: 'screensaver', rotation: 'background', online: 'background', unsplash: 'online', animated: 'online', fonts: 'typography', icons: 'layout', iconpack: 'icons', iconapps: 'icons', appicon: 'iconapps', input: 'inputs', inputname: 'input', todpart: 'rotation', lock: 'samsung', lockapps: 'lock', screentime: 'lock', screenapp: 'screentime', remote: 'samsung', remotepick: 'remote', remoteapp: 'remotepick' };
   function groupName(group, t) { return group === 'remotepick' ? buttonName(t.key) : (group === 'appicon' || group === 'input') && t && app(t.app) ? app(t.app).name : group === 'todpart' && t && t.part ? partName(t.part) : DETAIL_NAMES[group]; }
   function parentName(t) { return (t.group === 'appicon' || t.group === 'inputname') && t.fromHome ? 'Home' : t.group === 'appicon' && app(t.app) && app(t.app).input ? app(t.app).name : PARENT[t.group] ? groupName(PARENT[t.group], t) : 'Settings'; }
   /* ---------- Wallpaper sources: any mix of Shore's own, My photos and online sources ----------
@@ -1454,7 +1493,7 @@
     else if (id === 'phone') openPhone();
     else openAppearance(id);
   }
-  var DETAIL_NAMES = { addons: 'Add-ons', ha: 'Home Assistant', adblock: 'Pi-hole and AdGuard', hadoor: 'Doorbell', hadoorcam: 'Camera to show', musicview: 'Music view', health: 'Setup and health', updates: 'Shore updates', fonts: 'Font', clock: 'Clock', display: 'Night', online: 'Wallpaper sources', unsplash: 'Unsplash themes', animated: 'Animated wallpapers', background: 'Wallpaper', layout: 'Home screen', typography: 'Text', icons: 'App icons', iconpack: 'Icon pack', iconapps: 'Per-app icons', appicon: 'Icon', input: 'Input', inputname: 'Name', todpart: 'Part of the day', lock: 'Parental lock', lockapps: 'Locked apps', inputs: 'Inputs', focus: 'Style', rotation: 'Rotation', samsung: TV.brand, remote: 'Remote buttons', remoteapp: 'Choose an app', phone: 'Phone', weather: 'Weather', music: 'Music', news: 'News', screensaver: 'Screensaver', saverlook: 'Arrangement and clock' };
+  var DETAIL_NAMES = { addons: 'Add-ons', ha: 'Home Assistant', adblock: 'Pi-hole and AdGuard', hadoor: 'Doorbell', hadoorcam: 'Camera to show', musicview: 'Music view', health: 'Setup and health', updates: 'Shore updates', fonts: 'Font', clock: 'Clock', display: 'Night', online: 'Wallpaper sources', unsplash: 'Unsplash themes', animated: 'Animated wallpapers', background: 'Wallpaper', layout: 'Home screen', typography: 'Text', icons: 'App icons', iconpack: 'Icon pack', iconapps: 'Per-app icons', appicon: 'Icon', input: 'Input', inputname: 'Name', todpart: 'Part of the day', lock: 'Parental lock', lockapps: 'Locked apps', screentime: 'Screen time', screenapp: 'Screen time', inputs: 'Inputs', focus: 'Style', rotation: 'Rotation', samsung: TV.brand, remote: 'Remote buttons', remoteapp: 'Choose an app', phone: 'Phone', weather: 'Weather', music: 'Music', news: 'News', screensaver: 'Screensaver', saverlook: 'Arrangement and clock' };
   function choice(axis, value, disabled) {
     if (axis === 'source') return { action: 'online.' + value, axis: axis, value: value, disabled: !!disabled, label: sourceName(value), tick: true, applied: sourceOn(value) };
     return { action: axis === 'mode' ? 'rotation.' + value : 'choice.' + axis + '.' + value, axis: axis, value: value, disabled: !!disabled,
@@ -2516,6 +2555,13 @@
       reason: t.part === 'evening' || t.part === 'night' ? 'Automatic prefers darker photos.' : 'Automatic prefers brighter photos.' }];
     if (PARENT[t.group] && remotePage(t)) return remoteSections(t);
     if (t.group === 'lock') return lockSections();
+    if (t.group === 'screentime') return [{ id: 'screentime', title: '', items: S.c.home.concat(Object.keys(S.c.lock.limits).filter(function (id) { return S.c.home.indexOf(id) < 0; })).filter(pkgOf).map(function (id) {
+      var m = S.c.lock.limits[id], u = m ? screenUse(id) : null;
+      return { action: 'screenapp.' + id, label: app(id).name, description: !m ? 'No limit' : T(limitName(m)) + (u ? ' · ' + T(u.used + ' min today') : ''), glyph: appMark(app(id), 56, 40, 34), pair: true };
+    }), reason: 'A daily limit counts while the app is on screen and starts again at midnight. When it runs out, Shore comes back; the PIN gives 30 more minutes.' }];
+    if (t.group === 'screenapp') return [{ id: 'screenapp', title: 'Each day', items: [0].concat(SCREEN_STEPS).map(function (m) {
+      return { action: 'limit.' + m, label: limitName(m), tick: true, applied: (S.c.lock.limits[t.app] || 0) === m };
+    }) }];
     if (t.group === 'lockapps') return [{ id: 'lockapps', title: '', items: S.c.home.concat(S.c.lock.apps.filter(function (id) { return S.c.home.indexOf(id) < 0; })).filter(function (id) { return app(id) && !app(id).input; }).map(function (id) {
       return { action: 'lock.app.' + id, label: app(id).name, tick: true, applied: S.c.lock.apps.indexOf(id) >= 0, glyph: appMark(app(id), 56, 40, 34) };
     }), reason: 'Locked apps ask for the PIN before they open, from Home, All apps and Continue watching.' }];
@@ -2531,7 +2577,8 @@
     return [{ id: 'lockpin', title: '', items: pin ? [{ action: 'lock.pin', label: 'Change PIN' }, { action: 'lock.off', label: 'Turn off the lock', description: 'Forgets the PIN and unlocks everything' }]
         : [{ action: 'lock.pin', label: 'Choose a PIN', description: 'Four digits' }] },
       { id: 'lockwhat', title: 'Ask for the PIN', items: [{ action: 'lock.settings', label: 'Settings', description: 'Also Apps on Home and Quick actions', tick: true, applied: S.c.lock.settings, disabled: !pin },
-        { action: 'open.lockapps', label: 'Apps', description: n ? (n === 1 ? '1 app locked' : n + ' apps locked') : 'None', pair: true, disabled: !pin }],
+        { action: 'open.lockapps', label: 'Apps', description: n ? (n === 1 ? '1 app locked' : n + ' apps locked') : 'None', pair: true, disabled: !pin }]
+        .concat(SCREEN ? [{ action: 'open.screentime', label: 'Screen time', description: Object.keys(S.c.lock.limits).length ? (Object.keys(S.c.lock.limits).length === 1 ? '1 app limited' : Object.keys(S.c.lock.limits).length + ' apps limited') : 'No limits', pair: true, disabled: !pin }] : []),
         reason: pin ? 'Forgot the PIN? Clearing Shore’s storage in the TV’s Android settings removes it, along with Shore’s other settings.' : 'Choose a PIN first.' }];
   }
   function detailRows(t) {
@@ -2686,6 +2733,9 @@
     else if (/^sleep\.\d+$/.test(item.action)) setSleep(+item.action.slice(6));
     else if (item.action === 'open.lock') { if (S.c.lock.pin && !S.unlocked) askPin('Settings', function () { S.unlocked = true; openAppearance('lock'); }); else openAppearance('lock'); }
     else if (item.action === 'open.lockapps') openAppearance('lockapps');
+    else if (item.action === 'open.screentime') openAppearance('screentime');
+    else if (item.action.indexOf('screenapp.') === 0) { openAppearance('screenapp'); top().app = item.action.slice(10); top().f.action = 'limit.' + (S.c.lock.limits[top().app] || 0); }
+    else if (/^limit\.\d+$/.test(item.action)) setLimit(t.app, +item.action.slice(6));
     else if (item.action === 'lock.pin') choosePin();
     else if (item.action === 'lock.off') lockOff();
     else if (item.action === 'lock.settings') lockToggle('settings');
@@ -4316,7 +4366,7 @@
   document.addEventListener('visibilitychange', function () {
     heldKeys = {};
     if (document.hidden) { pauseRotation(); clearTimeout(clockTimer); VIDEO.pause(); if (S.saver && !DREAM) stopSaver(); clearTimeout(saverTimer); saverTimer = 0; syncAwake(); if (HA) { HA.camera.hangup(); if (top().id === 'hacam') pop(); } }
-    else { shelfAsked = ''; release(); after(); updateClock(); focusStage(); saverReset(); pollPlaying(); checkHealth(); }
+    else { shelfAsked = ''; release(); after(); updateClock(); focusStage(); saverReset(); pollPlaying(); checkHealth(); checkTimesUp(); }
   });
   window.addEventListener('resize', fit);
 
@@ -4352,6 +4402,8 @@
   QA.activate = function (action) { return activate(action) ? QA.state() : null; };
   QA.news = function (items) { newsForced = items || null; newsIdx = 0; newsTick(false); return capNews.textContent; };
   /* Made-up Home Assistant areas and states, so the add-on can be checked without a server; null restores the real source. */
+  /* Browser checks: limits counted by a fake instead of the Home-button service. */
+  QA.screenTime = function (fake) { var used = fake || {}; SCREEN = { set: function (l) { QA.limits = l; }, info: function () { var o = {}; Object.keys(QA.limits || {}).forEach(function (p) { o[p] = { limit: QA.limits[p] + (used.extra || 0), used: used[p] || 0 }; }); return o; }, extend: function (p, m) { used.extra = (used.extra || 0) + m; }, takeTimesUp: function () { var p = used.up || ''; used.up = ''; return p; } }; syncLimits(); render(); return true; };
   QA.ring = function (e) { if (HA && HA.ring) HA.ring(e || {}); return top().id; };
   QA.adBlock = function (fake) { if (AD) AD.qa(fake || null); render(); return !!(AD && AD.available()); };
   QA.homeAssistant = function (fake) { if (HA) HA.qa(fake || null); render(); return !!(HA && HA.available()); };
@@ -4368,6 +4420,7 @@
   if (NOWPLAYING) { pollPlaying(); setInterval(pollPlaying, 5000); }
   if (UPDATE) { S.update = UPDATE.info(); UPDATE.onChange(function () { S.update = UPDATE.info(); if (isSettingsDetail(top()) || top().id === 'settings') render(); }); }
   checkHealth();
+  setTimeout(function () { syncLimits(); checkTimesUp(); }, 3000);
   if (PHONE) { S.phone = PHONE.info(); PHONE.onChange(function (count) { S.phone.count = count; if (WEATHER && S.c.cweather === 'on') WEATHER.refresh(false); if (isSettingsDetail(top()) || top().id === 'settings') render(); }); }
   if (REMOTE) {
     REMOTE.onLearned(remoteLearned);

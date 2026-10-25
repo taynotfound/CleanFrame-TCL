@@ -33,6 +33,13 @@ public class HomeButtonService extends AccessibilityService {
     private static final String TAG = "CleanFrameKeys";
 
     private final Handler handler = new Handler(Looper.getMainLooper());
+    /** Screen time: counts the app in front every half minute and sends a child back to Shore when its time is up. */
+    private final Runnable screenTick = new Runnable() {
+        @Override public void run() {
+            if (ScreenTime.tick(HomeButtonService.this)) timesUp(ScreenTime.current());
+            handler.postDelayed(this, 30000);
+        }
+    };
     private boolean inSystemHome, longFired;
     /** Key code whose press was captured by the learn step; its key-up is swallowed too. */
     private int learnedCode = -1;
@@ -44,13 +51,14 @@ public class HomeButtonService extends AccessibilityService {
     @Override
     protected void onServiceConnected() {
         connected = true; instance = this; RemoteKeys.notifyChanged();
+        handler.removeCallbacks(screenTick); handler.postDelayed(screenTick, 30000);
         // Just after boot: open Shore now instead of waiting for Google TV Home to draw and then replacing it.
         if (SystemClock.uptimeMillis() < 180000) openCleanFrame(false);
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        connected = false; instance = null; sleepAt = 0; handler.removeCallbacks(sleepNow); RemoteKeys.notifyChanged();
+        connected = false; instance = null; sleepAt = 0; handler.removeCallbacks(sleepNow); handler.removeCallbacks(screenTick); RemoteKeys.notifyChanged();
         return super.onUnbind(intent);
     }
 
@@ -155,12 +163,21 @@ public class HomeButtonService extends AccessibilityService {
         if (event.getEventType() != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED || event.getPackageName() == null) return;
         String pkg = event.getPackageName().toString();
         if (pkg.equals(GOOGLE_HOME)) {
+            ScreenTime.front(this, pkg); // stops counting the app that was in front
             if (inSystemHome || SystemClock.uptimeMillis() < allowSystemHomeUntil) { inSystemHome = true; return; }
             openCleanFrame(false); // e.g. leaving an app or waking from standby lands on Google TV Home
             return;
         }
         for (String overlay : OVERLAYS) if (pkg.equals(overlay)) return;
         inSystemHome = false;
+        if (ScreenTime.front(this, pkg) && !pkg.equals(getPackageName())) timesUp(pkg);
+    }
+
+    /** Back to Shore, which says the app's time is up for today; the PIN there can give more. */
+    private void timesUp(String pkg) {
+        if (pkg == null || pkg.isEmpty() || pkg.equals(getPackageName())) return;
+        ScreenTime.timesUp(pkg);
+        openCleanFrame(true);
     }
 
     @Override

@@ -286,6 +286,14 @@
     },
     onChange: function (fn) { haListeners.push(fn); }
   } : null;
+  /* Screen time (ScreenTime.java): daily limits counted by the Home-button service while the app is in front. */
+  var screenTime = bridge.screenLimits ? {
+    set: function (limits) { try { bridge.screenLimits(JSON.stringify(limits || {})); } catch (e) { } },
+    /* {package: {limit, used}} in minutes */
+    info: function () { var r; try { r = JSON.parse(bridge.screenInfo()) || {}; } catch (e) { r = {}; } return r; },
+    extend: function (pkg, minutes) { try { bridge.screenExtend(String(pkg), minutes | 0); } catch (e) { } },
+    takeTimesUp: function () { try { var p = String(bridge.screenTimesUp() || ''); return /^[A-Za-z][A-Za-z0-9_.]{0,160}$/.test(p) ? p : ''; } catch (e) { return ''; } }
+  } : null;
   /* Pi-hole / AdGuard Home add-on (AdBlock.java): today's counts; the password never reaches the page. */
   var adListeners = [];
   window.CleanFrameAdChanged = function () { adListeners.forEach(function (fn) { try { fn(); } catch (e) { } }); };
@@ -324,7 +332,7 @@
     ready: function () { try { bridge.pageReady(); } catch (e) { } }
   };
   window.FrameDevice = {
-    platform: 'android', startup: startup, sleep: sleep, calendar: calendar, phone: phone, news: news, homeAssistant: homeAssistant, adBlock: adBlock, icons: icons, nowPlaying: nowPlaying, saver: saver, update: update,
+    platform: 'android', startup: startup, sleep: sleep, calendar: calendar, phone: phone, news: news, homeAssistant: homeAssistant, adBlock: adBlock, screenTime: screenTime, icons: icons, nowPlaying: nowPlaying, saver: saver, update: update,
     launch: launch, launchApp: launchApp, apps: apps, appInfo: appInfo,
     inputs: inputs, onInputs: function (fn) { inputListeners.push(fn); }, online: online, remote: remote, topShelf: topShelf, watchNext: watchNext,
     /* Android package behind a Home entry (for its TV banner); null for inputs and unknown IDs. */

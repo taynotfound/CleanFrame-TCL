@@ -1121,6 +1121,33 @@ try {
     await nav('up', 'up', 'ok', 'up', 'up', 'up', 'ok', 'up', 'up', 'up', 'up', 'ok', 'up', 'up', 'up', 'up', 'up', 'ok');
     check('The arrows enter the right PIN and the app opens', (await state()).view !== 'pin', [(await state()).view, await current.locator('#sheetView').innerText()]);
   });
+  await run('Screen time', async () => {
+    const pinHash = pin => { let h = 0x811c9dc5; for (const ch of 'shore:' + pin) { h ^= ch.charCodeAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
+    const id = 'stremio';
+    await closePage(); await page({ seed: { ...baseline(), lock: { pin: pinHash('1234'), settings: false, apps: [], limits: { [id]: 30, bogus: 45 } } } });
+    check('Limits load, and odd values are dropped', JSON.stringify((await state()).lock.limits) === JSON.stringify({ [id]: 30 }), (await state()).lock.limits);
+    const pkg = await current.evaluate(id => (ShoreQA.screenTime({}), Object.keys(ShoreQA.limits)[0] || ''), id);
+    check('Limits reach the native side by package', !!pkg);
+    await current.evaluate(p => ShoreQA.screenTime({ [p]: 31 }), pkg);
+    await act('home.app.' + id);
+    const text = await current.locator('#sheetView').innerText();
+    check('An app over its limit says time is up', (await state()).view === 'message' && /Time.s up/.test(text), text);
+    await nav('right', 'ok');
+    check('More time asks for the PIN', (await state()).view === 'pin');
+    for (const k of '1234') await current.keyboard.press(k);
+    check('The PIN gives more time and opens the app', (await state()).view !== 'pin' && (await state()).view !== 'message', (await state()).view);
+    await closePage(); await page({ seed: { ...baseline(), lock: { pin: pinHash('1234'), settings: false, apps: [], limits: { [id]: 30 } } } });
+    await current.evaluate(() => ShoreQA.screenTime({}));
+    await group('samsung'); await act('open.lock');
+    for (const k of '1234') await current.keyboard.press(k);
+    check('Parental lock shows Screen time', (await call('actions')).includes('open.screentime'));
+    await act('open.screentime');
+    await act('screenapp.' + id);
+    await act('limit.60');
+    check('A new limit is saved', (await stored()).lock.limits[id] === 60);
+    await act('limit.0');
+    check('No limit removes it', !(id in (await stored()).lock.limits));
+  });
   await run('Home Assistant add-on stays out of sight until switched on', async () => {
     await page();
     const haCalls = () => current.evaluate(() => window.__haCalls || []);
