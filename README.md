@@ -56,6 +56,7 @@ Shore (formerly CleanFrame-TCL) brings [Nathan Clark's CleanFrame](https://githu
 
 ### On the TV
 - The Home button opens Shore. Hold Home for the original Google TV Home.
+- When something stops working (the Home button service after an update, notification access, a wallpaper source) or an update is waiting, a small dot appears on *Settings*. *Settings › Google TV › Setup and health* says what.
 - Reassign remote buttons such as the app shortcut keys or the TV button.
 - Animations pause outside Home, so menus stay snappy.
 - Sleep timer (*Settings › Night*): 30, 60, 90 or 120 minutes, then the TV switches off, even while another app is open. It needs the Shore Home button in Accessibility.

@@ -1050,6 +1050,15 @@ try {
     await act('todauto.' + other);
     check('Automatic forgets it again', !(await stored()).wallFor[other]);
   });
+  await run('Setup dot on Settings', async () => {
+    await closePage(); await page();
+    check('No dot while everything works', await current.locator('#utils .u.has-alert').count() === 0);
+    await current.evaluate(() => ShoreQA.health(2));
+    check('A dot on Settings when something stopped working', await current.locator('#utils .u[data-action="util.settings"].has-alert .u-dot').count() === 1);
+    check('The button says how many', /2 things to check/.test(await current.locator('#utils .u[data-action="util.settings"]').getAttribute('aria-label')));
+    await current.evaluate(() => ShoreQA.health(0));
+    check('It goes away again', await current.locator('#utils .u.has-alert').count() === 0);
+  });
   await run('Parental lock', async () => {
     const pinHash = pin => { let h = 0x811c9dc5; for (const ch of 'shore:' + pin) { h ^= ch.charCodeAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
     await closePage(); await page();

@@ -1414,7 +1414,7 @@
         .concat(NEWS || newsForced ? [{ id: 'news', label: 'News', value: off(S.c.cnews) || newsSourceName(S.c.nsrc) }] : []) },
       { head: 'Shore', rows: [{ id: 'inputs', label: 'Inputs', value: inputSummary() }].concat(PHONE ? [{ id: 'phone', label: 'Phone', value: !S.phone.enabled ? 'Off' : S.phone.count ? (S.phone.count === 1 ? '1 photo' : S.phone.count + ' photos') : 'On' }] : [])
         .concat(addonsAvailable().length ? [{ id: 'addons', label: 'Add-ons', value: addonsSummary() }] : [])
-        .concat([{ id: 'samsung', label: TV.brand, value: updateReady() ? 'Shore update available' : 'Home and TV settings' }]) }
+        .concat([{ id: 'samsung', label: TV.brand, value: updateReady() ? 'Shore update available' : healthAlerts() ? (healthAlerts() === 1 ? '1 thing to check' : healthAlerts() + ' things to check') : 'Home and TV settings' }]) }
     ]];
   }
   function inputSummary() {
@@ -2156,6 +2156,34 @@
   }
   function healthTodo() { return healthItems().filter(function (i) { return !i.applied; }).length; }
   function healthLine() { var n = healthTodo(); return !n ? 'Everything is set up' : n === 1 ? '1 thing to check' : n + ' things to check'; }
+  /* Things that stopped working, for the dot on Settings: not choices like a phone companion left off. */
+  function healthAlerts() {
+    var r = S.remote, n = 0;
+    if (QA.alerts !== undefined) return QA.alerts; // browser checks
+    if (!S.healthChecked) return 0; // nothing is known until the first check, after Home has painted
+    if (REMOTE && (!r.service || r.blocked)) n++;
+    if (NOWPLAYING && S.c.cplaying === 'on' && !S.playing.access) n++;
+    if (ONLINE && String(ONLINE_INFO.failed || '').split(',').some(function (id) { return id && sourceOn(id); })) n++;
+    if (UPDATE && updateReady()) n++;
+    return n;
+  }
+  /* Asked again whenever Shore comes back to the front, a little after Home has painted, and every half hour. */
+  var healthTimer = 0;
+  function checkHealth() {
+    clearTimeout(healthTimer);
+    healthTimer = setTimeout(function () {
+      if (document.hidden) return;
+      try {
+        if (REMOTE) refreshRemote();
+        if (NOWPLAYING) S.playing.access = NOWPLAYING.info(false).access;
+        if (ONLINE) ONLINE_INFO = ONLINE.info();
+        if (UPDATE) S.update = UPDATE.info();
+      } catch (e) { }
+      S.healthChecked = true;
+      if (top().id === 'home') render();
+      healthTimer = setTimeout(checkHealth, 30 * 60000);
+    }, 2500);
+  }
   function healthSections() {
     return [{ id: 'health', title: '', items: healthItems() }]; // ticks and the OK hint say what to do; a note would not fit
   }
@@ -2954,7 +2982,11 @@
     var html = '', style = hs.mode === 'arrange' && S.c.controls !== 'text' ? 'both' : S.c.controls;
     var iconsOnly = style === 'icons', U = utils(), focused = null;
     utilsEl.className = 'utils quiet-utils is-' + style + (hs.zone === 'util' || hs.zone === 'ctl' ? ' is-awake' : '');
-    U.forEach(function (u, i) { html += utilBtn('util', i, 'util.' + u, icon(UTIL[u][1], '', true) + '<span class="u-label">' + esc(UTIL[u][0]) + '</span>', '', T(UTIL[u][0])); });
+    var alerts = healthAlerts();
+    U.forEach(function (u, i) {
+      var dot = u === 'settings' && alerts > 0;
+      html += utilBtn('util', i, 'util.' + u, icon(UTIL[u][1], '', true) + (dot ? '<i class="u-dot" aria-hidden="true"></i>' : '') + '<span class="u-label">' + esc(UTIL[u][0]) + '</span>', dot ? ' has-alert' : '', T(UTIL[u][0]) + (dot ? ', ' + T(alerts === 1 ? '1 thing to check' : alerts + ' things to check') : ''));
+    });
     setHTML(utilsEl, html);
     Array.prototype.forEach.call(utilsEl.querySelectorAll('.u'), function (b) {
       var z = b.getAttribute('data-z'), focus = hs.zone === z && hs.u === Number(b.getAttribute('data-i'));
@@ -4203,7 +4235,7 @@
   document.addEventListener('visibilitychange', function () {
     heldKeys = {};
     if (document.hidden) { pauseRotation(); clearTimeout(clockTimer); VIDEO.pause(); if (S.saver && !DREAM) stopSaver(); clearTimeout(saverTimer); saverTimer = 0; syncAwake(); if (HA) { HA.camera.hangup(); if (top().id === 'hacam') pop(); } }
-    else { shelfAsked = ''; release(); after(); updateClock(); focusStage(); saverReset(); pollPlaying(); }
+    else { shelfAsked = ''; release(); after(); updateClock(); focusStage(); saverReset(); pollPlaying(); checkHealth(); }
   });
   window.addEventListener('resize', fit);
 
@@ -4241,6 +4273,7 @@
   /* Made-up Home Assistant areas and states, so the add-on can be checked without a server; null restores the real source. */
   QA.homeAssistant = function (fake) { if (HA) HA.qa(fake || null); render(); return !!(HA && HA.available()); };
   QA.weatherFx = function (kind) { fxForced = kind || ''; render(); return stage.className.indexOf(' wx-') >= 0; };
+  QA.health = function (n) { QA.alerts = n; render(); return healthAlerts(); };
   QA.saver = function (on) { if (on === true) startSaver(); else if (on === false) stopSaver(); else if (on === 'next' && S.saver) nextSaverPhoto(); return { on: S.saver, scheduled: !!saverTimer, awake: awakeOn, photo: saverSrc }; };
   QA.actions = function () { var view = isSettingsDetail(top()) ? appearanceEl : sheetEl.hidden ? homeEl : sheetEl; return Array.prototype.filter.call(view.querySelectorAll('[data-action]'), renderedAction).map(function (el) { return el.getAttribute('data-action'); }); };
 
@@ -4251,6 +4284,7 @@
   if (WEATHER) WEATHER.onChange(function () { if (S.c.cweather === 'on' && (top().id === 'home' || isSettingsDetail(top()))) renderCaption(top(), homeState(top())); if (S.c.wfx === 'on') render(); });
   if (NOWPLAYING) { pollPlaying(); setInterval(pollPlaying, 5000); }
   if (UPDATE) { S.update = UPDATE.info(); UPDATE.onChange(function () { S.update = UPDATE.info(); if (isSettingsDetail(top()) || top().id === 'settings') render(); }); }
+  checkHealth();
   if (PHONE) { S.phone = PHONE.info(); PHONE.onChange(function (count) { S.phone.count = count; if (WEATHER && S.c.cweather === 'on') WEATHER.refresh(false); if (isSettingsDetail(top()) || top().id === 'settings') render(); }); }
   if (REMOTE) {
     REMOTE.onLearned(remoteLearned);

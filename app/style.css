@@ -1025,3 +1025,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
 .hc-pill.is-focus{background:var(--solid);color:var(--solid-ink)}
 .hc-hint{top:1000px}
 .hc-hold{margin-left:24px}
+/* Setup needs a look: a small dot on Settings (Setup and health says what). */
+.u-dot{position:absolute;left:24px;top:-2px;width:12px;height:12px;border-radius:50%;background:#ffb27a;box-shadow:0 0 0 2px rgba(14,10,6,.28);pointer-events:none}
+.l-list .u-dot{left:auto;right:-6px}
