@@ -26,19 +26,19 @@ const range = previous ? [`${previous}..HEAD`] : ['-n', '15', 'HEAD'];
 
 const copy = existsSync(new URL('release-copy.json', import.meta.url)) ? JSON.parse(readFileSync(new URL('release-copy.json', import.meta.url), 'utf8')) : {};
 const SEP = '\u001e', END = '\u001f';
-const commits = git('log', ...range, `--pretty=format:%H${SEP}%s${SEP}%b${END}`)
+const commits = git('log', ...range, `--pretty=format:%H${SEP}%s${SEP}%b${SEP}%P${END}`)
   .split(END).map((c) => c.trim()).filter(Boolean).map((c) => {
-    const [sha, subject, body = ''] = c.split(SEP);
+    const [sha, subject, body = '', parents = ''] = c.split(SEP);
     const lines = body.split('\n');
     const pick = (key) => lines.filter((l) => l.startsWith(key + ':')).map((l) => l.slice(key.length + 1).trim()).filter(Boolean);
     const files = git('show', '--name-only', '--pretty=format:', sha).split('\n').filter(Boolean);
     const extra = copy[sha.slice(0, 7)] || {};
-    return { sha, subject: subject.trim(), title: extra.title || pick('Release-title')[0], notes: extra.notes || pick('Release'), image: extra.image || pick('Release-image')[0], files };
+    return { sha, merge: parents.trim().split(' ').length > 1, subject: subject.trim(), title: extra.title || pick('Release-title')[0], notes: extra.notes || pick('Release'), image: extra.image || pick('Release-image')[0], files };
   });
 
 const onTv = (f) => f.startsWith('app/') || (f.startsWith('android/') && !f.includes('/companion/'));
 const onPhone = (f) => f.includes('/companion/');
-const appChange = (c) => c.notes.length > 0 || c.files.some((f) => onTv(f) || onPhone(f));
+const appChange = (c) => !c.merge && (c.notes.length > 0 || c.files.some((f) => onTv(f) || onPhone(f))); // merges only repeat their branch's commits
 const app = commits.filter(appChange);
 
 const raw = (path) => `https://raw.githubusercontent.com/${repo}/${head}/${path}`;

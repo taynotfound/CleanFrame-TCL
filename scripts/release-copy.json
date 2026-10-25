@@ -1,4 +1,48 @@
 {
+  "6282d80": {
+    "title": "Search, screen time, widgets and Home Assistant",
+    "notes": [
+      "**Problem report.** The phone companion’s TV settings tab downloads a report of crashes and errors to attach to a bug report. It stays on the TV until you download it and holds no settings or passwords. If the page stops, Shore now reloads it instead of closing."
+    ]
+  },
+  "8bc7c64": {
+    "notes": [
+      "**What’s new.** After Shore updates itself, Home shows what changed once. You can read it again under Settings › Google TV › Shore updates."
+    ]
+  },
+  "9775623": {
+    "notes": [
+      "**Widgets.** An optional row of cards under the clock (Settings › Clock › Widgets): the forecast for the next three days, your next three events, and with Home Assistant the inside temperature, lights on and any open door or window."
+    ]
+  },
+  "23f2519": {
+    "notes": [
+      "**Italiano e Türkçe.** Shore and the phone companion now speak Italian and Turkish, with ANSA, la Repubblica, BBC News Türkçe and DW Türkçe as news sources."
+    ]
+  },
+  "7ea29bb": {
+    "notes": [
+      "**Type from your phone.** The companion’s new Keyboard tab types on the TV: into Shore’s Search right away, and into other apps’ text fields once you turn on Shore phone keyboard in the TV’s Accessibility settings."
+    ]
+  },
+  "0b6bd2f": {
+    "notes": [
+      "**Search.** All apps has a Search button: type with the remote’s arrows or a keyboard to find apps, HDMI inputs and Settings pages. On a keyboard, just start typing on Home."
+    ]
+  },
+  "ff261ab": {
+    "notes": [
+      "**Screen time.** Give an app a daily limit, from 30 minutes to 3 hours (Settings › Google TV › Parental lock › Screen time). When it runs out Shore comes back, and the PIN gives 30 more minutes."
+    ]
+  },
+  "e0d51c9": {
+    "notes": [
+      "New Settings › Add-ons. Add-ons stay out of sight until you switch them on.",
+      "Home Assistant add-on: see your rooms, switch lights, switches and fans, lock and unlock, and watch cameras live from a Smart home button on Home. Built by [mozthewah](https://github.com/mozthewah), thank you!",
+      "Connect Home Assistant from the phone companion; the access token stays on the TV and out of backups.",
+      "With Home Assistant on, the line under the clock shows the temperature and humidity inside."
+    ]
+  },
   "39e9db2": {
     "title": "Mix your wallpaper sources",
     "notes": [
