@@ -78,6 +78,10 @@ final class DeviceBridge {
     @JavascriptInterface
     public void haForget() { if (activity != null) HomeAssistant.get(context).forget(); }
 
+    /** The doorbell entity and the camera a ring shows; empty strings turn it off. */
+    @JavascriptInterface
+    public void haDoorbell(String entity, String camera) { if (activity != null) HomeAssistant.get(context).setDoorbell(entity, camera); }
+
     /** Camera signalling session (0 when it can't start); events arrive through window.CleanFrameHACamera. */
     @JavascriptInterface
     public int haCameraStart(String entity) { return activity == null ? 0 : HomeAssistant.get(context).cameraStart(entity); }

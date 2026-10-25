@@ -35,6 +35,8 @@ final class HomeAssistant {
         void changed();
         /** A camera signalling event for the page: {session, type, ...}. */
         void camera(String json);
+        /** The doorbell rang while Shore is in front: {camera, name}. */
+        default void doorbell(String json) { }
     }
 
     private static final long EVERY = 30_000L;
@@ -67,7 +69,15 @@ final class HomeAssistant {
         return instance;
     }
 
-    private HomeAssistant(Context context) { prefs = context.getSharedPreferences("homeassistant", Context.MODE_PRIVATE); }
+    private final Context context;
+    private HaSocket bell;
+    private volatile long rang;
+
+    private HomeAssistant(Context context) {
+        this.context = context;
+        prefs = context.getSharedPreferences("homeassistant", Context.MODE_PRIVATE);
+        watchBell();
+    }
 
     void setListener(Listener l) { listener = l; }
 
@@ -84,7 +94,8 @@ final class HomeAssistant {
         try {
             return new JSONObject().put("configured", configured()).put("enabled", enabled()).put("url", url())
                     .put("status", !enabled() ? "off" : !configured() ? "setup" : status).put("error", error).put("at", at)
-                    .put("areas", areas).put("selected", selected()).put("states", states).toString();
+                    .put("areas", areas).put("selected", selected()).put("states", states)
+                    .put("doorbell", doorbell()).put("doorcam", prefs.getString("doorcam", "")).toString();
         } catch (Exception e) { return "{}"; }
     }
 
@@ -99,6 +110,7 @@ final class HomeAssistant {
         prefs.edit().putBoolean("enabled", on).apply();
         if (!on) { areas = new JSONArray(); states = new JSONObject(); status = "off"; error = ""; at = 0; hangup(0); }
         schedule();
+        watchBell();
         notifyChanged();
     }
 
@@ -142,6 +154,7 @@ final class HomeAssistant {
         catch (HaError e) { return e.code; }
         prefs.edit().putString("url", url).putString("token", token).apply();
         status = "loading"; error = "";
+        closeBell(); watchBell();
         refresh();
         notifyChanged();
         return "";
@@ -149,7 +162,8 @@ final class HomeAssistant {
 
     /** Forgets the server and token (companion or TV). The add-on switch stays as it is. */
     void forget() {
-        prefs.edit().remove("url").remove("token").remove("areas").apply();
+        prefs.edit().remove("url").remove("token").remove("areas").remove("doorbell").remove("doorcam").apply();
+        closeBell();
         areas = new JSONArray(); states = new JSONObject(); status = "setup"; error = ""; at = 0;
         hangup(0);
         notifyChanged();
@@ -209,6 +223,76 @@ final class HomeAssistant {
             catch (Exception ignored) { }
             worker.schedule(this::poll, 600, TimeUnit.MILLISECONDS);
         });
+    }
+
+    // ---------- Doorbell: a ring opens the camera on Shore, or a short note over another app ----------
+
+    private String doorbell() { return prefs.getString("doorbell", ""); }
+
+    /** The entity that rings (an event or a binary sensor) and the camera to show; empty strings turn it off. */
+    void setDoorbell(String entity, String cameraId) {
+        String e = entity != null && entity.matches("(event|binary_sensor)\\.[A-Za-z0-9_]{1,200}") ? entity : "";
+        String c = cameraId != null && cameraId.matches("camera\\.[A-Za-z0-9_]{1,200}") ? cameraId : "";
+        prefs.edit().putString("doorbell", e).putString("doorcam", c).apply();
+        closeBell(); watchBell();
+        notifyChanged();
+    }
+
+    /**
+     * Keeps one WebSocket subscription to the doorbell entity while the add-on is on, also behind other apps, so a
+     * ring arrives within a second. Reconnects after 30 seconds when the connection drops.
+     */
+    private synchronized void watchBell() {
+        if (bell != null || !enabled() || !configured() || doorbell().isEmpty()) return;
+        final String entity = doorbell(), key = token();
+        final HaSocket[] self = new HaSocket[1];
+        self[0] = bell = HaSocket.open(url(), new HaSocket.Listener() {
+            @Override public void message(String text) { bellMessage(self[0], entity, key, text); }
+            @Override public void closed(String reason) {
+                synchronized (HomeAssistant.this) { if (bell == self[0]) bell = null; }
+                worker.schedule(HomeAssistant.this::watchBell, 30, TimeUnit.SECONDS);
+            }
+        });
+    }
+
+    private synchronized void closeBell() { HaSocket b = bell; bell = null; if (b != null) b.close(); }
+
+    private void bellMessage(HaSocket socket, String entity, String key, String text) {
+        try {
+            JSONObject m = new JSONObject(text);
+            String type = m.optString("type");
+            if (type.equals("auth_required")) socket.send(new JSONObject().put("type", "auth").put("access_token", key).toString());
+            else if (type.equals("auth_ok")) socket.send(new JSONObject().put("id", 1).put("type", "subscribe_trigger")
+                    .put("trigger", new JSONObject().put("platform", "state").put("entity_id", entity)).toString());
+            else if (type.equals("auth_invalid")) socket.close();
+            else if (type.equals("event") && m.optInt("id") == 1) {
+                JSONObject trigger = m.optJSONObject("event") == null ? null : m.getJSONObject("event").optJSONObject("variables");
+                trigger = trigger == null ? null : trigger.optJSONObject("trigger");
+                JSONObject to = trigger == null ? null : trigger.optJSONObject("to_state"), from = trigger == null ? null : trigger.optJSONObject("from_state");
+                String now = to == null ? "" : to.optString("state"), was = from == null ? "" : from.optString("state");
+                boolean ring = entity.startsWith("event.") ? !now.isEmpty() && !now.equals(was) && !now.equals("unavailable") && !now.equals("unknown") : now.equals("on") && !was.equals("on");
+                if (ring) ring(to.optJSONObject("attributes") == null ? "" : to.getJSONObject("attributes").optString("friendly_name", ""));
+            }
+        } catch (Exception ignored) { }
+    }
+
+    private void ring(String name) {
+        long now = System.currentTimeMillis();
+        if (now - rang < 20_000) return; // one press, one pop-up
+        rang = now;
+        Listener l = listener;
+        if (active && l != null) {
+            try { l.doorbell(new JSONObject().put("camera", prefs.getString("doorcam", "")).put("name", clip(name, 120)).toString()); } catch (Exception ignored) { }
+            return;
+        }
+        String lang = java.util.Locale.getDefault().getLanguage(), note;
+        switch (lang) {
+            case "de": note = "Es hat geklingelt"; break; case "fr": note = "On sonne à la porte"; break; case "es": note = "Llaman a la puerta"; break;
+            case "nl": note = "Er wordt aangebeld"; break; case "pl": note = "Ktoś dzwoni do drzwi"; break; case "uk": note = "Дзвонять у двері"; break;
+            default: note = "Someone’s at the door";
+        }
+        final String text = note;
+        new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> android.widget.Toast.makeText(context, text, android.widget.Toast.LENGTH_LONG).show());
     }
 
     // ---------- Polling ----------

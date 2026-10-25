@@ -1082,6 +1082,29 @@ try {
     check('Switching off stops it and clears the line', (await stored()).look.aad === 'off' && (await adCalls()).some(c => c[0] === 'enable' && c[1] === false) && !/blocked|paused/.test(await caption()));
     await current.evaluate(() => ShoreQA.adBlock(null));
   });
+  await run('Doorbell pop-up', async () => {
+    await closePage(); await page();
+    const haCalls = () => current.evaluate(() => window.__haCalls || []);
+    await current.evaluate(fake => ShoreQA.homeAssistant(fake), HA_FAKE);
+    await group('addons'); await act('choice.aha.on'); await ready();
+    await act('open.ha');
+    await act('open.hadoor');
+    check('The doorbell list starts with the event that rings', (await state()).settingsGroup === 'hadoor' && (await call('actions')).includes('hadoor.0'));
+    await act('hadoor.0');
+    check('Choosing it is sent to the native side', (await haCalls()).some(c => c[0] === 'doorbell' && c[1] === 'event.front_door_ding'));
+    await nav('back'); await act('open.hadoorcam'); await act('hadoorcam.0');
+    check('And the camera to show', (await haCalls()).some(c => c[0] === 'doorbell' && c[1] === 'event.front_door_ding' && c[2] === 'camera.front_door'));
+    await scene('home');
+    await current.evaluate(() => ShoreQA.ring({ camera: 'camera.front_door', name: 'Front Door Ding' }));
+    let where = await call('where');
+    check('A ring opens the door camera over Home', where.view === 'hacam' && /doorbell/i.test(await current.locator('#sheetView').innerText()), where);
+    await nav('back');
+    check('Back closes it', (await call('where')).view === 'home');
+    await current.evaluate(() => ShoreQA.ring({ camera: '', name: 'Front Door Ding' }));
+    check('Without a camera it says someone is there', (await call('where')).view === 'message' && /at the door/.test(await current.locator('#sheetView').innerText()));
+    await nav('ok');
+    await current.evaluate(() => ShoreQA.homeAssistant(null));
+  });
   await run('Parental lock', async () => {
     const pinHash = pin => { let h = 0x811c9dc5; for (const ch of 'shore:' + pin) { h ^= ch.charCodeAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
     await closePage(); await page();

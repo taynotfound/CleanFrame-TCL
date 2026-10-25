@@ -257,6 +257,8 @@
   /* Home Assistant add-on (HomeAssistant.java): states read natively, the token never reaches the page. */
   var haListeners = [], haCamListeners = [];
   window.CleanFrameHAChanged = function () { haListeners.forEach(function (fn) { try { fn(); } catch (e) { } }); };
+  var haBellListeners = [];
+  window.CleanFrameDoorbell = function (event) { if (event && typeof event === 'object') haBellListeners.forEach(function (fn) { try { fn({ camera: /^camera\.[A-Za-z0-9_]{1,200}$/.test(event.camera || '') ? event.camera : '', name: String(event.name || '').slice(0, 120) }); } catch (e) { } }); };
   window.CleanFrameHACamera = function (event) { if (event && typeof event.session === 'number') haCamListeners.forEach(function (fn) { try { fn(event); } catch (e) { } }); };
   var homeAssistant = bridge.haInfo ? {
     /* {configured, enabled, url, status: off|setup|loading|ok|error, error, at, areas:[{name, ids}], selected, states:{id: {s, n, u, c, t}}} */
@@ -265,7 +267,8 @@
       try { r = JSON.parse(bridge.haInfo()) || {}; } catch (e) { r = {}; }
       return { configured: !!r.configured, enabled: !!r.enabled, url: typeof r.url === 'string' ? r.url : '', status: /^(off|setup|loading|ok|error)$/.test(r.status) ? r.status : 'off',
         error: String(r.error || ''), at: +r.at || 0, areas: (r.areas instanceof Array ? r.areas : []).filter(function (a) { return a && typeof a.name === 'string' && a.ids instanceof Array; }),
-        selected: (r.selected instanceof Array ? r.selected : []).filter(function (n) { return typeof n === 'string'; }), states: r.states && typeof r.states === 'object' ? r.states : {} };
+        selected: (r.selected instanceof Array ? r.selected : []).filter(function (n) { return typeof n === 'string'; }), states: r.states && typeof r.states === 'object' ? r.states : {},
+        doorbell: typeof r.doorbell === 'string' ? r.doorbell : '', doorcam: typeof r.doorcam === 'string' ? r.doorcam : '' };
     },
     enable: function (on) { try { bridge.haEnable(!!on); } catch (e) { } },
     areas: function (names) { try { bridge.haAreas(JSON.stringify(names || [])); } catch (e) { } },
@@ -273,6 +276,8 @@
     toggle: function (id) { try { bridge.haToggle(String(id)); } catch (e) { } },
     call: bridge.haCall ? function (id, service, data) { try { bridge.haCall(String(id), String(service), JSON.stringify(data || {})); } catch (e) { } } : null,
     forget: function () { try { bridge.haForget(); } catch (e) { } },
+    doorbell: bridge.haDoorbell ? function (entity, camera) { try { bridge.haDoorbell(String(entity || ''), String(camera || '')); } catch (e) { } } : null,
+    onDoorbell: function (fn) { haBellListeners.push(fn); },
     camera: {
       start: function (id) { try { return +bridge.haCameraStart(String(id)) || 0; } catch (e) { return 0; } },
       offer: function (session, sdp) { try { bridge.haCameraOffer(session | 0, String(sdp)); } catch (e) { } },

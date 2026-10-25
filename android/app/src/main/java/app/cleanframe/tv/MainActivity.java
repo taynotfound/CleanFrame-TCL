@@ -114,6 +114,9 @@ public class MainActivity extends Activity {
             @Override public void camera(String json) {
                 runOnUiThread(() -> { if (web != null) web.evaluateJavascript("window.CleanFrameHACamera&&window.CleanFrameHACamera(" + json + ")", null); });
             }
+            @Override public void doorbell(String json) {
+                runOnUiThread(() -> { if (web != null) web.evaluateJavascript("window.CleanFrameDoorbell&&window.CleanFrameDoorbell(" + json + ")", null); });
+            }
         });
         AdBlock.get(this).setListener(() -> runOnUiThread(() -> { if (web != null) web.evaluateJavascript("window.CleanFrameAdChanged&&window.CleanFrameAdChanged()", null); }));
         final WebViewAssetLoader loader = new WebViewAssetLoader.Builder()

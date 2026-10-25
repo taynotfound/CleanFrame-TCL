@@ -8,7 +8,7 @@
   var T = window.CleanFrameI18n ? CleanFrameI18n.T : function (s) { return s; };
   /* "Open (door)": a key apart from the verb "Open", shown as "Open" where no translation has it. */
   function TT(key) { var w = T(key); return w === key ? key.replace(/ \(.*\)$/, '') : w; }
-  var NATIVE = window.FrameDevice && FrameDevice.homeAssistant || null, src = NATIVE, running = false, listeners = [];
+  var NATIVE = window.FrameDevice && FrameDevice.homeAssistant || null, src = NATIVE, running = false, listeners = [], bellListeners = [], bellWired = false;
   var latest = null, built = null, overrides = {}, pending = {};
   var DOMAIN_ORDER = ['light', 'switch', 'fan', 'climate', 'media_player', 'lock', 'cover', 'vacuum', 'humidifier', 'alarm_control_panel', 'binary_sensor', 'sensor', 'event'];
   var TOGGLE = ['light', 'switch', 'fan', 'lock'], LIT = ['light', 'switch', 'fan'];
@@ -242,7 +242,8 @@
     var data = JSON.parse(JSON.stringify(fake)), calls = window.__haCalls = [];
     function later() { setTimeout(function () { data.at = Date.now(); changed(); }, 0); }
     return {
-      info: function () { return { configured: data.configured !== false, enabled: running, url: data.url || 'http://homeassistant.local:8123', status: running ? (data.status || 'ok') : 'off', error: data.error || '', at: data.at || 1, areas: data.areas || [], selected: data.selected || [], states: data.states || {} }; },
+      info: function () { return { configured: data.configured !== false, enabled: running, url: data.url || 'http://homeassistant.local:8123', status: running ? (data.status || 'ok') : 'off', error: data.error || '', at: data.at || 1, areas: data.areas || [], selected: data.selected || [], states: data.states || {}, doorbell: data.doorbell || '', doorcam: data.doorcam || '' }; },
+      doorbell: function (entity, camera) { calls.push(['doorbell', entity, camera]); data.doorbell = entity; data.doorcam = camera; later(); },
       enable: function (on) { calls.push(['enable', on]); later(); },
       areas: function (names) { calls.push(['areas', names]); data.selected = names.slice(); later(); },
       refresh: function () { calls.push(['refresh']); },
@@ -266,7 +267,25 @@
     };
   }
 
+  /* Doorbell: what can ring (event entities first, those Home Assistant calls doorbells before the rest) and the cameras to show. */
+  function doorbells() {
+    var i = info(), out = [];
+    Object.keys(i.states).forEach(function (id) {
+      var s = i.states[id], d = domainOf(id), bellish = s.c === 'doorbell' || /door.?bell|ding|\bring\b|klingel|sonnette|timbre|deurbel|dzwonek|дзвін/i.test(id + ' ' + (s.n || ''));
+      if (d === 'event' || d === 'binary_sensor' && bellish) out.push({ id: id, name: String(s.n || id), score: (s.c === 'doorbell' ? 0 : bellish ? 1 : 2) + (d === 'event' ? 0 : 3) });
+    });
+    return out.sort(function (a, b) { return a.score - b.score || a.name.localeCompare(b.name); });
+  }
+  function camerasAll() { var i = info(); return Object.keys(i.states).filter(function (id) { return domainOf(id) === 'camera'; }).map(function (id) { return { id: id, name: String(i.states[id].n || id) }; }); }
   window.CleanFrameHA = {
+    doorbells: doorbells,
+    cameraList: camerasAll,
+    doorbell: function () { var i = info(); return { entity: i.doorbell || '', camera: i.doorcam || '' }; },
+    setDoorbell: function (entity, camera) { if (src && src.doorbell) { src.doorbell(entity, camera); latest = null; } },
+    canDoorbell: function () { return !!(src && src.doorbell); },
+    onDoorbell: function (fn) { bellListeners.push(fn); if (NATIVE && NATIVE.onDoorbell && !bellWired) { bellWired = true; NATIVE.onDoorbell(function (e) { bellListeners.forEach(function (f) { f(e); }); }); } },
+    /* Browser checks: a ring as the native side would send it. */
+    ring: function (e) { bellListeners.forEach(function (f) { f(e); }); },
     available: function () { return !!src; },
     running: function () { return running; },
     /* Called by main.js when the add-on is switched on (also at start, after Home has painted) and off. */

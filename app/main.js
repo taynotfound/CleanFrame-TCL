@@ -1373,7 +1373,7 @@
   function closeEditor() { clearSession(); pop(); }
 
   /* ---------- Settings, Layout and messages ---------- */
-  var PARENT = { ha: 'addons', adblock: 'addons', musicview: 'music', health: 'samsung', updates: 'samsung', saverlook: 'screensaver', rotation: 'background', online: 'background', unsplash: 'online', animated: 'online', fonts: 'typography', icons: 'layout', iconpack: 'icons', iconapps: 'icons', appicon: 'iconapps', input: 'inputs', inputname: 'input', todpart: 'rotation', lock: 'samsung', lockapps: 'lock', remote: 'samsung', remotepick: 'remote', remoteapp: 'remotepick' };
+  var PARENT = { ha: 'addons', adblock: 'addons', hadoor: 'ha', hadoorcam: 'ha', musicview: 'music', health: 'samsung', updates: 'samsung', saverlook: 'screensaver', rotation: 'background', online: 'background', unsplash: 'online', animated: 'online', fonts: 'typography', icons: 'layout', iconpack: 'icons', iconapps: 'icons', appicon: 'iconapps', input: 'inputs', inputname: 'input', todpart: 'rotation', lock: 'samsung', lockapps: 'lock', remote: 'samsung', remotepick: 'remote', remoteapp: 'remotepick' };
   function groupName(group, t) { return group === 'remotepick' ? buttonName(t.key) : (group === 'appicon' || group === 'input') && t && app(t.app) ? app(t.app).name : group === 'todpart' && t && t.part ? partName(t.part) : DETAIL_NAMES[group]; }
   function parentName(t) { return (t.group === 'appicon' || t.group === 'inputname') && t.fromHome ? 'Home' : t.group === 'appicon' && app(t.app) && app(t.app).input ? app(t.app).name : PARENT[t.group] ? groupName(PARENT[t.group], t) : 'Settings'; }
   /* ---------- Wallpaper sources: any mix of Shore's own, My photos and online sources ----------
@@ -1454,7 +1454,7 @@
     else if (id === 'phone') openPhone();
     else openAppearance(id);
   }
-  var DETAIL_NAMES = { addons: 'Add-ons', ha: 'Home Assistant', adblock: 'Pi-hole and AdGuard', musicview: 'Music view', health: 'Setup and health', updates: 'Shore updates', fonts: 'Font', clock: 'Clock', display: 'Night', online: 'Wallpaper sources', unsplash: 'Unsplash themes', animated: 'Animated wallpapers', background: 'Wallpaper', layout: 'Home screen', typography: 'Text', icons: 'App icons', iconpack: 'Icon pack', iconapps: 'Per-app icons', appicon: 'Icon', input: 'Input', inputname: 'Name', todpart: 'Part of the day', lock: 'Parental lock', lockapps: 'Locked apps', inputs: 'Inputs', focus: 'Style', rotation: 'Rotation', samsung: TV.brand, remote: 'Remote buttons', remoteapp: 'Choose an app', phone: 'Phone', weather: 'Weather', music: 'Music', news: 'News', screensaver: 'Screensaver', saverlook: 'Arrangement and clock' };
+  var DETAIL_NAMES = { addons: 'Add-ons', ha: 'Home Assistant', adblock: 'Pi-hole and AdGuard', hadoor: 'Doorbell', hadoorcam: 'Camera to show', musicview: 'Music view', health: 'Setup and health', updates: 'Shore updates', fonts: 'Font', clock: 'Clock', display: 'Night', online: 'Wallpaper sources', unsplash: 'Unsplash themes', animated: 'Animated wallpapers', background: 'Wallpaper', layout: 'Home screen', typography: 'Text', icons: 'App icons', iconpack: 'Icon pack', iconapps: 'Per-app icons', appicon: 'Icon', input: 'Input', inputname: 'Name', todpart: 'Part of the day', lock: 'Parental lock', lockapps: 'Locked apps', inputs: 'Inputs', focus: 'Style', rotation: 'Rotation', samsung: TV.brand, remote: 'Remote buttons', remoteapp: 'Choose an app', phone: 'Phone', weather: 'Weather', music: 'Music', news: 'News', screensaver: 'Screensaver', saverlook: 'Arrangement and clock' };
   function choice(axis, value, disabled) {
     if (axis === 'source') return { action: 'online.' + value, axis: axis, value: value, disabled: !!disabled, label: sourceName(value), tick: true, applied: sourceOn(value) };
     return { action: axis === 'mode' ? 'rotation.' + value : 'choice.' + axis + '.' + value, axis: axis, value: value, disabled: !!disabled,
@@ -1907,9 +1907,42 @@
     if (m.configured && m.areas.length) out.push({ id: 'harooms', title: 'Rooms', items: m.areas.map(function (name, i) {
       return { action: 'ha.area.' + i, label: name, tick: true, applied: !m.selected.length || m.selected.indexOf(name) >= 0 };
     }), reason: 'Rooms are Home Assistant’s areas. Devices hidden there stay hidden here.' });
+    if (m.configured && HA.canDoorbell()) {
+      var bell = HA.doorbell(), bellName = bellLabel(HA.doorbells(), bell.entity), camName = bellLabel(HA.cameraList(), bell.camera);
+      out.push({ id: 'hadoorbell', title: 'Doorbell', items: [{ action: 'open.hadoor', label: 'Doorbell', description: bell.entity ? bellName : 'Off', pair: true },
+        { action: 'open.hadoorcam', label: 'Camera to show', description: bell.camera ? camName : 'None', pair: true, disabled: !bell.entity }],
+        reason: bell.entity ? 'When it rings, Shore shows the camera. Over another app, a short note appears instead.' : 'Pick what rings, and Shore shows your door camera when someone’s there.' });
+    }
     if (m.configured) out.push({ id: 'haforget', title: '', items: [{ action: 'ha.forget', label: 'Disconnect Home Assistant' }] });
     return out;
   }
+  function bellLabel(list, id) { var hit = list.filter(function (x) { return x.id === id; })[0]; return hit ? hit.name : id; }
+  function doorSections(t) {
+    var bell = HA.doorbell(), list = t.group === 'hadoor' ? HA.doorbells() : HA.cameraList(), cur = t.group === 'hadoor' ? bell.entity : bell.camera;
+    return [{ id: t.group, title: '', items: [{ action: t.group + '.none', label: t.group === 'hadoor' ? 'Off' : 'None', tick: true, applied: !cur }]
+      .concat(list.slice(0, 40).map(function (x, i) { return { action: t.group + '.' + i, label: x.name, description: x.id, tick: true, applied: cur === x.id }; })),
+      reason: t.group === 'hadoor' ? (list.length ? 'Doorbells from Ring, Nest, Reolink and others appear as events in Home Assistant.' : 'Nothing that rings was found in the rooms you show.') : '' }];
+  }
+  function setDoor(t, i) {
+    var bell = HA.doorbell(), list = t.group === 'hadoor' ? HA.doorbells() : HA.cameraList(), pick = i < 0 ? '' : list[i] ? list[i].id : null;
+    if (pick === null) return;
+    if (t.group === 'hadoor') HA.setDoorbell(pick, pick ? bell.camera : '');
+    else HA.setDoorbell(bell.entity, pick);
+    render();
+  }
+  /* A ring while Shore is in front: the door camera (live), over whatever is on screen, or a note without one. */
+  function doorbellRang(e) {
+    var t, camName;
+    if (!HA || !HA.running()) return;
+    if (S.saver) stopSaver();
+    while (top().id === 'hacam' || top().doorbell) pop();
+    if (e.camera) { camName = bellLabel(HA.cameraList(), e.camera); openHaCam({ id: e.camera, name: camName }); top().doorbell = true; }
+    else push({ id: 'message', doorbell: true, content: { title: 'Someone’s at the door', line: e.name || '', note: '', actions: [['stay', 'OK']] }, f: { b: 0 } });
+    t = top();
+    setTimeout(function () { if (top() === t) { if (t.id === 'hacam') closeHaCam(); else pop(); render(); } }, 120000); // closes itself after two minutes
+    render();
+  }
+  if (HA && HA.onDoorbell) HA.onDoorbell(doorbellRang);
   /* OK on a room shows or hides it; every room shown is stored as "all", so new rooms appear by themselves. */
   function haArea(i) {
     var m = HA.model(), name = m.areas[i], list = m.selected.length ? m.selected.slice() : m.areas.slice(), at;
@@ -2459,6 +2492,7 @@
     if (t.group === 'phone') return phoneSections(flat);
     if (t.group === 'addons') return addonSections();
     if (t.group === 'ha') return haSections();
+    if (t.group === 'hadoor' || t.group === 'hadoorcam') return doorSections(t);
     if (t.group === 'adblock') return adSections();
     if (t.group === 'updates') return updateSections();
     if (t.group === 'health') return healthSections();
@@ -2673,6 +2707,8 @@
     else if (item.action === 'open.musicview') openAppearance('musicview');
     else if (item.action === 'open.health') openHealth();
     else if (item.action === 'open.ha') openHaSettings();
+    else if (item.action === 'open.hadoor' || item.action === 'open.hadoorcam') openAppearance(item.action.slice(5));
+    else if (/^hadoor(cam)?\.(none|\d+)$/.test(item.action)) setDoor(t, /none$/.test(item.action) ? -1 : +item.action.slice(item.action.lastIndexOf('.') + 1));
     else if (item.action === 'open.adblock') { AD.refresh(); openAppearance('adblock'); }
     else if (item.action === 'ad.refresh') AD.refresh();
     else if (/^ad\.pause\.\d+$/.test(item.action)) { AD.pause(+item.action.slice(9)); render(); }
@@ -3521,7 +3557,7 @@
         + command({ action: 'settings.retry', label: 'Try again' }, '<span>Try again</span>', 'setting-retry');
     }
     setHTML(appearanceStatus, status);
-    hint = selected.disabled ? '' : remoteHint(selected) || (selected.action === 'settings.back' ? 'Return to ' + (parentName(t)) : selected.action === 'settings.retry' ? 'Retry this change' : selected.axis === 'source' ? (selected.applied ? 'Remove from rotation' : 'Add to rotation') : selected.axis ? 'Apply selected setting' : selected.action === 'background.wallpaper' ? 'Choose a wallpaper' : selected.action === 'background.rotation' ? 'Choose a rotation interval' : selected.action === 'background.online' ? 'Choose a wallpaper source' : selected.action === 'phone.toggle' ? (S.phone.enabled ? 'Turn off' : 'Turn on') : selected.action === 'phone.forget' ? 'Phones scan a new code' : selected.action === 'phone.clear' ? 'Remove all my photos' : selected.action === 'nowplaying.access' ? 'Open Notification access' : /^open\./.test(selected.action) ? 'Open selected group' : selected.more ? 'Show these sources' : selected.action === 'typography.fonts' ? 'Choose a font' : selected.action === 'saver.start' ? 'Start the screensaver now' : selected.action === 'health.remote' ? 'Open Accessibility settings' : selected.action === 'health.phone' ? 'Open Phone settings' : selected.action === 'update.install' ? 'Download and install' : selected.action === 'update.check' ? 'Check now' : selected.action === 'update.auto' ? (S.update.auto ? 'Turn off' : 'Turn on') : selected.action === 'update.wait' ? 'Please wait' : selected.action.indexOf('iconapp.') === 0 ? 'Choose an icon' : selected.action.indexOf('iconset.') === 0 ? 'Use this icon' : selected.action.indexOf('inname.') === 0 ? 'Use this name' : selected.action.indexOf('todpart.') === 0 ? 'Choose a photo for this part of the day' : selected.action.indexOf('todauto.') === 0 ? 'Pick one automatically' : selected.action.indexOf('todpick.') === 0 ? 'Choose a photo' : /^input(page|name)\./.test(selected.action) ? 'Open selected group' : selected.action.indexOf('input.toggle.') === 0 ? (selected.applied ? 'Hide from Home' : 'Show on Home') : selected.action === 'ha.refresh' ? 'Check again' : selected.action === 'ad.refresh' ? 'Check again' : selected.action === 'ad.pause.0' ? 'Turn blocking back on' : selected.action.indexOf('ad.pause.') === 0 ? 'Pause blocking' : selected.action === 'ad.forget' ? 'Forget the server and its password' : selected.action.indexOf('ha.area.') === 0 ? (selected.applied ? 'Hide this room' : 'Show this room') : selected.action === 'ha.forget' ? 'Forget the server and its token' : 'Open on the TV');
+    hint = selected.disabled ? '' : remoteHint(selected) || (selected.action === 'settings.back' ? 'Return to ' + (parentName(t)) : selected.action === 'settings.retry' ? 'Retry this change' : selected.axis === 'source' ? (selected.applied ? 'Remove from rotation' : 'Add to rotation') : selected.axis ? 'Apply selected setting' : selected.action === 'background.wallpaper' ? 'Choose a wallpaper' : selected.action === 'background.rotation' ? 'Choose a rotation interval' : selected.action === 'background.online' ? 'Choose a wallpaper source' : selected.action === 'phone.toggle' ? (S.phone.enabled ? 'Turn off' : 'Turn on') : selected.action === 'phone.forget' ? 'Phones scan a new code' : selected.action === 'phone.clear' ? 'Remove all my photos' : selected.action === 'nowplaying.access' ? 'Open Notification access' : /^open\./.test(selected.action) ? 'Open selected group' : selected.more ? 'Show these sources' : selected.action === 'typography.fonts' ? 'Choose a font' : selected.action === 'saver.start' ? 'Start the screensaver now' : selected.action === 'health.remote' ? 'Open Accessibility settings' : selected.action === 'health.phone' ? 'Open Phone settings' : selected.action === 'update.install' ? 'Download and install' : selected.action === 'update.check' ? 'Check now' : selected.action === 'update.auto' ? (S.update.auto ? 'Turn off' : 'Turn on') : selected.action === 'update.wait' ? 'Please wait' : selected.action.indexOf('iconapp.') === 0 ? 'Choose an icon' : selected.action.indexOf('iconset.') === 0 ? 'Use this icon' : selected.action.indexOf('inname.') === 0 ? 'Use this name' : selected.action.indexOf('todpart.') === 0 ? 'Choose a photo for this part of the day' : selected.action.indexOf('todauto.') === 0 ? 'Pick one automatically' : selected.action.indexOf('todpick.') === 0 ? 'Choose a photo' : /^input(page|name)\./.test(selected.action) ? 'Open selected group' : selected.action.indexOf('input.toggle.') === 0 ? (selected.applied ? 'Hide from Home' : 'Show on Home') : selected.action === 'ha.refresh' ? 'Check again' : /^hadoor\./.test(selected.action) ? 'Use this doorbell' : /^hadoorcam\./.test(selected.action) ? 'Show this camera' : selected.action === 'ad.refresh' ? 'Check again' : selected.action === 'ad.pause.0' ? 'Turn blocking back on' : selected.action.indexOf('ad.pause.') === 0 ? 'Pause blocking' : selected.action === 'ad.forget' ? 'Forget the server and its password' : selected.action.indexOf('ha.area.') === 0 ? (selected.applied ? 'Hide this room' : 'Show this room') : selected.action === 'ha.forget' ? 'Forget the server and its token' : 'Open on the TV');
     setHTML(appearanceDesc, hint ? '<span class="remote-key">OK</span><span>' + esc(hint) + '</span>' : '');
     fitRows();
   }
@@ -3857,10 +3893,10 @@
       if (still && el.still.getAttribute('src') !== still.src) el.still.src = still.src;
       el.still.className = 'ha-live-still' + (still ? ' is-on' : '');
       el.video.className = 'ha-live-video' + (t.state === 'live' ? ' is-on' : '');
-      setHTML(el.badge, t.state === 'live' ? '<span class="ha-dot"></span>' + esc('Live') : '');
+      setHTML(el.badge, t.doorbell ? '<span class="ha-dot"></span>' + esc('Doorbell') : t.state === 'live' ? '<span class="ha-dot"></span>' + esc('Live') : '');
       setHTML(el.title, escRaw(c.name));
       setHTML(el.state, t.state === 'live' ? '' : esc(t.state === 'error' ? haCamError(t.msg) : 'Connecting…'));
-      setHTML(el.close, '<button type="button" tabindex="-1" class="btn is-focus" data-z="hacam-close" data-i="0" data-action="hacam.close">' + icon('left') + '<span>' + esc('Smart home') + '</span></button>');
+      setHTML(el.close, '<button type="button" tabindex="-1" class="btn is-focus" data-z="hacam-close" data-i="0" data-action="hacam.close">' + icon('left') + '<span>' + esc(t.doorbell ? 'Close' : 'Smart home') + '</span></button>');
     },
     apps: function (t, el) {
       var f = t.f, items = appsItems(), n = items.length, rows = Math.ceil(n / COLS), vis = 3, row = Math.floor(f.i / COLS);
@@ -4316,6 +4352,7 @@
   QA.activate = function (action) { return activate(action) ? QA.state() : null; };
   QA.news = function (items) { newsForced = items || null; newsIdx = 0; newsTick(false); return capNews.textContent; };
   /* Made-up Home Assistant areas and states, so the add-on can be checked without a server; null restores the real source. */
+  QA.ring = function (e) { if (HA && HA.ring) HA.ring(e || {}); return top().id; };
   QA.adBlock = function (fake) { if (AD) AD.qa(fake || null); render(); return !!(AD && AD.available()); };
   QA.homeAssistant = function (fake) { if (HA) HA.qa(fake || null); render(); return !!(HA && HA.available()); };
   QA.weatherFx = function (kind) { fxForced = kind || ''; render(); return stage.className.indexOf(' wx-') >= 0; };
