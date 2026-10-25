@@ -384,6 +384,7 @@ Questions, bugs or a TV to report: [Discord](https://discord.gg/z6C4Mj9VPK). Sho
 
 - CleanFrame by Nathan Clark, MIT. This fork keeps the original [licence](LICENSE) and [third-party notices](THIRD_PARTY_NOTICES.md).
 - Android TV port and TCL additions: Shore contributors, MIT.
+- Home Assistant add-on: [mozthewah](https://github.com/mozthewah).
 - App logos: [Simple Icons](https://simpleicons.org) (CC0) and public-domain wordmarks from Wikimedia Commons; see `app/assets/icons/SOURCES.json`. Trademarks belong to their owners.
 - Fonts: SIL Open Font License; see `app/assets/fonts/`.
 - Online wallpapers belong to their authors and are shown under each provider's terms: [NASA APOD](https://apod.nasa.gov), [Bing](https://www.bing.com), [Wikimedia Commons](https://commons.wikimedia.org), [Lorem Picsum](https://picsum.photos), [Unsplash](https://unsplash.com), [Pexels](https://www.pexels.com) and [KLIPY](https://klipy.com) ("Powered by KLIPY").
