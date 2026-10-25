@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 /**
  * Remote button assignments, applied by HomeButtonService.
- * Stored as keyCode -> {action, name}. Actions: home | none | screensaver | app:<package> | input:<tv input id>.
+ * Stored as keyCode -> {action, name}. Actions: home | none | screensaver | sleep | app:<package> | input:<tv input id>.
  * A button without an entry keeps its default behaviour.
  */
 final class RemoteKeys {
@@ -62,7 +62,7 @@ final class RemoteKeys {
 
     static boolean valid(String action) {
         if (action == null) return false;
-        if (action.equals("home") || action.equals("none") || action.equals("screensaver")) return true;
+        if (action.equals("home") || action.equals("none") || action.equals("screensaver") || action.equals("sleep")) return true;
         if (action.startsWith("app:")) return action.substring(4).matches("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z0-9_]+)+");
         return action.startsWith("input:") && action.length() > 6 && action.length() < 300;
     }

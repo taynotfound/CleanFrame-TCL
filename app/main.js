@@ -1449,6 +1449,7 @@
     if (action === 'home') return 'Shore Home';
     if (action === 'none') return 'Does nothing';
     if (action === 'screensaver') return TV.art;
+    if (action === 'sleep') return 'Sleep timer';
     a = remoteTarget(action);
     return a ? a.name : /^input:/.test(action) ? 'TV input' : action.slice(4);
   }
@@ -1512,12 +1513,12 @@
       return [{ id: 'apps', title: '', items: items.length ? items : [{ action: 'remote.none', label: 'No apps on Home', disabled: true }],
         reason: apps.length > 8 ? 'Showing your first 8 Home apps.' : 'These are the apps on your Home screen.' }];
     }
-    choices = [choose('default', 'Default'), choose('home', 'Shore Home'), choose('none', 'Do nothing'), choose('screensaver', TV.art)];
+    choices = [choose('default', 'Default'), choose('home', 'Shore Home'), choose('none', 'Do nothing'), choose('screensaver', TV.art)].concat(SLEEP ? [choose('sleep', 'Sleep timer')] : []);
     inputs = LIVE.slice(0, 3).map(function (id) { return choose('input:' + app(id).appId, app(id).name); });
     return [{ id: 'action', title: 'Action', items: choices }]
       .concat(inputs.length ? [{ id: 'inputs', title: 'Inputs', horizontal: true, items: inputs }] : [])
       .concat([{ id: 'app', title: 'App', items: [{ action: 'remote.apps', label: /^app:/.test(current) ? actionName(current) : 'An app', more: true }],
-        reason: current === 'default' ? 'Default keeps what the TV normally does.' : '' }]);
+        reason: current === 'default' ? 'Default keeps what the TV normally does.' : current === 'sleep' ? 'Each press: 30, 60, 90, 120 minutes, then off.' : '' }]);
   }
   /* ---------- Under the clock: weather (Open-Meteo) and what is playing (Android media sessions) ---------- */
   /* ---------- Headlines: one at a time under the clock and on the screensaver ---------- */
@@ -1635,6 +1636,7 @@
   function sleepSection() {
     var left = sleepLeft(), off = left < 0, running = left > 0;
     if (!running) sleepPick = 0;
+    else if (!sleepPick || sleepPick * 60000 < left) sleepPick = [30, 60, 90, 120].filter(function (m) { return m * 60000 >= left; })[0] || 120; // set by the remote button
     return { id: 'sleep', title: 'Sleep timer', horizontal: true, items: [0, 30, 60, 90, 120].map(function (m) {
       return { action: 'sleep.' + m, label: m ? m + ' min' : 'Off', tick: true, applied: !off && sleepPick === m, disabled: off };
     }), reason: off ? 'Turn on the Shore Home button in Accessibility to use the sleep timer.' : running ? sleepText() + '.' : 'Switches the TV off, even while another app is open.' };

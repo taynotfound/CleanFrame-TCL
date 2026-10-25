@@ -68,6 +68,38 @@ public class HomeButtonService extends AccessibilityService {
         return true;
     }
 
+    private static final int[] SLEEP_STEPS = { 30, 60, 90, 120 };
+
+    /**
+     * The sleep-timer remote button: each press moves to the next step above the time left (30, 60, 90, 120
+     * minutes), and after 120 switches the timer off. A short note says what was set, over whatever is on screen.
+     */
+    private void sleepStep() {
+        long left = sleepLeft();
+        int minutes = 0;
+        if (left <= 0) minutes = SLEEP_STEPS[0];
+        else for (int step : SLEEP_STEPS) if (step > (left + 120000) / 60000) { minutes = step; break; } // a step just set counts as that step
+        sleepIn(minutes);
+        android.widget.Toast.makeText(this, sleepNote(minutes), android.widget.Toast.LENGTH_SHORT).show();
+    }
+
+    /** The note in the TV's language (the six Shore speaks), English otherwise. */
+    static String sleepNote(int minutes) {
+        String lang = java.util.Locale.getDefault().getLanguage();
+        if (minutes <= 0) {
+            switch (lang) {
+                case "de": return "Sleep-Timer aus"; case "fr": return "Minuterie de veille désactivée"; case "es": return "Temporizador apagado";
+                case "nl": return "Slaaptimer uit"; case "pl": return "Wyłącznik czasowy wyłączony"; case "uk": return "Таймер вимкнення вимкнено";
+                default: return "Sleep timer off";
+            }
+        }
+        switch (lang) {
+            case "de": return "Aus in " + minutes + " Min."; case "fr": return "Veille dans " + minutes + " min"; case "es": return "Se apaga en " + minutes + " min";
+            case "nl": return "Uit over " + minutes + " min"; case "pl": return "Wyłączenie za " + minutes + " min"; case "uk": return "Вимкнення через " + minutes + " хв";
+            default: return "Sleep in " + minutes + " min";
+        }
+    }
+
     /** Milliseconds until standby, 0 when no timer runs, -1 when the service is off. */
     static long sleepLeft() { return instance == null ? -1 : sleepAt == 0 ? 0 : Math.max(1, sleepAt - System.currentTimeMillis()); }
 
@@ -112,6 +144,7 @@ public class HomeButtonService extends AccessibilityService {
         boolean ok = true;
         if (action.equals("home")) openCleanFrame(true);
         else if (action.equals("screensaver")) ok = bridge.screensaver();
+        else if (action.equals("sleep")) sleepStep();
         else if (action.startsWith("app:")) ok = bridge.launch(action.substring(4));
         else if (action.startsWith("input:")) ok = bridge.openInput(action.substring(6));
         if (!ok) Log.w(TAG, "Could not perform " + action);

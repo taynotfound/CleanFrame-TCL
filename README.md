@@ -18,7 +18,7 @@ While music plays, it opens the song full screen with synced lyrics that light u
 
 </div>
 
-Shore (formerly CleanFrame-TCL) brings [Nathan Clark's CleanFrame](https://github.com/nthnclrk/CleanFrame), originally made for Samsung The Frame, to **Android TV and Google TV**. It is tuned and tested on a **TCL 55C6KS** (55" Mini LED, 4K, Android TV 12) and also reported running on a TCL 65C7K and a CHiQ L32QM8G (Android 14). The interface is the original HTML/CSS app; a small Java shell runs it full screen and connects it to the TV.
+Shore (formerly CleanFrame-TCL) brings [Nathan Clark's CleanFrame](https://github.com/nthnclrk/CleanFrame), originally made for Samsung The Frame, to **Android TV and Google TV**. It is tuned and tested on a **TCL 55C6KS** (55" Mini LED, 4K, Android TV 12) and also reported running on a TCL 65C7K, a CHiQ L32QM8G (Android 14) and a Hisense A6N (Android TV 12). See [Tested TVs](#tested-tvs). The interface is the original HTML/CSS app; a small Java shell runs it full screen and connects it to the TV.
 
 > [!NOTE]
 > **Unofficial.** Not affiliated with TCL, Google, Samsung or any streaming service. Everything here is reversible, and each step says how.
@@ -79,6 +79,19 @@ Shore (formerly CleanFrame-TCL) brings [Nathan Clark's CleanFrame](https://githu
 </table>
 
 <sub>Bundled animated loops. On the TV they play at 1080p behind the interface.</sub>
+
+## Tested TVs
+
+Shore is an ordinary Android TV app, so most Google TV and Android TV sets should work. These are confirmed by the maintainer or by people running it:
+
+| TV | System | Chip, memory | Notes |
+| --- | --- | --- | --- |
+| TCL 55C6KS | Android TV 12 (Google TV) | MediaTek, 4K Mini LED | Reference TV: everything is built and checked here |
+| TCL 65C7K | Google TV | | Reported working |
+| CHiQ L32QM8G | Android 14 | | Reported working |
+| Hisense A6N series ("SmartTV 4K", lushan-NF) | Android TV 12 (API 31) | MediaTek MT9676, 4× Cortex-A55 at 1.53 GHz (32-bit), Mali-G52, 2 GB RAM | Works with only ~360 MB free; the interface draws at 1080p and is scaled to 4K. Home Assistant add-on tested here. WebView Chrome 155 |
+
+Running it on another TV? A [TV report](https://github.com/taynotfound/shore/issues/new?template=3-tv-report.yml) adds it to this list.
 
 ## Install
 
