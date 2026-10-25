@@ -325,6 +325,9 @@ final class Companion {
                 send(out, 200, "application/json", apiInfo());
                 return;
             }
+            // Problem report: crashes and errors for a bug report; downloaded as text by the phone.
+            if (method.equals("GET") && api.equals("report")) { send(out, 200, "application/json", new JSONObject().put("report", Diagnostics.report(context)).toString()); return; }
+            if (method.equals("POST") && api.equals("report/clear")) { Diagnostics.clear(context); send(out, 200, "application/json", "{\"ok\":true}"); return; }
             // Phone keyboard: the text comes in the body (it may be a password) and replaces the focused field's text.
             if (method.equals("POST") && api.equals("type")) {
                 if (length <= 0 || length > 16384) { send(out, 413, "application/json", "{\"error\":\"size\"}"); return; }

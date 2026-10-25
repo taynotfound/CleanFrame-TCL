@@ -237,6 +237,11 @@
     control: bridge.nowPlayingControl ? function (pkg, action) { try { return !!bridge.nowPlayingControl(String(pkg || ''), String(action)); } catch (e) { return false; } } : null
   };
   /* In-app updates: the native side checks the public releases, verifies the APK and opens Android's installer. */
+  /* Page errors go to the problem report the phone companion can download (Diagnostics.java). */
+  if (bridge.pageError) {
+    window.addEventListener('error', function (e) { try { bridge.pageError(String(e.message || 'Error') + (e.filename ? ' at ' + String(e.filename).replace(/^.*\/assets\//, '') + ':' + e.lineno + ':' + e.colno : '')); } catch (x) { } });
+    window.addEventListener('unhandledrejection', function (e) { try { bridge.pageError('Unhandled rejection: ' + String(e.reason && e.reason.message || e.reason)); } catch (x) { } });
+  }
   var updateListeners = [];
   window.CleanFrameUpdateChanged = function () { updateListeners.forEach(function (fn) { try { fn(); } catch (e) { } }); };
   var update = bridge.updateInfo ? {

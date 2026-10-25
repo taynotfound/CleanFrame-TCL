@@ -147,6 +147,19 @@ public class MainActivity extends Activity {
 
             @Override
             public void onPageFinished(WebView view, String url) { loaded = true; }
+
+            // The page's renderer died (often low memory): note it and start the page again instead of closing Shore.
+            @Override
+            public boolean onRenderProcessGone(WebView view, android.webkit.RenderProcessGoneDetail detail) {
+                Diagnostics.note(MainActivity.this, "The page stopped", detail.didCrash() ? "The renderer crashed." : "Android closed the renderer to free memory.");
+                if (view == web) {
+                    ((android.view.ViewGroup) view.getParent()).removeView(view);
+                    view.destroy();
+                    web = null;
+                    recreate();
+                }
+                return true;
+            }
         });
 
         RemoteKeys.listener = remoteListener = new RemoteKeys.Listener() {

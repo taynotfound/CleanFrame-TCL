@@ -38,6 +38,7 @@
     </queries>
 
     <application
+        android:name=".ShoreApp"
         android:label="Shore"
         android:icon="@drawable/icon"
         android:banner="@drawable/banner"

@@ -278,6 +278,10 @@ final class DeviceBridge {
     @JavascriptInterface
     public String calendarNext() { return phone == null ? "{}" : CalendarFeed.get(context).next(phone.calendar()); }
 
+    /** An error from the page, for the problem report (Diagnostics). */
+    @JavascriptInterface
+    public void pageError(String text) { Diagnostics.pageError(context, text); }
+
     /** Up to three upcoming events for the widgets row. */
     @JavascriptInterface
     public String calendarUpcoming() { return phone == null ? "[]" : CalendarFeed.get(context).upcoming(phone.calendar()); }
