@@ -1156,6 +1156,31 @@ try {
     await current.waitForTimeout(50);
     check('Enter from the phone opens the first result', (await current.evaluate(() => window.__tv.calls.some(c => /launch/.test(c.method)))), await current.evaluate(() => window.__tv.calls));
   });
+  await run('Widgets row', async () => {
+    await closePage(); await page();
+    const fake = JSON.parse(JSON.stringify(HA_FAKE));
+    fake.areas[2].ids.push('binary_sensor.front_door'); fake.states['binary_sensor.front_door'] = { s: 'on', n: 'Front Door', c: 'door' };
+    await current.evaluate(f => ShoreQA.homeAssistant(f), fake);
+    await look({ aha: 'on', cweather: 'on', ccal: 'on' });
+    const today = new Date(), iso = d => d.toISOString().slice(0, 10);
+    await current.evaluate(([a, b, c]) => {
+      ShoreQA.days = [{ date: a, icon: 'sun', hi: 18, lo: 9 }, { date: b, icon: 'rain', hi: 14, lo: 8 }, { date: c, icon: 'cloud', hi: 15, lo: 7 }];
+      ShoreQA.events = [{ title: 'Dentist', start: Date.now() + 3600000, allDay: false }, { title: 'Book club', start: Date.now() + 86400000, allDay: true }];
+    }, [iso(today), iso(new Date(+today + 86400000)), iso(new Date(+today + 2 * 86400000))]);
+    await scene('home');
+    const cards = () => current.evaluate(() => [...document.querySelectorAll('.cap-widgets .wg')].map(e => e.className.replace('wg ', '') + ': ' + e.innerText.replace(/\n/g, ' ')));
+    check('Widgets stay off until switched on', (await cards()).length === 0);
+    await look({ cwidget: 'on' }); await scene('home');
+    const shown = await cards();
+    check('Forecast, events and Home cards appear', shown.length === 3 && /18°/.test(shown[0]) && /Dentist/.test(shown[1]) && /Book club/.test(shown[1]) && /Inside \d+°/.test(shown[2]) && /Front Door · Open/.test(shown[2]), shown);
+    check('The Inside reading is not repeated under the clock', !/Inside/.test(await current.evaluate(() => [...document.querySelectorAll('.caption .cap-date')].map(e => e.textContent).join(' '))));
+    const fits = await current.evaluate(() => { const r = document.querySelector('.cap-widgets').getBoundingClientRect(), s = document.querySelector('#stage').getBoundingClientRect(); return r.right <= s.right && r.bottom < s.bottom * 0.75; });
+    check('The row fits above the apps', fits);
+    await look({ lstyle: 'shelf' }); await scene('home');
+    check('Shelf layout keeps them off', (await cards()).length === 0);
+    await current.evaluate(() => { delete ShoreQA.days; delete ShoreQA.events; ShoreQA.homeAssistant(null); });
+    await look({ cwidget: 'off', lstyle: 'glass', ccal: 'off', aha: 'off' });
+  });
   await run('Screen time', async () => {
     const pinHash = pin => { let h = 0x811c9dc5; for (const ch of 'shore:' + pin) { h ^= ch.charCodeAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
     const id = 'stremio';

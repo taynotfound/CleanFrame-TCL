@@ -99,10 +99,10 @@
     return latest;
   }
   /* {status, error, configured, at, areas: [names], selected, rooms: [{name, on, items: [{id, name, room, state, active, toggle, off, lit, control}]}],
-     cameras: [{id, name, room, activity}], indoor: {temp, tunit, humidity}, unavailable: [full names]} */
+     cameras: [{id, name, room, activity}], indoor: {temp, tunit, humidity}, open: ["Front Door · Open" for each open door or window], unavailable: [full names]} */
   function model() {
     if (built) return built;
-    var i = info(), chosen = i.selected, rooms = [], cameras = [], indoor = null, gone = [];
+    var i = info(), chosen = i.selected, rooms = [], cameras = [], indoor = null, gone = [], open = [];
     i.areas.forEach(function (a) {
       if (chosen.length && chosen.indexOf(a.name) < 0) return;
       var ents = a.ids.filter(function (id) { return typeof id === 'string' && id.indexOf('.') > 0 && i.states[id]; }).map(function (id) { return entry(id, i.states[id]); });
@@ -110,6 +110,7 @@
       ents.forEach(function (e) { if (e.d === 'event') activity = Math.max(activity, when(e.s)); });
       ents.forEach(function (e) { var n = displayName(e, a.name); if (e.d === 'camera') cameras.push({ id: e.id, name: n === TT('Camera (device)') ? a.name : n, room: a.name, activity: activity, off: e.s === 'unavailable' }); });
       ents.forEach(function (e) { if (e.s === 'unavailable' && !climateSensor(e) && e.d !== 'event') gone.push(String(e.n || e.id)); });
+      ents.forEach(function (e) { if (e.d === 'binary_sensor' && /^(door|window|opening|garage_door)$/.test(e.c) && e.s === 'on') open.push(String(e.n || e.id) + ' · ' + TT('Open (door)')); });
       // The first room with a reading supplies both, so temperature and humidity come from the same place.
       if (!indoor) {
         ents.forEach(function (e) { if (climateSensor(e) && numeric(e.s)) { if (e.c === 'temperature' && !temp) temp = e; if (e.c === 'humidity' && !hum) hum = e; } });
@@ -124,7 +125,7 @@
       });
       if (items.length) rooms.push({ name: a.name, on: items.filter(function (x) { return x.lit; }).length, items: items });
     });
-    built = { status: i.status, error: i.error, configured: i.configured, url: i.url, at: i.at, areas: i.areas.map(function (a) { return a.name; }), selected: chosen.slice(), rooms: rooms, cameras: cameras, indoor: indoor, unavailable: gone };
+    built = { status: i.status, error: i.error, configured: i.configured, url: i.url, at: i.at, areas: i.areas.map(function (a) { return a.name; }), selected: chosen.slice(), rooms: rooms, cameras: cameras, indoor: indoor, open: open, unavailable: gone };
     return built;
   }
   /* Drops changes still waiting to be sent. */

@@ -270,6 +270,10 @@ final class DeviceBridge {
     @JavascriptInterface
     public String calendarNext() { return phone == null ? "{}" : CalendarFeed.get(context).next(phone.calendar()); }
 
+    /** Up to three upcoming events for the widgets row. */
+    @JavascriptInterface
+    public String calendarUpcoming() { return phone == null ? "[]" : CalendarFeed.get(context).upcoming(phone.calendar()); }
+
     /** Sleep timer through the Home-button service: minutes until standby, 0 to cancel. False when the service is off. */
     @JavascriptInterface
     public boolean sleepIn(int minutes) { return minutes >= 0 && minutes <= 600 && HomeButtonService.sleepIn(minutes); }

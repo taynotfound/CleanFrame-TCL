@@ -5,7 +5,7 @@
 (function (root) {
   'use strict';
   var KEY = 'cleanframe.weather.v2', MAX_AGE = 30 * 60000, RETRY = 10 * 60000;
-  var state = { temp: null, code: -1, day: 1, at: 0, place: '', tried: 0, busy: false }, listeners = [];
+  var state = { temp: null, code: -1, day: 1, days: null, at: 0, place: '', tried: 0, busy: false }, listeners = [];
   /* WMO weather codes, grouped. */
   function label(code) {
     if (code === 0) return 'Clear';
@@ -75,23 +75,25 @@
     });
   }
   function load() {
-    try { var saved = JSON.parse(root.localStorage.getItem(KEY)); if (saved && typeof saved.temp === 'number') { state.temp = saved.temp; state.code = +saved.code; state.at = +saved.at || 0; state.place = String(saved.place || ''); state.day = saved.day === 0 ? 0 : 1; } } catch (e) { }
+    try { var saved = JSON.parse(root.localStorage.getItem(KEY)); if (saved && typeof saved.temp === 'number') { state.temp = saved.temp; state.code = +saved.code; state.at = +saved.at || 0; state.place = String(saved.place || ''); state.day = saved.day === 0 ? 0 : 1; state.days = Array.isArray(saved.days) ? saved.days : null; } } catch (e) { }
   }
-  function save() { try { root.localStorage.setItem(KEY, JSON.stringify({ temp: state.temp, code: state.code, day: state.day, at: state.at, place: state.place })); } catch (e) { } }
+  function save() { try { root.localStorage.setItem(KEY, JSON.stringify({ temp: state.temp, code: state.code, day: state.day, days: state.days, at: state.at, place: state.place })); } catch (e) { } }
   function changed() { listeners.forEach(function (fn) { try { fn(); } catch (e) { } }); }
   function refresh(force) {
     var name = place(), now = Date.now();
     if (!name) return;
     if (name !== state.place) { state.temp = null; state.at = 0; state.tried = 0; state.place = name; }
-    if (state.busy || !force && (now - state.at < MAX_AGE || now - state.tried < RETRY)) return;
+    if (state.busy || !force && (now - state.at < MAX_AGE && state.days || now - state.tried < RETRY)) return; // older caches have no forecast yet
     state.busy = true; state.tried = now;
     geocode(names(name), function (hit) {
       if (!hit) { state.busy = false; return; }
-      get('https://api.open-meteo.com/v1/forecast?current=temperature_2m,weather_code,is_day&timezone=auto&latitude=' + hit.latitude + '&longitude=' + hit.longitude, function (data) {
+      get('https://api.open-meteo.com/v1/forecast?current=temperature_2m,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min&forecast_days=3&timezone=auto&latitude=' + hit.latitude + '&longitude=' + hit.longitude, function (data) {
         state.busy = false;
-        var c = data && data.current;
+        var c = data && data.current, d = data && data.daily, i;
         if (!c || typeof c.temperature_2m !== 'number') return;
         state.temp = c.temperature_2m; state.code = +c.weather_code; state.day = c.is_day === 0 ? 0 : 1;
+        state.days = [];
+        for (i = 0; d && d.time && i < d.time.length && i < 3; i++) if (typeof d.temperature_2m_max[i] === 'number') state.days.push({ date: String(d.time[i]), code: +d.weather_code[i], hi: d.temperature_2m_max[i], lo: d.temperature_2m_min[i] });
         state.at = Date.now();
         save(); changed();
       });
@@ -108,6 +110,12 @@
     },
     /* Icon for the current sky (sun, moon, partly, partly-night, cloud, fog, drizzle, rain, snow, storm), or ''. */
     icon: function () { return state.temp === null || Date.now() - state.at > 3 * 3600000 ? '' : iconName(state.code, state.day); },
+    /* Today and the next two days: [{date 'YYYY-MM-DD', icon, label, hi, lo}] in the unit ('c' or 'f'), or [] when unknown or old. */
+    days: function (unit) {
+      if (!state.days || Date.now() - state.at > 6 * 3600000) return [];
+      function u(v) { return Math.round(unit === 'f' ? v * 9 / 5 + 32 : v); }
+      return state.days.map(function (d) { return { date: d.date, icon: iconName(d.code, 1), label: label(d.code), hi: u(d.hi), lo: u(d.lo) }; });
+    },
     defaultUnit: function () { return fahrenheit() ? 'f' : 'c'; },
     refresh: refresh,
     onChange: function (fn) { listeners.push(fn); }

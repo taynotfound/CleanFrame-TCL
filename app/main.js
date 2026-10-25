@@ -101,16 +101,16 @@
     cformat: ['12', '24'], cdate: ['off', 'on'], cweather: ['off', 'on'], wunit: ['c', 'f'], cplaying: ['off', 'on'], cart: ['off', 'on'], clook: ['off', 'on'], saver: ['off', '5', '10', '15'], csize: ['small', 'medium', 'large', 'huge'], cweight: ['auto', 'thin', 'light', 'regular', 'bold'],
     night: ['off', 'scheduled', 'always'], nhours: ['20-7', '21-7', '22-6', '23-7'], ndim: ['soft', 'medium', 'strong'], idle: ['off', '1', '5'], focus: ['type', 'glass'], material: ['soft', 'frost', 'tint'],
     svsrc: ['like', 'every', 'builtin'], svlay: ['mix', 'single', 'mosaic'], svtime: ['15', '30', '60'], svmotion: ['still', 'drift'], iask: ['off', 'on'], ncalm: ['off', 'on'], wfx: ['off', 'on'], cnews: ['off', 'on'], svphoto: ['off', 'on'], svclock: ['off', 'on'], svdate: ['off', 'on'], svmusic: ['off', 'on'], wicon: ['off', 'on'], cwave: ['off', 'on'],
-    cpos: ['left', 'center'], csec: ['off', 'on'], tint: ['none', 'warm', 'cool', 'rose', 'green'], dglass: ['clear', 'default', 'solid'], isize: ['small', 'default', 'large'], npdim: ['none', 'soft', 'strong'], svpos: ['move', 'fixed'], istyle: ['shore', 'original', 'mono'], cwatch: ['off', 'on'], plyric: ['off', 'on'], pword: ['off', 'on'], pbeat: ['off', 'on'], crecent: ['off', 'on'], ccal: ['off', 'on'], pqueue: ['off', 'on'], ptrans: ['off', 'on'], aha: ['off', 'on'], aad: ['off', 'on'],
+    cpos: ['left', 'center'], csec: ['off', 'on'], tint: ['none', 'warm', 'cool', 'rose', 'green'], dglass: ['clear', 'default', 'solid'], isize: ['small', 'default', 'large'], npdim: ['none', 'soft', 'strong'], svpos: ['move', 'fixed'], istyle: ['shore', 'original', 'mono'], cwatch: ['off', 'on'], plyric: ['off', 'on'], pword: ['off', 'on'], pbeat: ['off', 'on'], crecent: ['off', 'on'], ccal: ['off', 'on'], cwidget: ['off', 'on'], pqueue: ['off', 'on'], ptrans: ['off', 'on'], aha: ['off', 'on'], aad: ['off', 'on'],
     nsrc: ['google', 'phone'].concat(NEWS_OUTLETS.map(function (o) { return o.id; })) };
   /* Newer axes with their defaults: stored, migrated and validated like the others. */
-  var MORE_LOOK = { svphoto: 'off', ncalm: 'off', wfx: 'off', cnews: 'off', iask: 'on', svsrc: 'like', svlay: 'mix', svtime: '30', svmotion: 'drift', svclock: 'on', svdate: 'on', svmusic: 'on', wicon: 'on', cwave: 'on', cpos: 'left', csec: 'off', tint: 'none', dglass: 'default', isize: 'default', npdim: 'none', svpos: 'move', nsrc: 'google', istyle: 'shore', cwatch: 'on', plyric: 'on', pword: 'on', pbeat: 'off', crecent: 'on', ccal: 'off', pqueue: 'on', ptrans: 'off', aha: 'off', aad: 'off' };
+  var MORE_LOOK = { svphoto: 'off', ncalm: 'off', wfx: 'off', cnews: 'off', iask: 'on', svsrc: 'like', svlay: 'mix', svtime: '30', svmotion: 'drift', svclock: 'on', svdate: 'on', svmusic: 'on', wicon: 'on', cwave: 'on', cpos: 'left', csec: 'off', tint: 'none', dglass: 'default', isize: 'default', npdim: 'none', svpos: 'move', nsrc: 'google', istyle: 'shore', cwatch: 'on', plyric: 'on', pword: 'on', pbeat: 'off', crecent: 'on', ccal: 'off', cwidget: 'off', pqueue: 'on', ptrans: 'off', aha: 'off', aad: 'off' };
   /* On/off settings that OK flips. */
-  var TOGGLES = ['svphoto', 'ncalm', 'wfx', 'cnews', 'iask', 'cdate', 'cweather', 'cplaying', 'cart', 'clook', 'svclock', 'svdate', 'svmusic', 'wicon', 'cwave', 'csec', 'cwatch', 'plyric', 'pword', 'pbeat', 'crecent', 'ccal', 'pqueue', 'ptrans', 'aha', 'aad'];
+  var TOGGLES = ['svphoto', 'ncalm', 'wfx', 'cnews', 'iask', 'cdate', 'cweather', 'cplaying', 'cart', 'clook', 'svclock', 'svdate', 'svmusic', 'wicon', 'cwave', 'csec', 'cwatch', 'plyric', 'pword', 'pbeat', 'crecent', 'ccal', 'cwidget', 'pqueue', 'ptrans', 'aha', 'aad'];
   var LOOK_NAMES = { bg: 'Background', layout: 'Layout', apps: 'Apps', font: 'Font', controls: 'Home controls', inputs: 'Inputs', motion: 'Motion', tweight: 'Text weight', tsize: 'App name size', cformat: 'Format', cdate: 'Date', cweather: 'Weather', wunit: 'Temperature', cplaying: 'Now playing', cart: 'Album art', clook: 'Artist pictures', saver: 'Screensaver', csize: 'Clock size', cweight: 'Clock weight',
     night: 'Night mode', nhours: 'Night hours', ndim: 'Night dimming', idle: 'Hide controls when idle', focus: 'Focus', material: 'Material',
     svphoto: 'Photo title', ncalm: 'Calmer photos at night', wfx: 'Weather effects', cnews: 'Headlines', iask: 'Ask to switch', svsrc: 'Screensaver photos', svlay: 'Arrangement', svtime: 'Each slide', svmotion: 'Photo motion', svclock: 'Clock', svdate: 'Date and weather', svmusic: 'Music', wicon: 'Weather icon', cwave: 'Level meter',
-    cpos: 'Clock position', csec: 'Seconds', tint: 'Accent', dglass: 'App row glass', isize: 'Icon size', npdim: 'Album art dimming', svpos: 'Clock on the screensaver', nsrc: 'Source', istyle: 'Icon style', cwatch: 'Continue watching', plyric: 'Lyrics', pword: 'Word by word', pbeat: 'Beat pulse', crecent: 'Recently used', ccal: 'Calendar', pqueue: 'Up next', ptrans: 'Translate lyrics', aha: 'Home Assistant', aad: 'Pi-hole and AdGuard' };
+    cpos: 'Clock position', csec: 'Seconds', tint: 'Accent', dglass: 'App row glass', isize: 'Icon size', npdim: 'Album art dimming', svpos: 'Clock on the screensaver', nsrc: 'Source', istyle: 'Icon style', cwatch: 'Continue watching', plyric: 'Lyrics', pword: 'Word by word', pbeat: 'Beat pulse', crecent: 'Recently used', ccal: 'Calendar', cwidget: 'Widgets', pqueue: 'Up next', ptrans: 'Translate lyrics', aha: 'Home Assistant', aad: 'Pi-hole and AdGuard' };
   var VALUE_NAMES = { dark: 'Dark', light: 'Light', photo: 'Photo', list: 'List', dock: 'Dock', type: 'Type', glass: 'Glass', soft: 'Soft', frost: 'Frost', tint: 'Clear tint', icons: 'Icons', both: 'Icons and text', text: 'Text', front: 'First in Home', row: 'Own row', still: 'Still', drift: 'Drift', auto: 'Auto', thin: 'Thin', regular: 'Regular', bold: 'Bold', small: 'Small', 'default': 'Default', large: 'Large',
     medium: 'Medium', huge: 'Huge', '12': '12-hour', '24': '24-hour', on: 'Show', scheduled: 'Timed', always: 'Always', soft: 'Soft', strong: 'Strong',
     '20-7': '20–07', '21-7': '21–07', '22-6': '22–06', '23-7': '23–07', '1': 'After 1 min', '5': 'After 5 min', '10': 'After 10 min', '15': 'After 15 min', c: '°C', f: '°F',
@@ -136,6 +136,9 @@
     house: '<path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10.2 15.6a2.6 2.6 0 1 1 3.6 0c-.5.5-.8 1-.8 1.6h-2c0-.6-.3-1.1-.8-1.6Z"/>',
     camera: '<rect x="3" y="6.5" width="13" height="11" rx="2"/><path d="m16 10.5 5-3v9l-5-3"/>',
     /* Weather: same line style as the controls. */
+    'w-thermo': '<path d="M10 14.5V5a2 2 0 1 1 4 0v9.5a4 4 0 1 1-4 0Z"/><path d="M12 9v8"/>',
+    'w-bulb': '<path d="M9.5 17.5h5M10.5 20.5h3M12 3.5a6 6 0 0 0-3.5 10.9V16h7v-1.6A6 6 0 0 0 12 3.5Z"/>',
+    'w-door': '<path d="M6 20.5v-16h9v16M4 20.5h16"/><path d="M15 5.5l3.5 1.5v13.5"/><circle cx="12.5" cy="12.5" r=".8"/>',
     'w-sun': '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
     'w-moon': '<path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10Z"/>',
     'w-partly': '<path d="M8.5 3.5v1.2M3.6 8.4h1.2M5 5l.9.9M13 5l-.9.9"/><path d="M5.6 11.4a3.6 3.6 0 0 1 6.5-2.9"/><path d="M8 19.5h9.5a3.5 3.5 0 0 0 .4-7 5 5 0 0 0-9.6-.6A3.8 3.8 0 0 0 8 19.5Z"/>',
@@ -189,7 +192,7 @@
   function lookOf(c) { return { bg: c.bg, wall: c.wall, layout: c.layout, apps: c.apps, font: c.font, controls: c.controls, inputs: c.inputs, lstyle: c.lstyle, motion: c.motion, tweight: c.tweight, tsize: c.tsize, cformat: c.cformat, cdate: c.cdate, cweather: c.cweather, wunit: c.wunit, cplaying: c.cplaying, cart: c.cart, clook: c.clook, saver: c.saver, csize: c.csize, cweight: c.cweight,
       night: c.night, nhours: c.nhours, ndim: c.ndim, idle: c.idle, focus: c.focus, material: c.material, svsrc: c.svsrc, svlay: c.svlay, svtime: c.svtime,
       svmotion: c.svmotion, iask: c.iask, ncalm: c.ncalm, wfx: c.wfx, cnews: c.cnews, svphoto: c.svphoto, svclock: c.svclock, svdate: c.svdate, svmusic: c.svmusic, wicon: c.wicon, cwave: c.cwave,
-      cpos: c.cpos, csec: c.csec, tint: c.tint, dglass: c.dglass, isize: c.isize, npdim: c.npdim, svpos: c.svpos, nsrc: c.nsrc, istyle: c.istyle, ipack: c.ipack, cwatch: c.cwatch, plyric: c.plyric, pword: c.pword, pbeat: c.pbeat, crecent: c.crecent, ccal: c.ccal, pqueue: c.pqueue, ptrans: c.ptrans, aha: c.aha, aad: c.aad }; }
+      cpos: c.cpos, csec: c.csec, tint: c.tint, dglass: c.dglass, isize: c.isize, npdim: c.npdim, svpos: c.svpos, nsrc: c.nsrc, istyle: c.istyle, ipack: c.ipack, cwatch: c.cwatch, plyric: c.plyric, pword: c.pword, pbeat: c.pbeat, crecent: c.crecent, ccal: c.ccal, cwidget: c.cwidget, pqueue: c.pqueue, ptrans: c.ptrans, aha: c.aha, aad: c.aad }; }
   function materialApplies(c) { c = c || S.c; return c.bg === 'photo' && (c.layout === 'dock' || c.focus === 'glass'); }
 
   /* ---------- Helpers ---------- */
@@ -1576,7 +1579,7 @@
   function choice(axis, value, disabled) {
     if (axis === 'source') return { action: 'online.' + value, axis: axis, value: value, disabled: !!disabled, label: sourceName(value), tick: true, applied: sourceOn(value) };
     return { action: axis === 'mode' ? 'rotation.' + value : 'choice.' + axis + '.' + value, axis: axis, value: value, disabled: !!disabled,
-      label: axis === 'nsrc' ? newsSourceName(value) : axis === 'cdate' ? 'Date' : axis === 'cweather' ? 'Weather' : axis === 'cplaying' ? 'Now playing' : axis === 'cart' ? 'Album art' : axis === 'clook' ? 'Find artist pictures online' : axis === 'saver' && value !== 'off' ? value + ' min' : axis === 'svtime' ? value + ' s' : axis === 'csec' ? shortSeconds() : axis === 'iask' ? askLabel() : /^(svclock|svdate|svmusic|wicon|cwave|ncalm|svphoto|wfx|cnews|cwatch|plyric|pword|pbeat|crecent|ccal|pqueue|ptrans)$/.test(axis) ? LOOK_NAMES[axis] : axis === 'font' ? FONTS[value].name : axis === 'mode' ? MODES.filter(function (m) { return m.id === value; })[0].name : value === 'both' ? 'Both' : value === 'light' && /weight$/.test(axis) ? weightLight() : VALUE_NAMES[value] };
+      label: axis === 'nsrc' ? newsSourceName(value) : axis === 'cdate' ? 'Date' : axis === 'cweather' ? 'Weather' : axis === 'cplaying' ? 'Now playing' : axis === 'cart' ? 'Album art' : axis === 'clook' ? 'Find artist pictures online' : axis === 'saver' && value !== 'off' ? value + ' min' : axis === 'svtime' ? value + ' s' : axis === 'csec' ? shortSeconds() : axis === 'iask' ? askLabel() : /^(svclock|svdate|svmusic|wicon|cwave|ncalm|svphoto|wfx|cnews|cwatch|plyric|pword|pbeat|crecent|ccal|cwidget|pqueue|ptrans)$/.test(axis) ? LOOK_NAMES[axis] : axis === 'font' ? FONTS[value].name : axis === 'mode' ? MODES.filter(function (m) { return m.id === value; })[0].name : value === 'both' ? 'Both' : value === 'light' && /weight$/.test(axis) ? weightLight() : VALUE_NAMES[value] };
   }
   /* "Seconds" in the Format row, abbreviated where the word is long. */
   /* "Ask" (to switch inputs), short enough to share the Inputs row in every language. */
@@ -1762,26 +1765,59 @@
   function weatherIcon() { var name = WEATHER && S.c.cweather === 'on' && S.c.wicon === 'on' && WEATHER.icon ? WEATHER.icon() : ''; return name && SVG['w-' + name] ? icon('w-' + name, 'wx') : ''; }
   function clockExtras() {
     var html = '', p = S.playing, w = S.c.cweather === 'on' && WEATHER ? WEATHER.text(S.c.wunit) : '', date = S.c.cdate === 'on' ? T(dateText()) : '', inside = haInside();
+    if (widgetHome().length) inside = ''; // the Home card shows it
     if (date || w || inside) html += '<span class="cap-date">' + escRaw(date) + (date && w ? ' · ' : '') + weatherIcon() + escRaw(w) + ((date || w) && inside ? ' · ' : '') + esc(inside) + '</span>';
     if (NOWPLAYING && S.c.cplaying === 'on' && p.playing) html += '<span class="cap-date cap-playing">' + wave() + escRaw(p.title + (p.artist ? ' · ' + p.artist : '') + (p.app ? ' — ' + p.app : '')) + '</span>';
     if (sleepLeft() > 0) html += '<span class="cap-date cap-sleep">' + icon('w-moon', 'wx') + esc(sleepText()) + '</span>';
     if (adLine()) html += '<span class="cap-date cap-ad">' + icon('shield', 'wx') + esc(adLine()) + '</span>';
-    if (calendarLine()) html += '<span class="cap-date cap-cal">' + icon('calendar', 'wx') + escRaw(calendarLine()) + '</span>';
+    if (calendarLine() && !widgetEvents().length) html += '<span class="cap-date cap-cal">' + icon('calendar', 'wx') + escRaw(calendarLine()) + '</span>';
     return html;
   }
   /* ---------- Calendar: the next event from an iCal address set on the phone (CalendarFeed.java) ---------- */
   var CALENDAR = ANDROID && FrameDevice.calendar ? FrameDevice.calendar : null;
   function calendarLine() {
     if (!CALENDAR || S.c.ccal !== 'on') return '';
-    var e = CALENDAR.next(), d, now = new Date(), day, h, m;
+    var e = CALENDAR.next();
     if (!e || !e.title || !(e.start > 0)) return '';
-    d = new Date(e.start);
+    return eventWhen(e) + ' · ' + e.title;
+  }
+  /* "Today 18:30", "Tomorrow", "Monday 9:00 AM" or "Now". */
+  function eventWhen(e) {
+    var d = new Date(e.start), now = new Date(), day, h, m;
     day = d.toDateString() === now.toDateString() ? 'Today' : new Date(now.getTime() + 86400000).toDateString() === d.toDateString() ? 'Tomorrow' : '';
     if (!day) day = localeText('wd.' + d.getDay(), function () { try { return d.toLocaleDateString(undefined, { weekday: 'long' }); } catch (x) { return ''; } });
     else day = T(day);
-    if (e.allDay) return day + ' · ' + e.title;
+    if (e.allDay) return day;
     h = S.c.cformat === '24' ? d.getHours() : d.getHours() % 12 || 12; m = d.getMinutes();
-    return (e.start <= now.getTime() ? T('Now') : day + ' ' + (S.c.cformat === '24' && h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + (S.c.cformat === '24' ? '' : ' ' + meridiemOf(d))) + ' · ' + e.title;
+    return e.start <= now.getTime() ? T('Now') : day + ' ' + (S.c.cformat === '24' && h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + (S.c.cformat === '24' ? '' : ' ' + meridiemOf(d));
+  }
+  /* ---------- Widgets row: small cards under the clock, from what Clock, Weather and Add-ons already show ---------- */
+  function widgetsOn() { return S.c.cwidget === 'on' && !isShelf(); }
+  function widgetDays() { return !widgetsOn() || S.c.cweather !== 'on' ? [] : QA.days || (WEATHER && WEATHER.days ? WEATHER.days(S.c.wunit) : []); }
+  function widgetEvents() { return !widgetsOn() || S.c.ccal !== 'on' ? [] : QA.events || (CALENDAR && CALENDAR.upcoming ? CALENDAR.upcoming() : []); }
+  /* Inside reading, lights on and open doors and windows, from the rooms shown in Smart home. */
+  function widgetHome() {
+    var m = widgetsOn() && haShown() ? HA.model() : null, out = [], lit = 0, inside;
+    if (!m) return out;
+    inside = haInside(); if (inside) out.push(['w-thermo', inside]);
+    m.rooms.forEach(function (r) { lit += r.on; });
+    if (lit) out.push(['w-bulb', lit === 1 ? '1 light on' : lit + ' lights on']);
+    (m.open || []).slice(0, 2).forEach(function (n) { out.push(['w-door', n]); });
+    return out.slice(0, 3);
+  }
+  function widgetDay(date, i) {
+    var d = new Date(date + 'T12:00:00');
+    if (i === 0) return T('Today');
+    return localeText('wds.' + d.getDay(), function () { try { return d.toLocaleDateString(undefined, { weekday: 'short' }); } catch (x) { return ''; } });
+  }
+  function widgetsHtml() {
+    var days = widgetDays(), evs = widgetEvents(), home = widgetHome(), html = '';
+    if (days.length) html += '<span class="wg wg-forecast">' + days.map(function (d, i) {
+      return '<span class="wg-day"><span class="wg-dname">' + escRaw(widgetDay(d.date, i)) + '</span>' + (SVG['w-' + d.icon] ? icon('w-' + d.icon, 'wx') : '') + '<span class="wg-temp">' + d.hi + '°<i>' + d.lo + '°</i></span></span>';
+    }).join('') + '</span>';
+    if (evs.length) html += '<span class="wg wg-cal">' + evs.slice(0, 3).map(function (e) { return '<span class="wg-row"><b>' + escRaw(eventWhen(e)) + '</b><span class="wg-t">' + escRaw(e.title) + '</span></span>'; }).join('') + '</span>';
+    if (home.length) html += '<span class="wg wg-home">' + home.map(function (r) { return '<span class="wg-row">' + (SVG[r[0]] ? icon(r[0], 'wx') : '') + '<span class="wg-t">' + esc(r[1]) + '</span></span>'; }).join('') + '</span>';
+    return html ? '<span class="cap-widgets">' + html + '</span>' : '';
   }
   /* ---------- Sleep timer (Android): the Home-button service puts the TV into standby ---------- */
   var SLEEP = ANDROID && FrameDevice.sleep ? FrameDevice.sleep : null, sleepPick = 0;
@@ -2397,7 +2433,7 @@
     ['Style', ['focus', 'material', 'tint', 'dglass']],
     ['Text', ['font', 'tweight', 'tsize']],
     ['Inputs', ['inputs', 'iask']],
-    ['Clock', ['cformat', 'csec', 'cdate', 'csize', 'cweight', 'cpos', 'ccal']],
+    ['Clock', ['cformat', 'csec', 'cdate', 'csize', 'cweight', 'cpos', 'ccal', 'cwidget']],
     ['Weather', ['cweather', 'wunit', 'wicon', 'wfx']],
     ['Music', ['cplaying', 'cwave', 'cart', 'npdim', 'clook', 'plyric', 'pword', 'pbeat', 'pqueue', 'ptrans']],
     ['News', ['cnews', 'nsrc']],
@@ -2572,7 +2608,8 @@
       { id: 'csize', title: 'Clock size', horizontal: true, items: options('csize', ['small', 'medium', 'large', 'huge']) },
       { id: 'cweight', title: 'Clock weight', horizontal: true, items: options('cweight', ['auto', 'thin', 'light', 'bold']) },
       { id: 'cpos', title: 'Clock position', horizontal: true, items: options('cpos', ['left', 'center'], S.c.layout === 'list'), reason: S.c.layout === 'list' ? 'Centred needs the Dock layout.' : '' }]
-      .concat(CALENDAR ? [{ id: 'ccal', title: '', items: [choice('ccal', 'on')], reason: S.phone.calendar ? 'Your next event from the calendar address set on your phone.' : 'Add your calendar’s iCal address in the phone companion.' }] : []);
+      .concat(CALENDAR ? [{ id: 'ccal', title: '', items: [choice('ccal', 'on')], reason: S.phone.calendar ? 'Your next event from the calendar address set on your phone.' : 'Add your calendar’s iCal address in the phone companion.' }] : [])
+      .concat([{ id: 'cwidget', title: '', items: [choice('cwidget', 'on', isShelf())], reason: isShelf() ? 'Widgets need the Dock or List layout.' : 'Cards under the clock: the forecast, your next events and Home Assistant, from what is already switched on.' }]);
     if (t.group === 'weather') return [
       { id: 'cweather', title: '', items: [{ action: 'choice.cweather.on', axis: 'cweather', value: 'on', label: 'Show the weather', tick: true, applied: S.c.cweather === 'on' }],
         reason: PHONE ? 'Weather by Open-Meteo. Set your place in the phone companion.' : 'Weather by Open-Meteo.' },
@@ -3195,7 +3232,7 @@
     return text.replace(/[0-9]/g, function (digit) { return '<span class="clock-digit">' + digit + '</span>'; }) + ampm;
   }
   function renderCaption(t, hs) {
-    var html = '<span class="clock">' + clockHtml() + '</span>' + clockExtras();
+    var html = '<span class="clock">' + clockHtml() + '</span>' + clockExtras() + widgetsHtml();
     if (S.c.apps !== 'icons' && hs.items[hs.i] && (S.c.layout === 'list' ? photoLabel(hs.items[hs.i].id, false).size < 88 || photoLabel(hs.items[hs.i].id, false).ellipsis : hs.zone === 'apps' && reducedDockLabel(hs.items[hs.i].id))) html += '<span class="cap-line full-name">' + esc(app(hs.items[hs.i].id).name) + '</span>';
     setHTML(capMain, html);
   }

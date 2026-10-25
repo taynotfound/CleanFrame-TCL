@@ -319,7 +319,11 @@
     openSettings: function (done) { reply(ask('screensaverSettings'), done, 'Screensaver settings could not open.'); }
   };
   /* Next calendar event from the iCal address set on the phone: {title, start, allDay} or null. */
-  var calendar = { next: function () { try { var e = JSON.parse(bridge.calendarNext()); return e && e.title ? e : null; } catch (x) { return null; } } };
+  var calendar = {
+    next: function () { try { var e = JSON.parse(bridge.calendarNext()); return e && e.title ? e : null; } catch (x) { return null; } },
+    /* Up to three events within three days, soonest first. */
+    upcoming: function () { try { return JSON.parse(bridge.calendarUpcoming()).filter(function (e) { return e && e.title && e.start > 0; }); } catch (x) { return []; } }
+  };
   /* Sleep timer, kept by the Home-button service so it runs while other apps are open. */
   var sleep = {
     set: function (minutes) { try { return !!bridge.sleepIn(minutes | 0); } catch (e) { return false; } },

@@ -205,6 +205,7 @@ Press ♪ *Music* on Home while something plays.
 - Album art (*Music*): while music with a cover plays, the cover becomes the background, softly blurred and dimmed, and the glass shows it through. It needs a Photo background and goes back to your wallpaper when the music stops. The blur is made once per track on the TV's CPU, not live in the page. Turn it off in *Settings › Music*.
 - Sharper pictures (same page, on by default): media apps often share only a small cover, which looks soft at TV size. Shore then looks up a wide artist picture on [TheAudioDB](https://www.theaudiodb.com) and, if none fits, a 1000-pixel cover from the [iTunes Search API](https://performance-partners.apple.com/search-api). Only the artist name (and title for iTunes) is sent, once per track; results are cached on the TV for 30 days. Turn it off to keep everything on the TV.
 - Weather icons next to the temperature follow the sky and switch to night versions after sunset. *Weather › Details* hides the icon; *Music* hides the level meter.
+- Widgets (*Settings › Clock › Widgets*, off by default) add a row of small cards under the clock: today and the next two days' forecast (needs Weather), up to three events in the next three days (needs Calendar), and, with the Home Assistant add-on, the inside temperature, how many lights are on and any open door or window. Each card appears only when it has something to show. Not available with the Shelf layout. The forecast comes in the same Open-Meteo request as the current weather.
 
 ### Screensaver
 

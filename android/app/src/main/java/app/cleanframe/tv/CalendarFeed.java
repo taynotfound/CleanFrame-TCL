@@ -3,6 +3,7 @@ package app.cleanframe.tv;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -11,6 +12,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -51,6 +53,12 @@ final class CalendarFeed {
         return prefs.getString("next", "{}");
     }
 
+    /** Up to three events within three days, soonest first (the widgets row), or []. */
+    String upcoming(String address) {
+        if (next(address).equals("{}")) return "[]";
+        return prefs.getString("events", "[]");
+    }
+
     static String clean(String address) {
         String u = address == null ? "" : address.trim();
         if (u.regionMatches(true, 0, "webcal://", 0, 9)) u = "https://" + u.substring(9);
@@ -63,8 +71,8 @@ final class CalendarFeed {
         prefs.edit().putLong("at", System.currentTimeMillis()).apply(); // a failure waits for the next round too
         NET.execute(() -> {
             try {
-                JSONObject next = parse(fetch(url), System.currentTimeMillis());
-                prefs.edit().putString("url", url).putString("next", next == null ? "{}" : next.toString()).apply();
+                JSONArray soon = parse(fetch(url), System.currentTimeMillis());
+                prefs.edit().putString("url", url).putString("next", soon.length() == 0 ? "{}" : soon.getJSONObject(0).toString()).putString("events", soon.toString()).apply();
             } catch (Exception ignored) {
             } finally { busy = false; }
         });
@@ -80,10 +88,10 @@ final class CalendarFeed {
         } finally { c.disconnect(); }
     }
 
-    /** The soonest event that hasn't ended, starting within three days. */
-    static JSONObject parse(String ics, long now) throws Exception {
+    /** The three soonest events that haven't ended, starting within three days. */
+    static JSONArray parse(String ics, long now) throws Exception {
         String text = ics.replace("\r\n", "\n").replace("\n ", "").replace("\n\t", "");
-        String best = null; long bestAt = Long.MAX_VALUE; boolean bestAllDay = false;
+        List<JSONObject> found = new ArrayList<>();
         for (String block : text.split("BEGIN:VEVENT")) {
             int end = block.indexOf("END:VEVENT");
             if (end < 0) continue;
@@ -105,11 +113,13 @@ final class CalendarFeed {
             long s = time(start), e = stop != null ? time(stop) : s + (allDay ? 86400000L : 3600000L), length = Math.max(0, e - s);
             if (s < 0) continue;
             for (long at : occurrences(s, rule, now - length, now + AHEAD)) {
-                if (at + length > now && at < now + AHEAD && at < bestAt) { bestAt = at; best = summary; bestAllDay = allDay; }
+                if (at + length > now && at < now + AHEAD) found.add(new JSONObject().put("title", summary.length() > 120 ? summary.substring(0, 120) : summary).put("start", at).put("allDay", allDay));
             }
         }
-        if (best == null) return null;
-        return new JSONObject().put("title", best.length() > 120 ? best.substring(0, 120) : best).put("start", bestAt).put("allDay", bestAllDay);
+        Collections.sort(found, (a, b) -> Long.compare(a.optLong("start"), b.optLong("start")));
+        JSONArray out = new JSONArray();
+        for (int i = 0; i < found.size() && i < 3; i++) out.put(found.get(i));
+        return out;
     }
 
     /** "DTSTART;TZID=Europe/Berlin:20261025T180000", "DTSTART:20261025T160000Z" or a date: milliseconds, -1 if unreadable. */
