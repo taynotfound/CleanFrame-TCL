@@ -7,12 +7,49 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CLEANFRAME_PUBLIC_FONTS: '1'
+
 jobs:
-  public-source:
+  # Fast static checks: syntax and style that would break an old TV WebView, plus the docs and workflows.
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - name: JavaScript (ES5 for the TV interface, modern for tooling)
+        run: npm run lint
+      - name: Python
+        run: pipx run ruff==0.8.6 check scripts
+      - name: Shell
+        run: shellcheck debloat/debloat.sh
+      - name: HTML (website)
+        run: npx html-validate site/index.html site/app/index.html
+      - name: Markdown links, anchors and wiki pages
+        run: npm run check:docs
+      - name: GitHub workflows
+        run: |
+          bash <(curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/v1.7.7/scripts/download-actionlint.bash) 1.7.7
+          ./actionlint -color
+
+  # Source, resources and the public-release boundary (no private fonts, keys or builds in Git).
+  source:
+    name: Source
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      CLEANFRAME_PUBLIC_FONTS: '1'
     steps:
       - uses: actions/checkout@v7
         with:
@@ -27,5 +64,68 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run check:public
+
+  # The real interface in Chromium: navigation, focus, settings, add-ons, migrations (a mocked TV).
+  ui:
+    name: Interface (browser)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run check:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: interface-report
+          path: .local/qa/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  # Website, installable launcher and phone companion: console errors, broken files, phone layout, accessibility.
+  site:
+    name: Website and companion
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run check:site
+
+  # Budgets for key presses and frames on a CPU-throttled browser: a regression screen, not a TV measurement.
+  performance:
+    name: Performance budgets
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run check:performance
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: performance-report
+          path: .local/qa/performance/
+          if-no-files-found: ignore
+          retention-days: 14

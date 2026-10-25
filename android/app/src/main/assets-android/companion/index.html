@@ -73,10 +73,10 @@
     <!-- Keyboard: the box replaces the text of the focused field on the TV as you type. -->
     <div id="tab-keys" class="tab" hidden>
       <section class="card">
-        <h2 data-t="Type on the TV">Type on the TV</h2>
+        <h2 id="typeTitle" data-t="Type on the TV">Type on the TV</h2>
         <p class="quiet" data-t="Select a text field on the TV, then type here. Shore’s own Search works straight away; other apps need Shore phone keyboard turned on in the TV’s Accessibility settings.">Select a text field on the TV, then type here. Shore’s own Search works straight away; other apps need Shore phone keyboard turned on in the TV’s Accessibility settings.</p>
         <form id="typeForm" class="ha-form">
-          <input id="typeText" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="go" maxlength="2000">
+          <input id="typeText" aria-labelledby="typeTitle" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off" enterkeyhint="go" maxlength="2000">
           <div class="backup-buttons"><button class="button primary" type="submit" data-t="Enter">Enter</button><button id="typeClear" class="button quiet-button" type="button" data-t="Clear">Clear</button></div>
         </form>
         <p id="typeStatus" class="quiet"></p>

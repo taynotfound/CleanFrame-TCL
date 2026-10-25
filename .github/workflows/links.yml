@@ -1,0 +1,28 @@
+name: Links
+
+# External links in the README, the wiki and the docs. Weekly, because other sites come and go;
+# it never blocks a change. Local links are checked on every push by `npm run check:docs`.
+on:
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  lychee:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress --max-concurrency 8 --max-retries 2 --timeout 20
+            --accept 200,206,403,429
+            --exclude 'localhost' --exclude 'shore-tv.local' --exclude '127.0.0.1'
+            --exclude 'github.com/taynotfound/shore/(issues/new|wiki)' --exclude 'discord.gg'
+            README.md CONTRIBUTING.md THIRD_PARTY_NOTICES.md docs/**/*.md site/index.html
+          fail: false

@@ -112,7 +112,7 @@
     svphoto: 'Photo title', ncalm: 'Calmer photos at night', wfx: 'Weather effects', cnews: 'Headlines', iask: 'Ask to switch', svsrc: 'Screensaver photos', svlay: 'Arrangement', svtime: 'Each slide', svmotion: 'Photo motion', svclock: 'Clock', svdate: 'Date and weather', svmusic: 'Music', wicon: 'Weather icon', cwave: 'Level meter',
     cpos: 'Clock position', csec: 'Seconds', tint: 'Accent', dglass: 'App row glass', isize: 'Icon size', npdim: 'Album art dimming', svpos: 'Clock on the screensaver', nsrc: 'Source', istyle: 'Icon style', cwatch: 'Continue watching', plyric: 'Lyrics', pword: 'Word by word', pbeat: 'Beat pulse', crecent: 'Recently used', ccal: 'Calendar', cwidget: 'Widgets', pqueue: 'Up next', ptrans: 'Translate lyrics', aha: 'Home Assistant', aad: 'Pi-hole and AdGuard', perf: 'Performance' };
   var VALUE_NAMES = { dark: 'Dark', light: 'Light', photo: 'Photo', list: 'List', dock: 'Dock', type: 'Type', glass: 'Glass', soft: 'Soft', frost: 'Frost', tint: 'Clear tint', icons: 'Icons', both: 'Icons and text', text: 'Text', front: 'First in Home', row: 'Own row', still: 'Still', drift: 'Drift', auto: 'Auto', thin: 'Thin', regular: 'Regular', bold: 'Bold', small: 'Small', 'default': 'Default', large: 'Large',
-    medium: 'Medium', huge: 'Huge', '12': '12-hour', '24': '24-hour', on: 'Show', scheduled: 'Timed', always: 'Always', soft: 'Soft', strong: 'Strong',
+    medium: 'Medium', huge: 'Huge', '12': '12-hour', '24': '24-hour', on: 'Show', scheduled: 'Timed', always: 'Always', strong: 'Strong',
     '20-7': '20–07', '21-7': '21–07', '22-6': '22–06', '23-7': '23–07', '1': 'After 1 min', '5': 'After 5 min', '10': 'After 10 min', '15': 'After 15 min', c: '°C', f: '°F',
     like: 'Like Home', every: 'Everything', builtin: 'Built-in', mix: 'Mixed', single: 'One photo', mosaic: 'Mosaics',
     left: 'Left', center: 'Centred', none: 'None', warm: 'Warm', cool: 'Cool', rose: 'Rose', green: 'Green', clear: 'Clear', solid: 'Solid', move: 'Moving', fixed: 'Fixed', shore: 'Shore', original: 'Original', mono: 'Monochrome', full: 'High end', balanced: 'Balanced', potato: 'Potato' };
@@ -3215,7 +3215,7 @@
   function renderDock(hs) {
     var items = hs.items, n = items.length, empty = hs.mode !== 'arrange' && !n, g = dockGeom(empty ? -1 : n);
     var anchor = clamp(hs.i, 0, Math.max(0, n - 1)), off = empty ? 0 : dockOffset(n, anchor, g);
-    var full = hs.arr ? live(hs.arr.slots).length >= CAP : false, ns = hs.arr ? hs.arr.slots.length : n;
+    var full = hs.arr ? /* eslint-disable-line no-undef -- hs.arr is always null (legacy arrange mode) */ live(hs.arr.slots).length >= CAP : false, ns = hs.arr ? hs.arr.slots.length : n;
     var tileFocus = hs.zone === 'apps' || hs.zone === 'tiles', tileSel = hs.zone === 'act' || hs.zone === 'ctl' || hs.zone === 'preview' || hs.zone === 'recs' && !watchRow();
     var focusItem = items[anchor], s, ax, label, width;
 

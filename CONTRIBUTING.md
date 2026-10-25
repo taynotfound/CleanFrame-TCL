@@ -15,6 +15,9 @@ npm run check
 npx playwright install chromium
 CLEANFRAME_PUBLIC_FONTS=1 npm run check:browser
 npm run check:public
+npm run lint
+npm run check:docs
+npm run check:site
 ```
 
 Read [`docs/README.md`](docs/README.md) to find the right notes: [`docs/android-tv.md`](docs/android-tv.md) for the Android shell, [`docs/development.md`](docs/development.md) and [`docs/interaction-behaviour.md`](docs/interaction-behaviour.md) for the interface.

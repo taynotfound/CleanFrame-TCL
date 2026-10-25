@@ -1,0 +1,66 @@
+name: Android build
+
+# Builds the keyless release APK and runs Android lint on every change to the app or the Android shell, so a
+# broken build shows up before a release is started. Nothing is published; see android.yml for releases.
+on:
+  push:
+    paths: ['android/**', 'app/**', 'package.json', '.github/workflows/android-build.yml']
+  pull_request:
+    paths: ['android/**', 'app/**', 'package.json', '.github/workflows/android-build.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the commit count is the version
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - name: Build without keys
+        env:
+          SHORE_PUBLIC_BUILD: '1'
+        run: gradle -p android assembleRelease --warning-mode all
+      - name: No API key is compiled into a public build
+        run: |
+          file=$(find android/app/build/generated -name BuildConfig.java -path '*release*' | head -1)
+          test -n "$file"
+          if grep -E 'String (UNSPLASH_ACCESS_KEY|PEXELS_API_KEY|KLIPY_API_KEY|LASTFM_API_KEY|TMDB_TOKEN|YOUTUBE_API_KEY|TWITCH_CLIENT_ID|TWITCH_CLIENT_SECRET) = "[^"]' "$file"; then
+            echo "::error::A public build contains an API key"; exit 1
+          fi
+          grep 'PUBLIC_BUILD = true' "$file"
+      - name: APK size
+        run: |
+          apk=android/app/build/outputs/apk/release/app-release.apk
+          size=$(stat -c %s "$apk")
+          echo "### APK" >> "$GITHUB_STEP_SUMMARY"
+          echo "Size: $((size / 1024 / 1024)) MB ($size bytes)" >> "$GITHUB_STEP_SUMMARY"
+          unzip -l "$apk" | tail -1 >> "$GITHUB_STEP_SUMMARY"
+      - name: Android lint
+        env:
+          SHORE_PUBLIC_BUILD: '1'
+        run: gradle -p android lintRelease
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-lint-and-apk
+          path: |
+            android/app/build/reports/lint-results-release.*
+            android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: ignore
+          retention-days: 14

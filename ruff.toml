@@ -1,0 +1,6 @@
+# Python tooling (scripts/): catch real errors, not style.
+line-length = 140
+target-version = "py310"
+
+[lint]
+select = ["E9", "F", "B006", "B008", "S102", "S307"]

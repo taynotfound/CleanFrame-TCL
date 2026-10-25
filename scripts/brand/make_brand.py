@@ -11,7 +11,7 @@ and site/social.png (1280x640) for link previews and the GitHub social preview.
 Needs Pillow, Node with Playwright (as for the browser checks) and ffmpeg.
 Screens come from site/shots/*.jpg, the font from app/assets/manrope.woff2.
 """
-import base64, io, json, os, shutil, subprocess, sys, tempfile
+import base64, io, os, shutil, subprocess, sys, tempfile
 from PIL import Image
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -115,8 +115,8 @@ def landscape(thumbs, w=1200, h=628, video=False):
     body = background(w, h, 170, 130, 360)
     body += mark(130, 128, 40)
     body += '<text class="word" x="202" y="150" font-size="80" font-weight="300" letter-spacing="-2">Shore</text>'
-    body += f'<text class="tag" x="72" y="236" font-size="40" font-weight="300" letter-spacing="-.6">A calm home screen</text>'
-    body += f'<text class="tag" x="72" y="286" font-size="40" font-weight="300" letter-spacing="-.6">for Google TV.</text>'
+    body += '<text class="tag" x="72" y="236" font-size="40" font-weight="300" letter-spacing="-.6">A calm home screen</text>'
+    body += '<text class="tag" x="72" y="286" font-size="40" font-weight="300" letter-spacing="-.6">for Google TV.</text>'
     body += f'<text class="chips" x="72" y="{h - 64}" font-size="20" font-weight="500" fill-opacity=".6">Free and open source · github.com/taynotfound/shore</text>'
     body += chips(72, 330, 16, items=('Screensaver', 'Album art', 'Weather'))
     body += tv(560, 118, 576, 324, thumbs, caption_y=500, caption_size=20)
