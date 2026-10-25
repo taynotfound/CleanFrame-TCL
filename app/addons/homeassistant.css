@@ -1,0 +1,108 @@
+/* ---------- Home Assistant add-on: Smart home panel and camera live view (addons/homeassistant.js) ---------- */
+.view-ha{--ha-on:#f3c56f;--ha-frame:rgba(246,241,231,.22)}
+.bg-light .view-ha{--ha-on:#8a5a00;--ha-frame:rgba(29,26,22,.18)}
+/* 12px of room around the chips for the room outline. */
+.ha-rooms{position:absolute;left:100px;top:220px;width:1160px;height:744px;overflow:hidden}
+.ha-rooms.is-wide{width:1720px}
+.ha-rooms-in{position:absolute;left:12px;top:12px;width:100%;transition:transform 220ms var(--ease);will-change:transform}
+.ha-frame{position:absolute;left:0;top:0;border:2px solid var(--ha-frame);border-radius:30px;box-sizing:border-box;opacity:0;pointer-events:none;transition:opacity 160ms linear}
+.ha-frame.is-on{opacity:1}
+.ha-head{position:absolute;left:0;top:0;height:64px;box-sizing:border-box;display:flex;align-items:baseline;gap:16px;padding:10px 0 0 4px;white-space:nowrap}
+.ha-room{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:34px;line-height:44px;font-weight:600;letter-spacing:-.5px}
+.ha-lit{flex:none;font-size:24px;line-height:44px;font-weight:600;color:var(--ha-on)}
+.ha-chip{position:absolute;left:0;top:0;width:268px;height:112px;border-radius:24px;opacity:.82;transition:background-color 140ms linear,opacity 140ms linear}
+.ha-chip.is-focus{opacity:1;background:var(--plate);box-shadow:var(--plate-edge)}
+.ha-chip.is-off{opacity:.42}
+.ha-chip.is-off.is-focus{opacity:.8}
+/* Long names wrap to a second line, so "Front Door Motion" and "Front Door Motion Sensor" stay apart. */
+.ha-chip .panel-content{position:absolute;inset:0;padding:0 18px 0 24px;display:flex;flex-direction:column;justify-content:center;transform-origin:50% 50%;transition:transform var(--t) var(--ease)}
+.ha-name{font-size:28px;line-height:34px;font-weight:500;letter-spacing:-.3px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
+.ha-state{margin-top:2px;font-size:24px;line-height:30px;font-weight:500;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ha-chip.is-active .ha-state{color:var(--ha-on);font-weight:600}
+.f-type .sheet .ha-chip{background:none;box-shadow:none;opacity:.70}
+.f-type .sheet .ha-chip.is-focus{opacity:1}
+.f-type .sheet .ha-chip.is-focus .panel-content,.f-type .sheet .ha-cam.is-focus .panel-content{transform:scale(1.05)}
+.ha-cams{position:absolute;left:1312px;top:232px;width:496px;height:720px;overflow:hidden;display:none}
+.ha-cams.is-on{display:block}
+.ha-cams-in{position:absolute;left:0;top:0;width:496px;transition:transform 220ms var(--ease);will-change:transform}
+.ha-cam{position:absolute;left:0;top:0;width:496px;height:360px;border-radius:28px;transition:background-color 140ms linear}
+.ha-cam.is-focus{background:var(--plate);box-shadow:var(--plate-edge)}
+.f-type .sheet .ha-cam{background:none;box-shadow:none}
+.ha-cam .panel-content{position:absolute;inset:0;transform-origin:50% 40%;transition:transform var(--t) var(--ease)}
+.ha-still{position:absolute;left:12px;top:12px;width:472px;height:266px;border-radius:18px;overflow:hidden;background:rgba(0,0,0,.30);display:flex;align-items:center;justify-content:center;color:var(--faint)}
+.ha-still img{width:100%;height:100%;object-fit:cover;display:block}
+.ha-still .ico{width:64px;height:64px;stroke-width:1.6}
+.ha-cam.is-off .ha-still{opacity:.5}
+.ha-cam-name{position:absolute;left:20px;right:20px;top:286px;font-size:30px;line-height:38px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ha-cam-sub{position:absolute;left:20px;right:20px;top:322px;font-size:23px;line-height:30px;font-weight:500;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ha-empty{position:absolute;left:140px;top:296px;width:1200px;font-size:34px;line-height:48px;font-weight:500;color:var(--mute)}
+.ha-empty p{margin:0}
+.ha-before{left:660px;top:192px}
+.ha-after{left:660px;top:956px}
+.ha-hint{top:1000px}
+.ha-snap-video{position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
+.view-hacam{background:#000;color:#fff;overflow:hidden}
+.ha-live{position:absolute;left:0;top:0;width:1920px;height:1080px;background:#000}
+.ha-live-still,.ha-live-video{position:absolute;left:0;top:0;width:1920px;height:1080px;max-width:none;object-fit:contain;opacity:0;transition:opacity 400ms ease}
+.ha-live-still.is-on{opacity:.5}
+.ha-live-video.is-on{opacity:1}
+.ha-live-shade{position:absolute;left:0;top:0;width:1920px;height:260px;background:linear-gradient(to bottom,rgba(0,0,0,.62),rgba(0,0,0,0))}
+.ha-live-badge{position:absolute;left:112px;top:64px;margin:0;display:flex;align-items:center;gap:12px;font-size:24px;line-height:32px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.ha-dot{width:14px;height:14px;border-radius:50%;background:#ff4d4d;animation:ha-pulse 1.8s ease-in-out infinite alternate}
+@keyframes ha-pulse{from{opacity:.35}to{opacity:1}}
+.ha-live-title{position:absolute;left:112px;top:104px;margin:0;font-size:56px;line-height:64px;font-weight:600;letter-spacing:-1px;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.ha-live-state{position:absolute;left:0;right:0;top:516px;margin:0;text-align:center;font-size:34px;line-height:48px;font-weight:500;color:rgba(255,255,255,.72)}
+.ha-live-close{position:absolute;left:112px;top:944px}
+.ha-live-close .btn{color:#fff;background:rgba(0,0,0,.42)}
+.ha-live-close .btn.is-focus{background:#fff;color:#111}
+@media (prefers-reduced-motion:reduce){.ha-dot{animation:none}}
+
+/* Smart home controls: a light's power, brightness and colour; a thermostat's target and mode */
+.view-hactl{--ha-on:#f3c56f}
+.bg-light .view-hactl{--ha-on:#8a5a00}
+.view-hactl .s-sub,.view-ha .s-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hc-row{position:absolute;left:112px;width:1696px;padding:22px 28px 0;box-sizing:border-box;border-radius:32px;transition:background-color 140ms linear}
+.hc-row.is-on{background:var(--plate);box-shadow:var(--plate-edge)}
+.f-type .sheet .hc-row{background:none;box-shadow:none;opacity:.62;transition:opacity 140ms linear}
+.f-type .sheet .hc-row.is-on{opacity:1}
+.hc-label{margin:0;display:flex;align-items:baseline;gap:20px;font-size:28px;line-height:36px;font-weight:500;color:var(--mute)}
+.hc-value{font-weight:600;color:var(--ink)}
+.hc-power{top:236px;height:156px}
+.hc-switch{position:relative;margin-top:16px;width:236px;height:72px;border-radius:36px;background:var(--line);color:var(--ink);display:flex;align-items:center;justify-content:flex-end;padding:0 30px;box-sizing:border-box;font-size:28px;font-weight:600;transition:background-color 160ms linear}
+.hc-switch-knob{position:absolute;left:8px;top:8px;width:56px;height:56px;border-radius:50%;background:var(--ink);transition:transform 200ms var(--ease)}
+.hc-switch.is-on{background:var(--ha-on);color:#1d1a16;justify-content:flex-start}
+.hc-switch.is-on .hc-switch-knob{transform:translate3d(164px,0,0);background:#1d1a16}
+.hc-switch.is-focus{box-shadow:0 0 0 4px var(--ink)}
+.hc-bright{top:412px;height:188px}
+.hc-slider{margin-top:24px;display:flex;align-items:center;gap:20px}
+.hc-track{position:relative;width:1180px;height:18px;border-radius:9px;background:var(--line)}
+.hc-fill{position:absolute;left:0;top:0;width:100%;height:100%;border-radius:9px;background:var(--ha-on);transform-origin:0 50%;transition:transform 180ms var(--ease)}
+.hc-slider.is-dark .hc-fill{opacity:0}
+.hc-knob{position:absolute;left:-22px;top:-13px;width:44px;height:44px;border-radius:50%;background:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.3);transition:transform 180ms var(--ease)}
+.hc-knob::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--ink);transform:scale(1);transition:transform 160ms var(--ease)}
+.hc-slider.is-focus .hc-knob::after{transform:scale(1.3)}
+.hc-nudge{width:64px;height:64px;border-radius:32px;display:flex;align-items:center;justify-content:center;background:none;color:var(--mute)}
+.hc-nudge .ico{width:32px;height:32px}
+.hc-colors{top:620px;height:216px}
+.hc-swatches{margin-top:26px;display:flex;gap:24px}
+.hc-sw{position:relative;width:96px;height:96px;border-radius:50%;background:none;display:flex;align-items:center;justify-content:center;transition:transform 160ms var(--ease)}
+.hc-dot{width:76px;height:76px;border-radius:50%;box-shadow:inset 0 0 0 2px rgba(0,0,0,.12)}
+.hc-sw.is-focus{transform:scale(1.18)}
+.hc-sw.is-focus .hc-dot{box-shadow:0 0 0 5px var(--ink)}
+.hc-tick{position:absolute;left:30px;top:30px;width:36px;height:36px;color:#1d1a16;stroke-width:2.6}
+.hc-target{top:236px;height:340px}
+.hc-dial{margin-top:12px;display:flex;align-items:center;gap:40px}
+.hc-round{width:96px;height:96px;border-radius:48px;background:var(--line);color:var(--ink)}
+.hc-round .ico{width:40px;height:40px}
+.hc-temp{min-width:360px;text-align:center;font-size:168px;line-height:200px;font-weight:500;letter-spacing:-6px;font-variant-numeric:tabular-nums;transition:transform 160ms var(--ease)}
+.hc-temp.is-range{font-size:96px;letter-spacing:-3px}
+.hc-temp.is-focus{transform:scale(1.04)}
+.hc-now{margin:0;font-size:28px;line-height:36px;font-weight:500;color:var(--mute)}
+.hc-modes{top:604px;height:176px}
+.hc-pills{margin-top:22px;display:flex;flex-wrap:wrap;gap:12px}
+.hc-pill{height:64px;padding:0 30px;border-radius:32px;display:inline-flex;align-items:center;gap:10px;font-size:30px;font-weight:500;white-space:nowrap;color:var(--mute);background:var(--line);transition:background-color 140ms linear,color 140ms linear}
+.hc-pill .ico{width:28px;height:28px}
+.hc-pill.is-current{color:var(--ink)}
+.hc-pill.is-focus{background:var(--solid);color:var(--solid-ink)}
+.hc-hint{top:1000px}
+.hc-hold{margin-left:24px}

@@ -1,0 +1,70 @@
+/* Music view (addons/player.js). Loaded the first time the view opens. */
+.view-player{color:#fff;overflow:hidden}
+.pl-bg{position:absolute;left:0;top:0;width:1920px;height:1080px;background:#121416}
+.pl-back{position:absolute;left:0;top:0;width:1920px;height:1080px;max-width:none;object-fit:cover;opacity:0;transform:scale(1.08);transition:opacity 700ms ease,transform 70ms linear;will-change:transform}
+.pl-bg.is-on .pl-back{opacity:1}
+.pl-shade{position:absolute;left:0;top:0;width:1920px;height:1080px;background:linear-gradient(to right,rgba(8,9,11,.62),rgba(8,9,11,.30) 55%,rgba(8,9,11,.55))}
+.pl-art{position:absolute;left:220px;top:240px;width:600px;height:600px;border-radius:18px;overflow:hidden;background:rgba(255,255,255,.08);box-shadow:0 30px 70px rgba(0,0,0,.45);transition:left 400ms ease,top 400ms ease,width 400ms ease,height 400ms ease,transform 70ms linear}
+.pl-art img{width:100%;height:100%;object-fit:cover;display:block}
+.pl-art-empty{position:absolute;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5)}
+.pl-art-empty .ico{width:30%;height:30%}
+.pl-info{position:absolute;left:920px;top:300px;width:820px;transition:left 400ms ease,top 400ms ease,width 400ms ease}
+.pl-source{margin:0 0 14px;font-size:26px;line-height:32px;opacity:.7}
+.pl-title{margin:0;font-size:68px;line-height:80px;font-weight:600;letter-spacing:-1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pl-artist{margin:10px 0 0;font-size:34px;line-height:44px;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-bar{position:relative;margin-top:56px;width:640px;padding:14px 0 0}
+.pl-track{position:relative;height:8px;border-radius:4px;background:rgba(255,255,255,.22);transition:height 160ms ease}
+.pl-fill{position:absolute;left:0;top:0;width:100%;height:100%;border-radius:4px;background:#fff;transform-origin:0 50%;transform:scaleX(0)}
+.pl-knob{position:absolute;left:-10px;top:50%;width:20px;height:20px;margin-top:-10px;border-radius:50%;background:#fff;opacity:0;transition:opacity 160ms ease}
+.pl-bar.is-focus .pl-track{height:12px}
+.pl-bar.is-focus .pl-knob{opacity:1;box-shadow:0 0 0 6px rgba(255,255,255,.25)}
+.pl-bar.is-live{visibility:hidden}
+.pl-times{display:flex;justify-content:space-between;margin-top:12px;font-size:24px;line-height:30px;opacity:.7;font-variant-numeric:tabular-nums}
+.pl-buttons{display:flex;align-items:center;gap:22px;margin-top:40px}
+.pl-btn{width:84px;height:84px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;display:flex;align-items:center;justify-content:center;transition:background 140ms ease,transform 140ms ease}
+.pl-btn .ico{width:38px;height:38px}
+.pl-btn .ico-fill{fill:currentColor;stroke:none}
+.pl-btn.pl-toggle{width:104px;height:104px}
+.pl-btn.pl-toggle .ico{width:48px;height:48px}
+.pl-btn.pl-lyrics{margin-left:28px}
+.pl-btn.is-on{color:#fff;box-shadow:inset 0 0 0 3px rgba(255,255,255,.55)}
+.pl-btn.is-focus{background:#fff;color:#111;transform:scale(1.08)}
+.pl-words{position:absolute;left:880px;top:0;width:900px;height:1080px;opacity:0;transition:opacity 400ms ease;-webkit-mask-image:linear-gradient(to bottom,transparent 120px,#000 300px,#000 760px,transparent 960px);mask-image:linear-gradient(to bottom,transparent 120px,#000 300px,#000 760px,transparent 960px)}
+.pl-words.is-on{opacity:1}
+.pl-lines{position:absolute;left:0;top:380px;width:900px}
+.pl-line{margin:0;padding:10px 0;font-size:48px;line-height:60px;font-weight:700;letter-spacing:-.4px;opacity:.32;transform-origin:0 50%;transform:scale(.94);transition:transform 700ms cubic-bezier(.3,1.25,.4,1),opacity 450ms ease;will-change:transform}
+.pl-line.is-past{opacity:.2}
+.pl-line.is-now{opacity:1}
+.is-jump .pl-line{transition:none!important}
+.pl-line .w{display:inline-block;transition:opacity 260ms ease,transform 380ms cubic-bezier(.3,1.4,.4,1)}
+.pl-line.is-now .w{opacity:.38}
+.pl-words.no-words .pl-line.is-now .w{opacity:1;transform:none}
+.pl-line.is-now .w.is-lit{opacity:1;transform:translate3d(0,-3px,0)}
+.pl-dots{display:inline-flex;gap:14px;align-items:center;height:60px}
+.pl-dots i{width:16px;height:16px;border-radius:50%;background:#fff;opacity:.5}
+.pl-line.is-now .pl-dots i{animation:pl-dot 1.4s ease-in-out infinite}
+.pl-line.is-now .pl-dots i:nth-child(2){animation-delay:.2s}
+.pl-line.is-now .pl-dots i:nth-child(3){animation-delay:.4s}
+.pl-tr{display:block;margin-top:4px;font-size:30px;line-height:38px;font-weight:500;letter-spacing:0;opacity:.75}
+.pl-upnext{margin-top:44px}
+.pl-upnext:empty{display:none}
+.pl-upnext-h{margin:0 0 10px;font-size:22px;line-height:28px;letter-spacing:1.5px;text-transform:uppercase;opacity:.55}
+.pl-upnext-i{margin:0;font-size:28px;line-height:40px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-upnext-i span{opacity:1;font-weight:600}
+@keyframes pl-dot{0%,100%{transform:scale(.7);opacity:.4}50%{transform:scale(1.15);opacity:1}}
+.pl-plain{font-size:40px;line-height:58px;font-weight:500;opacity:.85;white-space:normal}
+.pl-state{margin:0;font-size:36px;line-height:46px;opacity:.6}
+.pl-credit{position:absolute;right:140px;bottom:56px;margin:0;font-size:22px;line-height:28px;opacity:.5}
+.pl-hint{position:absolute;left:140px;bottom:56px;margin:0;font-size:26px;line-height:32px;opacity:.7}
+.has-lyrics .pl-art{left:140px;top:110px;width:420px;height:420px}
+.has-lyrics .pl-info{left:140px;top:570px;width:640px}
+.has-lyrics .pl-title{font-size:44px;line-height:54px;-webkit-line-clamp:1}
+.has-lyrics .pl-artist{font-size:28px;line-height:36px}
+.has-lyrics .pl-source{font-size:22px;margin-bottom:8px}
+.has-lyrics .pl-bar{margin-top:30px}
+.has-lyrics .pl-buttons{margin-top:24px;gap:18px}
+.has-lyrics .pl-btn{width:72px;height:72px}
+.has-lyrics .pl-btn .ico{width:32px;height:32px}
+.has-lyrics .pl-btn.pl-toggle{width:88px;height:88px}
+.has-lyrics .pl-btn.pl-toggle .ico{width:40px;height:40px}
+.is-night .view-player .pl-back,.is-night .view-player .pl-art img{filter:brightness(var(--night))}

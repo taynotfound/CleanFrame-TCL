@@ -27,7 +27,8 @@ export async function openPreview({ publicFonts = false } = {}) {
         if (match) { clearTimeout(timeout); resolve(match[0]); }
       });
     });
-    browser = await chromium.launch({ headless: true });
+    // CLEANFRAME_CHROMIUM points at an already-installed Chromium when the pinned Playwright browser is absent.
+    browser = await chromium.launch(process.env.CLEANFRAME_CHROMIUM ? { headless: true, executablePath: process.env.CLEANFRAME_CHROMIUM } : { headless: true });
     return { browser, baseURL, close: async () => {
       try { await browser.close(); }
       finally { server.kill(); await once(server, 'exit'); }

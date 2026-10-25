@@ -1,0 +1,15 @@
+/* Widgets add-on (addons/widgets.js). Loaded only while it is switched on. */
+.cap-widgets{display:flex;align-items:flex-start;gap:16px;margin-top:22px}
+.l-list .cap-widgets{justify-content:flex-end}
+.wg{display:flex;flex-direction:column;gap:6px;min-width:0;max-width:440px;padding:16px 24px;border-radius:26px;background:rgba(10,12,14,.34);font-size:24px;line-height:32px;font-weight:500;letter-spacing:-.1px;text-shadow:0 1px 2px rgba(0,0,0,.25);text-align:left}
+.wg-forecast{flex-direction:row;gap:26px}
+.wg-day{display:flex;flex-direction:column;align-items:center;gap:4px}
+.wg-dname{font-size:22px;opacity:.78;white-space:nowrap}
+.wg-temp{white-space:nowrap}
+.wg-temp i{font-style:normal;opacity:.6;margin-left:8px}
+.wg-row{display:flex;align-items:center;gap:10px;max-width:392px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wg-row b{flex:none;font-weight:600}
+.wg .wx{width:30px;height:30px;flex:none}
+.wg-t{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.caption .cap-widgets{width:max-content;max-width:1640px}
+.l-list .caption .cap-widgets{width:auto;max-width:none}

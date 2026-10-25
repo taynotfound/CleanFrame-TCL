@@ -33,3 +33,7 @@ Run these only under a task that includes TV testing. Announce any installation 
 5. Test normal power-on after a streaming app and the usual Art Mode routine only when that work is included. Preserve the native Home recovery baseline and restore it before any uninstall/identity change.
 
 The current pending results are listed at the top of `tv-status.md`. Browser CPU throttling is a development comparison, not a TV performance measurement.
+
+## Performance
+
+`npm run bench` measures startup, idle and per-key cost with every feature and add-on, on a 6× CPU slowdown at 720p ("potato") or `--profile tv` (4×, 1080p). `--only base,drift` picks features, `--root <checkout>` measures another checkout for a before/after comparison and `--runs 3` takes the median of more runs. Reports go to ignored `.local/qa/bench/`. Method, budgets and the current results are in [performance](performance.md). If the pinned Playwright browser is missing, `CLEANFRAME_CHROMIUM=/path/to/chrome` points the browser tools at an installed Chromium.
