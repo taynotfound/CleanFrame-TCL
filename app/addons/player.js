@@ -102,7 +102,7 @@
      ~30 reads a second while the music view is open; stopped as soon as it closes. */
   var beatTimer = 0, beatOn = false, beatV = 0;
   function beatLoop() {
-    var B = NOWPLAYING && NOWPLAYING.beat, want = !!B && playerOpen() && S.c.pbeat === 'on' && !document.hidden && !potato(), v, el = slotEls;
+    var B = NOWPLAYING && NOWPLAYING.beat, want = !!B && playerOpen() && S.c.pbeat === 'on' && !document.hidden && !calm(), v, el = slotEls;
     clearTimeout(beatTimer); beatTimer = 0;
     if (!want) { if (beatOn) { B.stop(); beatOn = false; } beatV = 0; if (el.back) { el.back.style.transform = ''; el.art.style.transform = ''; } return; }
     if (!beatOn) beatOn = B.start();

@@ -52,19 +52,34 @@ The profile showed one Dock key costing about 105 ms at 6×, and most of it was 
 
 Potato then removes the slide itself: one paint per key instead of about 11 animated frames.
 
-## Performance › Potato
+## Performance tiers and Auto
 
-`perf` is `auto` (default), `full` or `potato`. Auto picks Potato when the TV reports `navigator.hardwareConcurrency <= 2` or `navigator.deviceMemory <= 1`. Potato keeps every setting and the look, and removes:
+`perf` is `auto` (default), `full` (shown as **High end**), `balanced` or `potato`. None of them changes the look or any setting; they change what moves.
 
-| Removed | Why |
-| --- | --- |
-| All transitions and CSS animations (`.perf-potato *`) | A focus move is one paint, not a 180 ms slide |
-| Background drift, the screensaver's pan and zoom | Full-screen layers animating every frame |
-| Weather effects | A full-screen animated layer |
-| Animated (video) and GIF wallpapers | Video decode on every frame; the still poster stays |
-| Beat pulse | A 30 Hz timer while the music view is open |
-| Edge fades on the Dock and List (`mask-image`) | The masked layer is redrawn whenever the rows move |
-| `will-change` hints | Fewer GPU layers and less texture memory |
+| Tier | Keeps | Removes |
+| --- | --- | --- |
+| High end | Everything that is switched on | Nothing |
+| Balanced | Focus slides and crossfades, edge fades | Everything that animates while Home just sits there: drift, weather effects, video and GIF wallpapers, the screensaver's pan and zoom, the beat pulse |
+| Potato | A static, instant interface | Also every transition and CSS animation (`.perf-potato *`), the Dock and List edge fades (`mask-image`) and `will-change` layer hints. A focus move is one paint instead of about 11 animated frames |
+
+### How Auto decides
+
+1. **Ceiling from the hardware.** `navigator.deviceMemory <= 1` (GB) caps Auto at Potato; `<= 2`, or `navigator.hardwareConcurrency <= 2`, caps it at Balanced. A TV that reports neither has no cap. Memory is a cap rather than a vote: decoded photos and glass materials take about 8 MB each whatever the CPU speed.
+2. **Measurement on this TV.** Each remote key press (at most one every 300 ms) records the slowest frame between the key and 250 ms later, which covers the slide. The median of every 12 presses picks the tier: under 34 ms (two frames at 60 Hz) High end, under 60 ms Balanced, otherwise Potato. It never goes above the ceiling.
+3. **Hysteresis.** Going down happens at once. Going up is one tier at a time and needs a median below 75 % of that tier's limit, so a TV near a boundary doesn't flip back and forth.
+4. **Kept.** The decision and its median are saved in `shore.tier.1` (keyed by the browser's user agent, so a WebView update measures again), so the next start begins on the right tier. A first start uses the ceiling.
+
+Settings › Performance says what Auto chose and why ("Auto chose Balanced: this TV shows a key press in 45 ms."), and the overview row reads "Auto, Balanced".
+
+What Auto picked in the benchmark, after 24 Dock key presses:
+
+| Profile | Median worst frame | Auto picked |
+| --- | --- | --- |
+| tv (4× CPU, 1080p) | 19 ms | High end |
+| potato (6× CPU, 720p) | 18 ms | High end |
+| brick (20× CPU, 720p) | 63 ms | Potato |
+
+CPU throttling slows the main thread but not the compositor or GPU, and after this change's layout fixes a 6× machine still draws each frame in time. That is why the frame measurement, not the CPU estimate, makes the decision. A real TV with a weak GPU will show it in its frame times.
 
 ## What each feature and add-on costs
 
@@ -94,7 +109,7 @@ Measured on top of the default look (Full) with the new code, 1 run each. Negati
 
 ### Rules of thumb for a slow TV
 
-1. Choose **Potato** (or leave Auto). It halves Dock key cost again and removes every idle animation.
+1. Leave **Auto**, or choose **Potato** yourself. Potato halves Dock key cost again and removes every idle animation; Balanced removes the idle animations and keeps the slides.
 2. Leave **Seconds**, **Drift**, **Weather effects** and the **Shelf layout** off. These are the four biggest costs.
 3. The **Dark** or **Light** background saves the most memory.
 4. Add-ons that only add a line under the clock (Headlines, Pi-hole, Widgets) are cheap. Home Assistant is the largest download; its cost while idle is small.

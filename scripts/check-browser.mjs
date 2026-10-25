@@ -62,7 +62,8 @@ function installHarness({ seed, legacy, mock, catalog, minuteMs, catalogFailure,
     if (legacy !== undefined) localStorage.setItem('cleanframe.shore.v1', typeof legacy === 'string' ? legacy : JSON.stringify(legacy));
     sessionStorage.setItem('__cleanframe_seeded', '1');
   }
-  window.ShoreQA = { minuteMs };
+  // Auto performance would follow this machine's speed; checks pin it, except where they test it.
+  window.ShoreQA = { minuteMs, tier: 'full' };
   window.__failWrites = !!storageFailure;
   window.__storageAttempts = 0;
   const set = Storage.prototype.setItem;
@@ -973,7 +974,7 @@ try {
     check('Full keeps the chosen drift', /\bmo-drift\b/.test(await stageClass()) && !/perf-potato/.test(await stageClass()));
     await group('performance');
     const perfActions = await call('actions');
-    check('Performance offers Auto, Full and Potato', ['choice.perf.auto', 'choice.perf.full', 'choice.perf.potato'].every(a => perfActions.includes(a)), perfActions);
+    check('Performance offers Auto, High end, Balanced and Potato', ['choice.perf.auto', 'choice.perf.full', 'choice.perf.balanced', 'choice.perf.potato'].every(a => perfActions.includes(a)), perfActions);
     await act('choice.perf.potato'); await ready();
     check('Potato persists', (await stored()).look.perf === 'potato');
     await scene('home');
@@ -993,6 +994,34 @@ try {
     await current.evaluate(() => ShoreQA.weatherFx(''));
     await group('addons');
     check('Add-ons lists Weather effects with what it costs', /Heavy on a slow TV/.test(await current.locator('[data-action="choice.wfx.on"]').innerText()));
+  });
+  await run('Auto performance follows the TV', async () => {
+    await page({ seed: baseline({ bg: 'photo', motion: 'drift' }) });
+    const stageClass = () => current.evaluate(() => document.getElementById('stage').className);
+    const feed = ms => current.evaluate(ms => { ShoreQA.tier = ''; return ShoreQA.tierSamples(Array(12).fill(ms)); }, ms);
+    let t = await feed(18);
+    check('Quick key presses: High end, with drift', t.tier === 'full' && t.why === 'measured' && /perf-full/.test(await stageClass()) && /\bmo-drift\b/.test(await stageClass()), t);
+    t = await feed(45);
+    check('Slower ones: Balanced, no drift but focus still slides', t.tier === 'balanced' && /perf-balanced/.test(await stageClass()) && !/\bmo-drift\b/.test(await stageClass())
+      && await current.evaluate(() => getComputedStyle(document.querySelector('#track')).transitionDuration !== '0s'), t);
+    t = await feed(95);
+    check('Slow ones: Potato, no slides', t.tier === 'potato' && /perf-potato/.test(await stageClass())
+      && await current.evaluate(() => getComputedStyle(document.querySelector('#track')).transitionDuration === '0s'), t);
+    t = await feed(30);
+    check('Getting quicker moves up one tier at a time', t.tier === 'balanced', t);
+    t = await feed(30);
+    check('and needs a clear margin to reach High end', t.tier === 'balanced', t);
+    t = await feed(20);
+    check('which a quick TV has', t.tier === 'full', t);
+    check('The decision is kept for the next start', await current.evaluate(() => JSON.parse(localStorage.getItem('shore.tier.1')).tier) === 'full');
+    check('The look itself is unchanged', (await stored()).look.motion === 'drift' && (await stored()).look.perf === 'auto');
+    await feed(45);
+    await group('performance');
+    check('Performance says what Auto chose and why', /Balanced: this TV shows a key press in 45 ms/.test(await current.locator('#appearance').innerText()), await current.locator('#appearance').innerText());
+    await scene('settings');
+    check('The overview row names the tier', /Auto, Balanced/.test(await current.locator('[data-action="settings.group.performance"]').innerText()));
+    await current.reload(); await ready();
+    check('A restart begins with the kept tier', await current.evaluate(() => { ShoreQA.tier = ''; return ShoreQA.tierSamples([]).tier; }) === 'balanced');
   });
   await run('Headlines under the clock', async () => {
     await page({ seed: baseline({ bg: 'photo', cnews: 'on' }) });

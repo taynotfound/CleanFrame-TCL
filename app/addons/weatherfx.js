@@ -3,7 +3,7 @@
    functions assigned here replace main.js's stubs. CSS-only drawing, transform and opacity; the cost is the
    full-screen animated layer, which a slow TV pays on every frame (docs/performance.md). Off on Potato. */
   weatherFx = function () {
-    if (S.c.bg !== 'photo' || potato()) return '';
+    if (S.c.bg !== 'photo' || calm()) return '';
     var kind = fxForced || (S.c.wfx === 'on' && S.c.cweather === 'on' && WEATHER && WEATHER.icon ? WEATHER.icon() : '');
     return /^(drizzle|rain|storm|snow|fog)$/.test(kind) ? ' wx-' + kind : '';
   };

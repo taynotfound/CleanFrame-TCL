@@ -55,7 +55,7 @@
     { id: '60', name: 'Every hour', min: 60 }, { id: 'day', name: 'Once a day', min: 1440 }, { id: 'tod', name: 'By time of day', min: 0 }
   ];
   var KEY = 'cleanframe.home.v1', storageOk = true, catalog = { loading: false, loaded: false, error: null, request: 0, revision: 0 };
-  var QA = window.ShoreQA = { minuteMs: window.ShoreQA && window.ShoreQA.minuteMs || 60000 };
+  var QA = window.ShoreQA = { minuteMs: window.ShoreQA && window.ShoreQA.minuteMs || 60000, tier: window.ShoreQA && window.ShoreQA.tier || '' };
   var FONTS = {
     manrope: { name: 'Manrope', family: 'Manrope', display: 600, ui: 500, clock: 500 },
     montreal: { name: 'Neue Montreal', family: 'Study Montreal', display: 300, ui: 400, clock: 300 },
@@ -101,7 +101,7 @@
     cformat: ['12', '24'], cdate: ['off', 'on'], cweather: ['off', 'on'], wunit: ['c', 'f'], cplaying: ['off', 'on'], cart: ['off', 'on'], clook: ['off', 'on'], saver: ['off', '5', '10', '15'], csize: ['small', 'medium', 'large', 'huge'], cweight: ['auto', 'thin', 'light', 'regular', 'bold'],
     night: ['off', 'scheduled', 'always'], nhours: ['20-7', '21-7', '22-6', '23-7'], ndim: ['soft', 'medium', 'strong'], idle: ['off', '1', '5'], focus: ['type', 'glass'], material: ['soft', 'frost', 'tint'],
     svsrc: ['like', 'every', 'builtin'], svlay: ['mix', 'single', 'mosaic'], svtime: ['15', '30', '60'], svmotion: ['still', 'drift'], iask: ['off', 'on'], ncalm: ['off', 'on'], wfx: ['off', 'on'], cnews: ['off', 'on'], svphoto: ['off', 'on'], svclock: ['off', 'on'], svdate: ['off', 'on'], svmusic: ['off', 'on'], wicon: ['off', 'on'], cwave: ['off', 'on'],
-    cpos: ['left', 'center'], csec: ['off', 'on'], tint: ['none', 'warm', 'cool', 'rose', 'green'], dglass: ['clear', 'default', 'solid'], isize: ['small', 'default', 'large'], npdim: ['none', 'soft', 'strong'], svpos: ['move', 'fixed'], istyle: ['shore', 'original', 'mono'], cwatch: ['off', 'on'], plyric: ['off', 'on'], pword: ['off', 'on'], pbeat: ['off', 'on'], crecent: ['off', 'on'], ccal: ['off', 'on'], cwidget: ['off', 'on'], pqueue: ['off', 'on'], ptrans: ['off', 'on'], aha: ['off', 'on'], aad: ['off', 'on'], perf: ['auto', 'full', 'potato'],
+    cpos: ['left', 'center'], csec: ['off', 'on'], tint: ['none', 'warm', 'cool', 'rose', 'green'], dglass: ['clear', 'default', 'solid'], isize: ['small', 'default', 'large'], npdim: ['none', 'soft', 'strong'], svpos: ['move', 'fixed'], istyle: ['shore', 'original', 'mono'], cwatch: ['off', 'on'], plyric: ['off', 'on'], pword: ['off', 'on'], pbeat: ['off', 'on'], crecent: ['off', 'on'], ccal: ['off', 'on'], cwidget: ['off', 'on'], pqueue: ['off', 'on'], ptrans: ['off', 'on'], aha: ['off', 'on'], aad: ['off', 'on'], perf: ['auto', 'full', 'balanced', 'potato'],
     nsrc: ['google', 'phone'].concat(NEWS_OUTLETS.map(function (o) { return o.id; })) };
   /* Newer axes with their defaults: stored, migrated and validated like the others. */
   var MORE_LOOK = { svphoto: 'off', ncalm: 'off', wfx: 'off', cnews: 'off', iask: 'on', svsrc: 'like', svlay: 'mix', svtime: '30', svmotion: 'drift', svclock: 'on', svdate: 'on', svmusic: 'on', wicon: 'on', cwave: 'on', cpos: 'left', csec: 'off', tint: 'none', dglass: 'default', isize: 'default', npdim: 'none', svpos: 'move', nsrc: 'google', istyle: 'shore', cwatch: 'on', plyric: 'on', pword: 'on', pbeat: 'off', crecent: 'on', ccal: 'off', cwidget: 'off', pqueue: 'on', ptrans: 'off', aha: 'off', aad: 'off', perf: 'auto' };
@@ -115,7 +115,7 @@
     medium: 'Medium', huge: 'Huge', '12': '12-hour', '24': '24-hour', on: 'Show', scheduled: 'Timed', always: 'Always', soft: 'Soft', strong: 'Strong',
     '20-7': '20–07', '21-7': '21–07', '22-6': '22–06', '23-7': '23–07', '1': 'After 1 min', '5': 'After 5 min', '10': 'After 10 min', '15': 'After 15 min', c: '°C', f: '°F',
     like: 'Like Home', every: 'Everything', builtin: 'Built-in', mix: 'Mixed', single: 'One photo', mosaic: 'Mosaics',
-    left: 'Left', center: 'Centred', none: 'None', warm: 'Warm', cool: 'Cool', rose: 'Rose', green: 'Green', clear: 'Clear', solid: 'Solid', move: 'Moving', fixed: 'Fixed', shore: 'Shore', original: 'Original', mono: 'Monochrome', full: 'Full', potato: 'Potato' };
+    left: 'Left', center: 'Centred', none: 'None', warm: 'Warm', cool: 'Cool', rose: 'Rose', green: 'Green', clear: 'Clear', solid: 'Solid', move: 'Moving', fixed: 'Fixed', shore: 'Shore', original: 'Original', mono: 'Monochrome', full: 'High end', balanced: 'Balanced', potato: 'Potato' };
   VALUE_NAMES.off = 'Off'; VALUE_NAMES.light = VALUE_NAMES.light || 'Light';
   var UTIL = { music: ['Music', 'music'], art: [TV.art, 'art'], apps: ['All apps', 'apps'], arrange: ['Arrange', 'arrange'], settings: ['Settings', 'settings'], ha: ['Smart home', 'house'] };
   var MSG = {
@@ -173,12 +173,58 @@
 
   /* ---------- State ---------- */
   var REDUCED_MOTION = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  /* Performance › Potato drops what a slow TV pays for on every frame: transitions, animations, drift, weather
-     effects, moving wallpapers and edge fades. The look itself stays. Auto picks it on two cores or less, or a
-     gigabyte of memory or less (docs/performance.md). */
-  var LOW_END = navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 2 || navigator.deviceMemory > 0 && navigator.deviceMemory <= 1;
-  function potato() { return S.c.perf === 'potato' || S.c.perf === 'auto' && LOW_END; }
+  /* Performance: three tiers (docs/performance.md). High end ('full') keeps everything; Balanced keeps the focus
+     slides but drops what animates all the time (drift, weather effects, moving wallpapers, the screensaver's pan);
+     Potato also drops every transition and edge fade. The look itself never changes.
+     Auto picks the tier for this TV and keeps checking: the TV's memory and cores set a ceiling, and the time this
+     TV really takes to show a key press decides within it. The result is kept, so the next start begins there. */
+  var TIERS = ['potato', 'balanced', 'full'], TIER_KEY = 'shore.tier.1';
+  var TIER_FRAME = { full: 34, balanced: 60 }; // a key's slowest frame, median: two frames at 60 Hz, then 60 ms
+  var tierAuto = null, tierWhy = 'hints', tierSamples = [], tierMedian = 0;
+  function tierCeiling() {
+    var mem = navigator.deviceMemory, cores = navigator.hardwareConcurrency;
+    if (mem > 0 && mem <= 1) return 'potato';
+    if (mem > 0 && mem <= 2 || cores > 0 && cores <= 2) return 'balanced';
+    return 'full';
+  }
+  function lowerTier(a, b) { return TIERS[Math.min(TIERS.indexOf(a), TIERS.indexOf(b))]; }
+  function savedTier() {
+    try { var t = JSON.parse(localStorage.getItem(TIER_KEY)); return t && TIERS.indexOf(t.tier) >= 0 && t.ua === navigator.userAgent ? t : null; } catch (e) { return null; }
+  }
+  (function () { var t = savedTier(); tierAuto = t ? lowerTier(t.tier, tierCeiling()) : tierCeiling(); tierMedian = t ? t.ms : 0; tierWhy = t ? 'measured' : 'hints'; })();
+  function tier() { return S.c.perf === 'auto' ? QA.tier || tierAuto : S.c.perf; }
+  function potato() { return tier() === 'potato'; }
+  function calm() { return tier() !== 'full'; } // Balanced and Potato: nothing animates while Home just sits there
+  /* One sample per key press: the slowest frame from the key to 250 ms after it, which covers the slide. Every 12
+     samples the median picks a tier; moving up needs a clear margin, so a TV doesn't flip between two. */
+  function measuredTier(ms, from) {
+    var up = from ? .75 : 1, i = from ? TIERS.indexOf(from) : 0;
+    var raw = ms < TIER_FRAME.full ? 'full' : ms < TIER_FRAME.balanced ? 'balanced' : 'potato';
+    if (from && TIERS.indexOf(raw) > i) raw = ms < (i === 0 ? TIER_FRAME.balanced : TIER_FRAME.full) * up ? TIERS[i + 1] : from;
+    return raw;
+  }
+  function tierSample(ms) {
+    var sorted, next;
+    tierSamples.push(ms);
+    if (tierSamples.length < 12) return;
+    sorted = tierSamples.slice().sort(function (a, b) { return a - b; }); tierSamples = [];
+    tierMedian = Math.round(sorted[6]);
+    next = lowerTier(measuredTier(tierMedian, tierAuto), tierCeiling());
+    tierWhy = 'measured';
+    try { localStorage.setItem(TIER_KEY, JSON.stringify({ tier: next, ms: tierMedian, ua: navigator.userAgent })); } catch (e) { }
+    if (next !== tierAuto) { tierAuto = next; log('Auto performance: ' + next + ' (' + tierMedian + ' ms)'); if (S.c.perf === 'auto') render(); }
+  }
+  function watchFrames() {
+    var t0 = Date.now(), last = 0, worst = 0, raf = window.requestAnimationFrame;
+    if (!raf || document.hidden) return;
+    raf(function frame() {
+      var now = Date.now();
+      worst = Math.max(worst, now - (last || t0)); last = now;
+      if (now - t0 < 250) raf(frame); else tierSample(worst);
+    });
+  }
   function slideMs() { return REDUCED_MOTION || potato() ? 0 : 190; }
+  var keySampled = 0;
   var S = {
     variant: 'B', geom: 'broad', c: null, stack: null,
     sel: null, selIdx: 0, lastUtil: 0, appsFocus: null, settingsFocus: 'background', appearanceFocus: 'bg', detailFocus: {},
@@ -1449,7 +1495,13 @@
         .concat([{ id: 'samsung', label: TV.brand, value: updateReady() ? 'Shore update available' : healthAlerts() ? (healthAlerts() === 1 ? '1 thing to check' : healthAlerts() + ' things to check') : 'Home and TV settings' }]) }
     ]];
   }
-  function perfSummary() { return S.c.perf === 'auto' ? T('Auto') + ', ' + T(potato() ? 'Potato' : 'Full') : VALUE_NAMES[S.c.perf]; }
+  /* What Auto decided, and why, in words. */
+  function autoReason() {
+    var name = T(VALUE_NAMES[tierAuto]), cap = tierCeiling();
+    if (tierWhy !== 'measured') return cap === 'full' ? T('Auto starts with High end and checks as you use Shore.') : T('Auto starts with ' + VALUE_NAMES[cap] + ': this TV has little memory or few processor cores.');
+    return T('Auto chose ' + VALUE_NAMES[tierAuto] + ': this TV shows a key press in ' + tierMedian + ' ms.') + (cap !== 'full' && tierAuto === cap ? ' ' + T('Its memory and cores allow no more.') : '');
+  }
+  function perfSummary() { return S.c.perf === 'auto' ? T('Auto') + ', ' + T(VALUE_NAMES[tier()]) : VALUE_NAMES[S.c.perf]; }
   function inputSummary() {
     var hidden = INPUTS.filter(function (i) { return S.c.hidein.indexOf(i.id) >= 0; }).length;
     return hidden ? (hidden === 1 ? '1 hidden' : hidden + ' hidden') : VALUE_NAMES[S.c.inputs];
@@ -1767,7 +1819,7 @@
     photos = saverTake(SAVER_TILES[layout]);
     if (!photos.length) return;
     if (photos.length < SAVER_TILES[layout]) layout = photos.length === 2 ? 'pair' : 'full';
-    photos.forEach(function (src, i) { html += '<div class="sv-tile t' + i + '"><img class="sv-img ' + (S.c.svmotion === 'drift' ? 'm' + (saverMotion++ % 4) + '" style="animation-duration:' + (saverSlideMs() / 1000 + 4) + 's' : 'still') + '" alt="" src="' + escRaw(src) + '"></div>'; });
+    photos.forEach(function (src, i) { html += '<div class="sv-tile t' + i + '"><img class="sv-img ' + (S.c.svmotion === 'drift' && !calm() ? 'm' + (saverMotion++ % 4) + '" style="animation-duration:' + (saverSlideMs() / 1000 + 4) + 's' : 'still') + '" alt="" src="' + escRaw(src) + '"></div>'; });
     left = photos.length;
     slide.className = 'sv-slide l-' + layout;
     slide.innerHTML = html;
@@ -2300,10 +2352,12 @@
       { id: 'dglass', title: 'App row glass', horizontal: true, items: options('dglass', ['clear', 'default', 'solid'], flat || S.c.layout !== 'dock') }
     ];
     if (t.group === 'performance') return [
-      { id: 'perf', title: 'Performance', horizontal: true, items: options('perf', ['auto', 'full', 'potato']),
-        reason: potato() ? 'No animations, drift, weather effects or moving wallpapers. Your look and apps stay the same.' : 'Every animation and effect you switch on.' },
+      { id: 'perf', title: 'Performance', horizontal: true, items: options('perf', ['auto', 'full', 'balanced', 'potato']),
+        reason: tier() === 'potato' ? 'No animations, drift, weather effects or moving wallpapers. Your look and apps stay the same.'
+          : tier() === 'balanced' ? 'Focus still slides, but nothing animates while Home just sits there: no drift, weather effects or moving wallpapers.'
+          : 'Every animation and effect you switch on.' },
       { id: 'perfaddons', title: '', items: [{ action: 'open.addons', label: 'Add-ons', description: addonsSummary(), pair: true }],
-        reason: S.c.perf === 'auto' ? (LOW_END ? 'Auto chose Potato: this TV has little memory or few processor cores.' : 'Auto chose Full for this TV.') : 'Each add-on says what it costs. Off, an add-on isn’t even loaded.' }];
+        reason: S.c.perf === 'auto' ? autoReason() : 'Each add-on says what it costs. Off, an add-on isn’t even loaded.' }];
     if (t.group === 'phone') return phoneSections(flat);
     if (t.group === 'addons') return addonSections();
     if (t.group === 'ha') return haSections();
@@ -2717,7 +2771,7 @@
   GIF.addEventListener('load', function () { if (GIF._src) GIF.className = 'photo-video is-playing'; });
   function animated(w) { return !!(w && (w.video || w.gif)); }
   function syncGif(shown) {
-    var src = S.c.bg === 'photo' && shown && shown.gif && !animationsPaused() && !potato() ? shown.gif : '';
+    var src = S.c.bg === 'photo' && shown && shown.gif && !animationsPaused() && !calm() ? shown.gif : '';
     if (!GIF.parentNode && IMG.photo.parentNode) IMG.photo.parentNode.insertBefore(GIF, IMG.photo.nextSibling);
     if (GIF._src === src) return;
     GIF._src = src; GIF.className = 'photo-video';
@@ -2726,7 +2780,7 @@
   function syncVideo(shown) {
     syncGif(shown);
     if (PHONE && shown && shown.id !== phoneWall) { phoneWall = shown.id; PHONE.wallpaper(shown.id); }
-    var src = S.c.bg === 'photo' && shown && shown.video && !potato() ? shown.video : '';
+    var src = S.c.bg === 'photo' && shown && shown.video && !calm() ? shown.video : '';
     if (!VIDEO.parentNode && IMG.photo.parentNode) IMG.photo.parentNode.insertBefore(VIDEO, IMG.photo.nextSibling);
     if (VIDEO._src !== src) {
       VIDEO._src = src; VIDEO.className = 'photo-video';
@@ -2736,7 +2790,7 @@
     if ((!src || animationsPaused()) && !VIDEO.paused) VIDEO.pause();
   }
   function syncDrift() {
-    var on = S.c.motion === 'drift' && S.c.bg === 'photo' && !animated(wall(S.c.wall)) && !potato(), key = on + '|' + imgSwaps;
+    var on = S.c.motion === 'drift' && S.c.bg === 'photo' && !animated(wall(S.c.wall)) && !calm(), key = on + '|' + imgSwaps;
     if (key === driftKey) return; // nothing to (re)phase: no image was replaced and drift didn't change
     driftKey = key;
     Array.prototype.forEach.call(stage.querySelectorAll('.photo,.mat-img,.ph-field-img'), function (el) {
@@ -2748,9 +2802,9 @@
     loadPack();
     var t = top(), sheet = !!V[t.id].sheet, shown = wall(S.shown ? S.shown.wall : S.c.wall), np = npArt(), palette = np ? null : ADAPTIVE_INK[shown.id];
     var adaptive = applyAdaptiveInk(palette), tr = np ? 'light' : adaptive && palette.tr ? palette.tr.pol : shown.ut.tr, br = np ? 'light' : adaptive && palette.br ? palette.br.pol : shown.ut.br;
-    var cls = 'stage bg-' + S.c.bg + ' l-' + S.c.layout + ' v-' + S.variant + ' m-' + (materialApplies() ? S.c.material : 'none') + ' f-' + S.c.focus + ' a-' + S.c.apps + ' u-' + S.c.controls + ' g-' + S.geom + ' tone-' + (np ? 'dark' : shown.tone) + ' tr-' + tr + ' br-' + br + wallClasses(shown) + inkRungClasses(palette, adaptive) + ' at-' + t.id + ' font-' + homeFont() + (homeFont() !== 'manrope' ? ' font-custom' : '') + (S.fontSwitch ? ' is-font-switch' : '') + (adaptive ? ' has-adaptive-ink adaptive-tl-' + palette.tl.pol : '') + (!adaptive && !np && shown.clockInk ? ' has-clock-ink' : '') + (!adaptive && !np && shown.dockClockInk ? ' has-dock-clock-ink' : '') + (np ? ' has-np-art' : '') + (S.saver ? ' is-saver' : '') + (S.intro ? ' is-' + S.intro : '') + (registeredMaterial(shown.id) ? ' registered-material' : '') + (sheet ? ' is-sheet' : '') + (S.reflow ? ' is-reflow' : '') + ' mo-' + (S.c.bg === 'photo' && !animated(shown) && !potato() ? S.c.motion : 'still') + (syncPause() ? ' anim-paused' : '') + (nightActive() ? ' is-night nd-' + S.c.ndim : '') + (S.idleHidden && top().id === 'home' ? ' is-idle' : '') + weatherFx()
+    var cls = 'stage bg-' + S.c.bg + ' l-' + S.c.layout + ' v-' + S.variant + ' m-' + (materialApplies() ? S.c.material : 'none') + ' f-' + S.c.focus + ' a-' + S.c.apps + ' u-' + S.c.controls + ' g-' + S.geom + ' tone-' + (np ? 'dark' : shown.tone) + ' tr-' + tr + ' br-' + br + wallClasses(shown) + inkRungClasses(palette, adaptive) + ' at-' + t.id + ' font-' + homeFont() + (homeFont() !== 'manrope' ? ' font-custom' : '') + (S.fontSwitch ? ' is-font-switch' : '') + (adaptive ? ' has-adaptive-ink adaptive-tl-' + palette.tl.pol : '') + (!adaptive && !np && shown.clockInk ? ' has-clock-ink' : '') + (!adaptive && !np && shown.dockClockInk ? ' has-dock-clock-ink' : '') + (np ? ' has-np-art' : '') + (S.saver ? ' is-saver' : '') + (S.intro ? ' is-' + S.intro : '') + (registeredMaterial(shown.id) ? ' registered-material' : '') + (sheet ? ' is-sheet' : '') + (S.reflow ? ' is-reflow' : '') + ' mo-' + (S.c.bg === 'photo' && !animated(shown) && !calm() ? S.c.motion : 'still') + (syncPause() ? ' anim-paused' : '') + (nightActive() ? ' is-night nd-' + S.c.ndim : '') + (S.idleHidden && top().id === 'home' ? ' is-idle' : '') + weatherFx()
       + ' ls-' + (isShelf() ? 'shelf' : 'glass') + ' cs-' + S.c.csize + ' cw-' + S.c.cweight + ' tw-' + S.c.tweight + ' ts-' + S.c.tsize
-      + ' cp-' + S.c.cpos + ' tint-' + S.c.tint + ' dg-' + S.c.dglass + ' is-' + S.c.isize + ' npd-' + S.c.npdim + (potato() ? ' perf-potato' : '');
+      + ' cp-' + S.c.cpos + ' tint-' + S.c.tint + ' dg-' + S.c.dglass + ' is-' + S.c.isize + ' npd-' + S.c.npdim + ' perf-' + tier();
     if (stage.className !== cls) stage.className = cls;
     syncStorm();
     if (newsWasOn !== (newsOn() ? S.c.nsrc : '')) { newsWasOn = newsOn() ? S.c.nsrc : ''; newsIdx = 0; newsTick(false); }
@@ -3950,6 +4004,7 @@
     // On a Home app tile or an adjustable Smart home chip, OK acts on release: held for LONG_OK it opens the tile's quick actions or the chip's controls instead.
     var held = k === 'ok' && holdAction();
     if (held) { clearTimeout(longOk.timer); longOk = { code: code, timer: setTimeout(function () { longOk.timer = 0; held(); }, LONG_OK) }; return; }
+    if (Date.now() - keySampled > 300) { keySampled = Date.now(); watchFrames(); }
     press(k);
   });
   document.addEventListener('keyup', function (ev) {
@@ -4005,6 +4060,8 @@
   QA.adBlock = function (fake) { return qaAddon('ad', fake, function () { if (AD) AD.qa(fake || null); render(); return !!(AD && AD.available()); }); };
   QA.homeAssistant = function (fake) { return qaAddon('ha', fake, function () { if (HA) HA.qa(fake || null); render(); return !!(HA && HA.available()); }); };
   QA.weatherFx = function (kind) { return qaAddon('wfx', true, function () { fxForced = kind || ''; render(); return stage.className.indexOf(' wx-') >= 0; }); };
+  /* Browser checks: feed key timings to Auto, or read what it decided. */
+  QA.tierSamples = function (list) { list.forEach(tierSample); return { tier: tierAuto, ms: tierMedian, why: tierWhy, ceiling: tierCeiling() }; };
   QA.addons = function () { var out = {}; ADDONS.forEach(function (a) { out[a.id] = addonMods[a.id] || 'not loaded'; }); return out; };
   QA.health = function (n) { QA.alerts = n; render(); return healthAlerts(); };
   QA.saver = function (on) { if (on === true) startSaver(); else if (on === false) stopSaver(); else if (on === 'next' && S.saver) nextSaverPhoto(); return { on: S.saver, scheduled: !!saverTimer, awake: awakeOn, photo: saverSrc }; };

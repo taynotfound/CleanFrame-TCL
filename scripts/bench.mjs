@@ -16,7 +16,7 @@ import { chromium } from 'playwright';
 const here = fileURLToPath(new URL('../', import.meta.url));
 const arg = (name, fallback) => { const i = process.argv.indexOf('--' + name); return i > 0 ? process.argv[i + 1] : fallback; };
 const root = resolve(arg('root', here)) + '/';
-const PROFILES = { potato: { cpu: 6, viewport: { width: 1280, height: 720 } }, tv: { cpu: 4, viewport: { width: 1920, height: 1080 } } };
+const PROFILES = { potato: { cpu: 6, viewport: { width: 1280, height: 720 } }, brick: { cpu: 20, viewport: { width: 1280, height: 720 } }, tv: { cpu: 4, viewport: { width: 1920, height: 1080 } } };
 const profileName = arg('profile', 'potato'), profile = PROFILES[profileName];
 const runs = +arg('runs', 2), only = arg('only', '') ? arg('only').split(',') : null;
 const out = resolve(arg('out', here + '.local/qa/bench/' + profileName + '.json'));
@@ -35,6 +35,8 @@ const DAYS = [{ date: '2026-10-25', icon: 'sun', hi: 21, lo: 12 }, { date: '2026
 const FEATURES = [
   { id: 'base', name: 'Default look (Photo, Dock, Glass, Soft)' },
   { id: 'potato', name: 'Performance: Potato', look: { perf: 'potato' } },
+  { id: 'balanced', name: 'Performance: Balanced', look: { perf: 'balanced' } },
+  { id: 'auto', name: 'Performance: Auto (what it picks after 24 keys)', look: { perf: 'auto' } },
   { id: 'dark', name: 'Dark background (no photo)', look: { bg: 'dark' } },
   { id: 'list', name: 'List layout', look: { layout: 'list' }, list: true },
   { id: 'shelf', name: 'Shelf layout', look: { lstyle: 'shelf' } },
@@ -144,6 +146,7 @@ async function measureIn(context, base, feature) {
     result.keys = { count: n, mainThreadMsPerKey: round(((k1.TaskDuration - k0.TaskDuration) / n - idleShare) * 1000),
       styleMsPerKey: round((k1.RecalcStyleDuration - k0.RecalcStyleDuration) * 1000 / n), layoutMsPerKey: round((k1.LayoutDuration - k0.LayoutDuration) * 1000 / n),
       layoutsPerKey: round((k1.LayoutCount - k0.LayoutCount) / n), latencyP50Ms: round(pct(lat, .5)), latencyP95Ms: round(pct(lat, .95)) };
+    result.autoTier = await page.evaluate(() => ShoreQA.tierSamples ? ShoreQA.tierSamples([]) : null);
     const where = await page.evaluate(() => ShoreQA.where());
     if (where.focusCount !== 1) errors.push('focus count ' + where.focusCount);
   }
@@ -178,7 +181,7 @@ try {
     const r = combine(list);
     report.features.push(r);
     console.log([r.id.padEnd(10), 'ready', r.readyMs + 'ms', 'startup', r.startup.taskMs + 'ms', 'js', Math.round(r.startup.bytes.script / 1024) + 'KB',
-      'idle', r.idle.taskMsPer10s + 'ms/10s', 'anim', r.idle.runningAnimations, r.keys ? 'key ' + r.keys.mainThreadMsPerKey + 'ms p95 ' + r.keys.latencyP95Ms + 'ms' : '', r.errors.length ? 'ERR ' + r.errors.join('; ') : ''].join(' '));
+      'idle', r.idle.taskMsPer10s + 'ms/10s', 'anim', r.idle.runningAnimations, r.keys ? 'key ' + r.keys.mainThreadMsPerKey + 'ms p95 ' + r.keys.latencyP95Ms + 'ms' : '', r.autoTier && r.id === 'auto' ? 'auto→' + r.autoTier.tier + ' (' + r.autoTier.ms + 'ms)' : '', r.errors.length ? 'ERR ' + r.errors.join('; ') : ''].join(' '));
   }
 } finally {
   await browser.close(); server.kill(); await once(server, 'exit');
