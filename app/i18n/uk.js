@@ -1,5 +1,6 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("uk", {
+      "Show what changed": "Показати, що змінилося",
       "Widgets": "Віджети", "Widgets need the Dock or List layout.": "Віджетам потрібен макет Dock або Список.", "Cards under the clock: the forecast, your next events and Home Assistant, from what is already switched on.": "Картки під годинником: прогноз, найближчі події та Home Assistant, з того, що вже увімкнено.",
       "Type from your phone": "Друк з телефона", "On · use the Keyboard tab on your phone": "Увімкнено · вкладка «Клавіатура» на телефоні", "Optional: turn on Shore phone keyboard in Accessibility": "Необов’язково: увімкніть «Shore phone keyboard» у спеціальних можливостях",
       "Search": "Пошук", "Type the letter": "Ввести літеру", "Results": "Результати", "Type a name": "Введіть назву", "Space": "Пробіл", "Delete": "Видалити", "Recent": "Нещодавні", "Nothing found": "Нічого не знайдено",
@@ -407,6 +408,7 @@ CleanFrameI18n.load("uk", {
       'Artist pictures': 'Фото виконавців'
     },
 [
+      [/^What’s new in Shore (.+)$/, "Що нового в Shore $1"], [/^And (\d+) more$/, "І ще $1"],
       [/^(\d+) apps limited$/, "Обмежено застосунків: $1"], [/^(\d+) min today$/, "сьогодні $1 хв"], [/^Time’s up for (.+)$/, "Час вичерпано: $1"],
       [/^([\d.]+)% blocked today$/, "Сьогодні заблоковано $1%"], [/^Blocking paused · (\d+) min$/, "Блокування на паузі · $1 хв"], [/^Pause (\d+) min$/, "Пауза $1 хв"],
       [/^The device calls itself (.+)\.$/, "Пристрій називає себе $1."],

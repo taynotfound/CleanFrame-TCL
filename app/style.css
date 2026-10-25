@@ -1063,3 +1063,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
 .wg-t{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .caption .cap-widgets{width:max-content;max-width:1640px}
 .l-list .caption .cap-widgets{width:auto;max-width:none}
+/* What's new after an update */
+.wn-kicker{position:absolute;left:140px;top:120px;margin:0;font-size:30px;line-height:40px;font-weight:600;color:var(--mute)}
+.wn-title{position:absolute;left:140px;top:168px;max-width:1640px;margin:0;font-size:64px;line-height:76px;font-weight:500;letter-spacing:-1.8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wn-list{position:absolute;left:140px;top:300px;width:1560px;margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:14px}
+.wn-list li{position:relative;padding-left:36px;font-size:30px;line-height:40px;font-weight:500;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.wn-list li::before{content:'';position:absolute;left:4px;top:15px;width:10px;height:10px;border-radius:5px;background:currentColor;opacity:.55}
+.wn-acts{top:auto;bottom:96px}
+.wn-list .wn-more{color:var(--mute)}

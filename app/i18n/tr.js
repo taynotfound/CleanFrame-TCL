@@ -1,5 +1,6 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("tr", {
+      "Show what changed": "Nelerin değiştiğini göster",
       "Widgets": "Widget’lar", "Widgets need the Dock or List layout.": "Widget’lar için Dock veya Liste düzeni gerekir.", "Cards under the clock: the forecast, your next events and Home Assistant, from what is already switched on.": "Saatin altında kartlar: hava tahmini, sıradaki etkinliklerin ve Home Assistant, zaten açık olanlardan.",
       "Type from your phone": "Telefondan yaz", "On · use the Keyboard tab on your phone": "Açık · telefondaki Klavye sekmesini kullan", "Optional: turn on Shore phone keyboard in Accessibility": "İsteğe bağlı: Erişilebilirlik’te Shore phone keyboard’u aç", "Search": "Ara",
       "Type the letter": "Harfi yaz", "Results": "Sonuçlar", "Type a name": "Bir ad yaz", "Space": "Boşluk",
@@ -173,6 +174,7 @@ CleanFrameI18n.load("tr", {
       "Find artist pictures online": "Sanatçı fotoğraflarını çevrimiçi bul", "Uses only the cover the music app provides.": "Yalnızca müzik uygulamasının verdiği kapağı kullanır.", "Artist pictures": "Sanatçı fotoğrafları"
     },
 [
+      [/^What’s new in Shore (.+)$/, "Shore $1 sürümündeki yenilikler"], [/^And (\d+) more$/, "Ve $1 tane daha"],
       [/^(\d+) apps limited$/, "$1 uygulama sınırlı"],
       [/^(\d+) min today$/, "bugün $1 dk"],
       [/^Time’s up for (.+)$/, "Süre doldu: $1"],

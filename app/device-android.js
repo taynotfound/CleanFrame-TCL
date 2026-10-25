@@ -252,6 +252,13 @@
     check: function () { try { bridge.updateCheck(); } catch (e) { } },
     install: function () { try { bridge.updateInstall(); } catch (e) { } },
     auto: function (on) { try { bridge.updateAuto(!!on); } catch (e) { } },
+    /* This version's release notes {pending, version, title, items}; items is empty until they are fetched. */
+    notes: function () {
+      var r;
+      try { r = JSON.parse(bridge.updateNotes ? bridge.updateNotes() : '{}') || {}; } catch (e) { r = {}; }
+      return { pending: !!r.pending, version: String(r.version || ''), title: String(r.title || ''), items: (Array.isArray(r.items) ? r.items : []).filter(function (s) { return typeof s === 'string' && s; }).slice(0, 40) };
+    },
+    notesSeen: function () { try { if (bridge.updateNotesSeen) bridge.updateNotesSeen(); } catch (e) { } },
     onChange: function (fn) { updateListeners.push(fn); }
   } : null;
   /* Home Assistant add-on (HomeAssistant.java): states read natively, the token never reaches the page. */

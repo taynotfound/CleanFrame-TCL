@@ -1,5 +1,6 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("nl", {
+      "Show what changed": "Laten zien wat er veranderd is",
       "Widgets": "Widgets", "Widgets need the Dock or List layout.": "Widgets hebben de Dock- of Lijst-indeling nodig.", "Cards under the clock: the forecast, your next events and Home Assistant, from what is already switched on.": "Kaarten onder de klok: de verwachting, je volgende afspraken en Home Assistant, uit wat al aanstaat.",
       "Type from your phone": "Typen vanaf je telefoon", "On · use the Keyboard tab on your phone": "Aan · tabblad Toetsenbord op je telefoon", "Optional: turn on Shore phone keyboard in Accessibility": "Optioneel: zet ‘Shore phone keyboard’ aan bij Toegankelijkheid",
       "Search": "Zoeken", "Type the letter": "Letter typen", "Results": "Resultaten", "Type a name": "Typ een naam", "Space": "Spatie", "Delete": "Wissen", "Recent": "Recent", "Nothing found": "Niets gevonden",
@@ -112,6 +113,7 @@ CleanFrameI18n.load("nl", {
       "While music plays": "Terwijl er muziek speelt", "Album art as background": "Albumhoes als achtergrond", "Find artist pictures online": "Artiestfoto’s online zoeken", "Uses only the cover the music app provides.": "Gebruikt alleen de hoes van de muziekapp.", "Artist pictures": "Artiestfoto’s"
     },
 [
+      [/^What’s new in Shore (.+)$/, "Nieuw in Shore $1"], [/^And (\d+) more$/, "En nog $1"],
       [/^(\d+) apps limited$/, "$1 apps beperkt"], [/^(\d+) min today$/, "vandaag $1 min"], [/^Time’s up for (.+)$/, "Tijd is op voor $1"],
       [/^([\d.]+)% blocked today$/, "Vandaag $1% geblokkeerd"], [/^Blocking paused · (\d+) min$/, "Blokkeren gepauzeerd · $1 min"], [/^Pause (\d+) min$/, "$1 min pauze"],
       [/^The device calls itself (.+)\.$/, "Het apparaat noemt zich $1."],

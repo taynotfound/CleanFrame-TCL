@@ -1,5 +1,6 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("it", {
+      "Show what changed": "Mostra cosa è cambiato",
       "Widgets": "Widget", "Widgets need the Dock or List layout.": "I widget richiedono il layout Dock o Elenco.", "Cards under the clock: the forecast, your next events and Home Assistant, from what is already switched on.": "Schede sotto l’orologio: previsioni, i prossimi eventi e Home Assistant, da ciò che è già attivo.",
       "Type from your phone": "Scrivi dal telefono", "On · use the Keyboard tab on your phone": "Attivo · usa la scheda Tastiera sul telefono", "Optional: turn on Shore phone keyboard in Accessibility": "Facoltativo: attiva Shore phone keyboard in Accessibilità", "Search": "Cerca",
       "Type the letter": "Scrivi la lettera", "Results": "Risultati", "Type a name": "Scrivi un nome", "Space": "Spazio",
@@ -173,6 +174,7 @@ CleanFrameI18n.load("it", {
       "Find artist pictures online": "Cerca online foto dell’artista", "Uses only the cover the music app provides.": "Usa solo la copertina fornita dall’app musicale.", "Artist pictures": "Foto dell’artista"
     },
 [
+      [/^What’s new in Shore (.+)$/, "Novità di Shore $1"], [/^And (\d+) more$/, "E altre $1"],
       [/^(\d+) apps limited$/, "$1 app limitate"],
       [/^(\d+) min today$/, "oggi $1 min"],
       [/^Time’s up for (.+)$/, "Tempo scaduto per $1"],

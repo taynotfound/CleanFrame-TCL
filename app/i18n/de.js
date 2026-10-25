@@ -1,5 +1,6 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("de", {
+      "Show what changed": "Zeigen, was sich geändert hat",
       "Widgets": "Widgets", "Widgets need the Dock or List layout.": "Widgets brauchen das Dock- oder Listen-Layout.", "Cards under the clock: the forecast, your next events and Home Assistant, from what is already switched on.": "Karten unter der Uhr: Vorhersage, deine nächsten Termine und Home Assistant, aus dem, was schon eingeschaltet ist.",
       "Type from your phone": "Vom Handy tippen", "On · use the Keyboard tab on your phone": "An · Tastatur-Tab auf dem Handy", "Optional: turn on Shore phone keyboard in Accessibility": "Optional: „Shore phone keyboard“ in den Bedienungshilfen einschalten",
       "Search": "Suche", "Type the letter": "Buchstabe tippen", "Results": "Ergebnisse", "Type a name": "Namen eingeben", "Space": "Leerzeichen", "Delete": "Löschen", "Recent": "Zuletzt", "Nothing found": "Nichts gefunden",
@@ -120,6 +121,7 @@ CleanFrameI18n.load("de", {
       "While music plays": "Während Musik läuft", "Album art as background": "Albumcover als Hintergrund", "Find artist pictures online": "Künstlerbilder online suchen", "Uses only the cover the music app provides.": "Nutzt nur das Cover der Musik-App.", "Artist pictures": "Künstlerbilder"
     },
 [
+      [/^What’s new in Shore (.+)$/, "Neu in Shore $1"], [/^And (\d+) more$/, "Und $1 weitere"],
       [/^(\d+) apps limited$/, "$1 Apps begrenzt"], [/^(\d+) min today$/, "heute $1 Min."], [/^Time’s up for (.+)$/, "Zeit ist um für $1"],
       [/^([\d.]+)% blocked today$/, "Heute $1 % blockiert"], [/^Blocking paused · (\d+) min$/, "Blockieren pausiert · $1 Min."], [/^Pause (\d+) min$/, "$1 Min. Pause"],
       [/^The device calls itself (.+)\.$/, "Das Gerät nennt sich $1."],

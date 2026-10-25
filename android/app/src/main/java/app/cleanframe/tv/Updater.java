@@ -222,6 +222,55 @@ final class Updater {
         }
     }
 
+    // ---------- What's new: the installed version's release notes, shown on Home once after an update ----------
+
+    private volatile boolean fetchingNotes;
+
+    /** {pending, version, title, items} for the installed version; fetched from its release once, and again an hour later if that failed. */
+    synchronized String notes() {
+        String v = BuildConfig.VERSION_NAME, seen = prefs.getString("seen", "");
+        // Before this existed there was no record, so a copy that has checked for updates counts as updated; a new install doesn't.
+        if (seen.isEmpty() && prefs.getLong("checked", 0) == 0) { prefs.edit().putString("seen", v).apply(); seen = v; }
+        if (!prefs.getString("notesFor", "").equals(v)) { fetchNotes(v); return "{}"; }
+        try { return new JSONObject(prefs.getString("notes", "{}")).put("pending", !seen.equals(v)).toString(); } catch (Exception e) { return "{}"; }
+    }
+
+    void notesSeen() { prefs.edit().putString("seen", BuildConfig.VERSION_NAME).apply(); }
+
+    private void fetchNotes(final String v) {
+        long now = System.currentTimeMillis();
+        if (fetchingNotes || !TAG.matcher("v" + v).matches() || now - prefs.getLong("notesTried", 0) < 3600000L) return;
+        fetchingNotes = true;
+        prefs.edit().putLong("notesTried", now).apply();
+        new Thread(() -> {
+            try {
+                JSONObject release = new JSONObject(read("https://api.github.com/repos/taynotfound/shore/releases/tags/v" + v));
+                prefs.edit().putString("notesFor", v).putString("notes", parseNotes(v, release.optString("body")).toString()).apply();
+                changed();
+            } catch (Exception ignored) {
+            } finally { fetchingNotes = false; }
+        }, "shore-notes").start();
+    }
+
+    /** The release's "## " headline and the "- " lines under it, without Markdown or HTML. */
+    static JSONObject parseNotes(String version, String body) throws Exception {
+        String title = "";
+        JSONArray items = new JSONArray();
+        boolean in = false;
+        for (String raw : body.split("\n")) {
+            String line = raw.trim();
+            if (line.startsWith("## ")) { if (in) break; title = plain(line.substring(3)); in = true; }
+            else if (in && line.startsWith("#")) break;
+            else if (in && line.startsWith("- ") && items.length() < 40) items.put(plain(line.substring(2)));
+        }
+        return new JSONObject().put("version", version).put("title", title).put("items", items);
+    }
+
+    private static String plain(String s) {
+        s = s.replaceAll("!\\[[^\\]]*\\]\\([^)]*\\)", "").replaceAll("\\[([^\\]]*)\\]\\([^)]*\\)", "$1").replaceAll("<[^>]+>", "").replace("**", "").replace("`", "").trim();
+        return s.length() > 300 ? s.substring(0, 300) : s;
+    }
+
     private static String headline(String body) {
         for (String line : body.split("\n")) if (line.startsWith("## ")) return line.substring(3).trim();
         return "";

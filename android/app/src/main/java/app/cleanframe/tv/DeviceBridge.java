@@ -142,6 +142,14 @@ final class DeviceBridge {
     @JavascriptInterface
     public void updateAuto(boolean on) { if (activity != null) Updater.get(context).setAuto(on); }
 
+    /** This version's release notes: {pending, version, title, items}, or {} until they are fetched. */
+    @JavascriptInterface
+    public String updateNotes() { return activity == null ? "{}" : Updater.get(context).notes(); }
+
+    /** The page showed the notes; they don't come back on their own. */
+    @JavascriptInterface
+    public void updateNotesSeen() { if (activity != null) Updater.get(context).notesSeen(); }
+
     /** {access, playing, title, artist, app, pkg} from the active media sessions (needs notification access). */
     @JavascriptInterface
     public String nowPlaying() { return NowPlayingService.info(context); }

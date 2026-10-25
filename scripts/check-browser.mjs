@@ -1181,6 +1181,14 @@ try {
     await current.evaluate(() => { delete ShoreQA.days; delete ShoreQA.events; ShoreQA.homeAssistant(null); });
     await look({ cwidget: 'off', lstyle: 'glass', ccal: 'off', aha: 'off' });
   });
+  await run('What’s new', async () => {
+    await closePage(); await page();
+    await current.evaluate(() => ShoreQA.whatsNew({ pending: true, version: '0.8.99', title: 'Search and widgets', items: ['Search: find apps, inputs and Settings pages from All apps', 'Widgets: forecast, upcoming events and Home Assistant cards under the clock', 'Italian and Turkish'] }));
+    const text = await current.locator('#sheetView').innerText();
+    check('The notes show the version, headline and items', (await state()).view === 'whatsnew' && /0\.8\.99/.test(text) && /Search and widgets/.test(text) && /Italian and Turkish/.test(text), text);
+    await nav('ok');
+    check('OK closes them', (await state()).view === 'home');
+  });
   await run('Screen time', async () => {
     const pinHash = pin => { let h = 0x811c9dc5; for (const ch of 'shore:' + pin) { h ^= ch.charCodeAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
     const id = 'stremio';

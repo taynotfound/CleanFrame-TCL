@@ -1389,6 +1389,20 @@
     }
   };
 
+  /* ---------- What's new: the release notes of the version just installed, once, over Home ---------- */
+  function openWhatsNew(n) { push({ id: 'whatsnew', notes: n, f: {} }); render(); }
+  function checkWhatsNew() {
+    var n = UPDATE && UPDATE.notes ? UPDATE.notes() : null;
+    if (!n || !n.pending || !n.items.length || top().id !== 'home' || S.stack.length > 1 || S.saver) return;
+    UPDATE.notesSeen();
+    openWhatsNew(n);
+  }
+  V.whatsnew = {
+    sheet: true,
+    key: function (t, k) { if (k === 'ok' || k === 'back') pop(); },
+    point: function (t, z) { if (z === 'act') this.key(t, 'ok'); }
+  };
+
   /* ---------- B: two-zone Home editor ---------- */
   function otherGroups() {
     var rec = S.c.recent.filter(function (id) { return !onHome(id) && app(id); });
@@ -2344,7 +2358,9 @@
     else if (updateReady() && u.personal) main = { action: 'update.check', label: 'Shore ' + u.latest + ' is out', description: 'Rebuild Shore to update' };
     else if (updateReady()) main = { action: 'update.install', label: 'Install Shore ' + u.latest, description: u.title || (u.size ? (u.size / 1048576).toFixed(1) + ' MB' : '') };
     else main = { action: 'update.check', label: u.status === 'checking' ? 'Checking…' : 'Check for updates', description: u.status === 'current' ? 'Shore ' + u.current + ' is the latest version' : 'You have Shore ' + u.current };
-    return [{ id: 'update', title: '', items: [main, { action: 'update.auto', label: 'Check automatically', description: 'Every few hours, when Shore opens', tick: true, applied: u.auto }],
+    var notes = UPDATE && UPDATE.notes ? UPDATE.notes() : null;
+    return [{ id: 'update', title: '', items: [main, { action: 'update.auto', label: 'Check automatically', description: 'Every few hours, when Shore opens', tick: true, applied: u.auto }]
+      .concat(notes && notes.items.length ? [{ action: 'update.notes', label: 'What’s new in Shore ' + notes.version, description: notes.title }] : []),
       reason: u.status === 'error' ? u.error
         : u.personal ? (updateReady() ? 'You built this copy of Shore yourself, so it doesn’t replace itself with the public APK. Pull the latest source, then build and install the new APK.' : 'You built this copy of Shore yourself. Shore tells you when a new version is out; then rebuild it from the latest source.')
         : updateReady() && !u.canInstall ? 'First, Shore asks for permission to install apps. Allow it, then come back and press OK again.'
@@ -2896,6 +2912,7 @@
     else if (item.action === 'ha.refresh') HA.refresh();
     else if (item.action.indexOf('ha.area.') === 0) haArea(+item.action.slice(8));
     else if (item.action === 'ha.forget') openMessage('haforget');
+    else if (item.action === 'update.notes') openWhatsNew(UPDATE.notes());
     else if (item.action === 'health.remote' || item.action === 'health.keyboard') perform('Accessibility settings', REMOTE.openSettings);
     else if (item.action === 'health.phone') openPhone();
     else if (item.action === 'open.updates') { S.update = UPDATE.info(); openAppearance('updates'); }
@@ -3738,7 +3755,7 @@
         + command({ action: 'settings.retry', label: 'Try again' }, '<span>Try again</span>', 'setting-retry');
     }
     setHTML(appearanceStatus, status);
-    hint = selected.disabled ? '' : remoteHint(selected) || (selected.action === 'settings.back' ? 'Return to ' + (parentName(t)) : selected.action === 'settings.retry' ? 'Retry this change' : selected.axis === 'source' ? (selected.applied ? 'Remove from rotation' : 'Add to rotation') : selected.axis ? 'Apply selected setting' : selected.action === 'background.wallpaper' ? 'Choose a wallpaper' : selected.action === 'background.rotation' ? 'Choose a rotation interval' : selected.action === 'background.online' ? 'Choose a wallpaper source' : selected.action === 'phone.toggle' ? (S.phone.enabled ? 'Turn off' : 'Turn on') : selected.action === 'phone.forget' ? 'Phones scan a new code' : selected.action === 'phone.clear' ? 'Remove all my photos' : selected.action === 'nowplaying.access' ? 'Open Notification access' : /^open\./.test(selected.action) ? 'Open selected group' : selected.more ? 'Show these sources' : selected.action === 'typography.fonts' ? 'Choose a font' : selected.action === 'saver.start' ? 'Start the screensaver now' : selected.action === 'health.remote' || selected.action === 'health.keyboard' ? 'Open Accessibility settings' : selected.action === 'health.phone' ? 'Open Phone settings' : selected.action === 'update.install' ? 'Download and install' : selected.action === 'update.check' ? 'Check now' : selected.action === 'update.auto' ? (S.update.auto ? 'Turn off' : 'Turn on') : selected.action === 'update.wait' ? 'Please wait' : selected.action.indexOf('iconapp.') === 0 ? 'Choose an icon' : selected.action.indexOf('iconset.') === 0 ? 'Use this icon' : selected.action.indexOf('inname.') === 0 ? 'Use this name' : selected.action.indexOf('todpart.') === 0 ? 'Choose a photo for this part of the day' : selected.action.indexOf('todauto.') === 0 ? 'Pick one automatically' : selected.action.indexOf('todpick.') === 0 ? 'Choose a photo' : /^input(page|name)\./.test(selected.action) ? 'Open selected group' : selected.action.indexOf('input.toggle.') === 0 ? (selected.applied ? 'Hide from Home' : 'Show on Home') : selected.action === 'ha.refresh' ? 'Check again' : /^hadoor\./.test(selected.action) ? 'Use this doorbell' : /^hadoorcam\./.test(selected.action) ? 'Show this camera' : selected.action === 'ad.refresh' ? 'Check again' : selected.action === 'ad.pause.0' ? 'Turn blocking back on' : selected.action.indexOf('ad.pause.') === 0 ? 'Pause blocking' : selected.action === 'ad.forget' ? 'Forget the server and its password' : selected.action.indexOf('ha.area.') === 0 ? (selected.applied ? 'Hide this room' : 'Show this room') : selected.action === 'ha.forget' ? 'Forget the server and its token' : 'Open on the TV');
+    hint = selected.disabled ? '' : remoteHint(selected) || (selected.action === 'settings.back' ? 'Return to ' + (parentName(t)) : selected.action === 'settings.retry' ? 'Retry this change' : selected.axis === 'source' ? (selected.applied ? 'Remove from rotation' : 'Add to rotation') : selected.axis ? 'Apply selected setting' : selected.action === 'background.wallpaper' ? 'Choose a wallpaper' : selected.action === 'background.rotation' ? 'Choose a rotation interval' : selected.action === 'background.online' ? 'Choose a wallpaper source' : selected.action === 'phone.toggle' ? (S.phone.enabled ? 'Turn off' : 'Turn on') : selected.action === 'phone.forget' ? 'Phones scan a new code' : selected.action === 'phone.clear' ? 'Remove all my photos' : selected.action === 'nowplaying.access' ? 'Open Notification access' : /^open\./.test(selected.action) ? 'Open selected group' : selected.more ? 'Show these sources' : selected.action === 'typography.fonts' ? 'Choose a font' : selected.action === 'saver.start' ? 'Start the screensaver now' : selected.action === 'health.remote' || selected.action === 'health.keyboard' ? 'Open Accessibility settings' : selected.action === 'health.phone' ? 'Open Phone settings' : selected.action === 'update.install' ? 'Download and install' : selected.action === 'update.notes' ? 'Show what changed' : selected.action === 'update.check' ? 'Check now' : selected.action === 'update.auto' ? (S.update.auto ? 'Turn off' : 'Turn on') : selected.action === 'update.wait' ? 'Please wait' : selected.action.indexOf('iconapp.') === 0 ? 'Choose an icon' : selected.action.indexOf('iconset.') === 0 ? 'Use this icon' : selected.action.indexOf('inname.') === 0 ? 'Use this name' : selected.action.indexOf('todpart.') === 0 ? 'Choose a photo for this part of the day' : selected.action.indexOf('todauto.') === 0 ? 'Pick one automatically' : selected.action.indexOf('todpick.') === 0 ? 'Choose a photo' : /^input(page|name)\./.test(selected.action) ? 'Open selected group' : selected.action.indexOf('input.toggle.') === 0 ? (selected.applied ? 'Hide from Home' : 'Show on Home') : selected.action === 'ha.refresh' ? 'Check again' : /^hadoor\./.test(selected.action) ? 'Use this doorbell' : /^hadoorcam\./.test(selected.action) ? 'Show this camera' : selected.action === 'ad.refresh' ? 'Check again' : selected.action === 'ad.pause.0' ? 'Turn blocking back on' : selected.action.indexOf('ad.pause.') === 0 ? 'Pause blocking' : selected.action === 'ad.forget' ? 'Forget the server and its password' : selected.action.indexOf('ha.area.') === 0 ? (selected.applied ? 'Hide this room' : 'Show this room') : selected.action === 'ha.forget' ? 'Forget the server and its token' : 'Open on the TV');
     setHTML(appearanceDesc, hint ? '<span class="remote-key">OK</span><span>' + esc(hint) + '</span>' : '');
     fitRows();
   }
@@ -3900,6 +3917,9 @@
         + '<div class="row-cue editor-before" data-slot="otherBefore" aria-hidden="true">' + icon('up') + '</div><div class="row-cue editor-after" data-slot="otherAfter" aria-hidden="true">' + icon('down') + '</div>';
     },
     settings: function () { return '<h2 class="s-title">' + esc('Settings') + '</h2><div class="settings-overview" data-slot="list"></div><p class="settings-overview-hint"><span class="remote-key">OK</span><span>' + esc('Open selected group') + '</span></p>'; },
+    whatsnew: function () {
+      return '<p class="wn-kicker" data-slot="kicker"></p><h2 class="wn-title" data-slot="title"></h2><ul class="wn-list" data-slot="list"></ul><div class="msg-acts wn-acts" data-slot="acts"></div>';
+    },
     search: function () {
       return '<h2 class="s-title">' + esc('Search') + '</h2><p class="sq" data-slot="q"></p><div class="skeys" data-slot="keys"></div>'
         + '<p class="s-label sr-label" data-slot="label"></p><div class="sres" data-slot="res"></div>'
@@ -4186,6 +4206,13 @@
       setHTML(el.boxes, html);
       el.boxes.className = 'pin-boxes' + (t.shake ? ' is-shake' + (t.shake % 2) : '');
       setHTML(el.err, esc(t.err || ''));
+    },
+    whatsnew: function (t, el) {
+      var n = t.notes;
+      setHTML(el.kicker, esc('What’s new in Shore ' + n.version));
+      setHTML(el.title, escRaw(n.title || ''));
+      setHTML(el.list, n.items.slice(0, 6).map(function (s) { return '<li>' + escRaw(s) + '</li>'; }).join('') + (n.items.length > 6 ? '<li class="wn-more">' + esc('And ' + (n.items.length - 6) + ' more') + '</li>' : ''));
+      setHTML(el.acts, '<button type="button" tabindex="-1" class="btn is-focus" data-z="act" data-i="0" data-action="whatsnew.ok"><span>' + esc('OK') + '</span></button>');
     },
     search: function (t, el) {
       var f = t.f, list = searchResults(t.q), at = f.zone === 'keys' ? searchKey(f) : -1, html = '', i;
@@ -4523,7 +4550,7 @@
   document.addEventListener('visibilitychange', function () {
     heldKeys = {};
     if (document.hidden) { pauseRotation(); clearTimeout(clockTimer); VIDEO.pause(); if (S.saver && !DREAM) stopSaver(); clearTimeout(saverTimer); saverTimer = 0; syncAwake(); if (HA) { HA.camera.hangup(); if (top().id === 'hacam') pop(); } }
-    else { shelfAsked = ''; release(); after(); updateClock(); focusStage(); saverReset(); pollPlaying(); checkHealth(); checkTimesUp(); }
+    else { shelfAsked = ''; release(); after(); updateClock(); focusStage(); saverReset(); pollPlaying(); checkHealth(); checkTimesUp(); setTimeout(checkWhatsNew, 1500); }
   });
   window.addEventListener('resize', fit);
 
@@ -4562,6 +4589,7 @@
   /* Made-up Home Assistant areas and states, so the add-on can be checked without a server; null restores the real source. */
   /* Browser checks: limits counted by a fake instead of the Home-button service. */
   QA.screenTime = function (fake) { var used = fake || {}; SCREEN = { set: function (l) { QA.limits = l; }, info: function () { var o = {}; Object.keys(QA.limits || {}).forEach(function (p) { o[p] = { limit: QA.limits[p] + (used.extra || 0), used: used[p] || 0 }; }); return o; }, extend: function (p, m) { used.extra = (used.extra || 0) + m; }, takeTimesUp: function () { var p = used.up || ''; used.up = ''; return p; } }; syncLimits(); render(); return true; };
+  QA.whatsNew = function (n) { openWhatsNew(n); return QA.state(); };
   QA.ring = function (e) { if (HA && HA.ring) HA.ring(e || {}); return top().id; };
   QA.adBlock = function (fake) { if (AD) AD.qa(fake || null); render(); return !!(AD && AD.available()); };
   QA.homeAssistant = function (fake) { if (HA) HA.qa(fake || null); render(); return !!(HA && HA.available()); };
@@ -4576,7 +4604,7 @@
   if (FrameDevice.onInputs) { FrameDevice.onInputs(refreshInputs); refreshInputs(); }
   if (WEATHER) WEATHER.onChange(function () { if (S.c.cweather === 'on' && (top().id === 'home' || isSettingsDetail(top()))) renderCaption(top(), homeState(top())); if (S.c.wfx === 'on') render(); });
   if (NOWPLAYING) { pollPlaying(); setInterval(pollPlaying, 5000); }
-  if (UPDATE) { S.update = UPDATE.info(); UPDATE.onChange(function () { S.update = UPDATE.info(); if (isSettingsDetail(top()) || top().id === 'settings') render(); }); }
+  if (UPDATE) { S.update = UPDATE.info(); UPDATE.onChange(function () { S.update = UPDATE.info(); if (isSettingsDetail(top()) || top().id === 'settings') render(); checkWhatsNew(); }); setTimeout(checkWhatsNew, 4000); }
   checkHealth();
   setTimeout(function () { syncLimits(); checkTimesUp(); }, 3000);
   if (PHONE) { S.phone = PHONE.info(); PHONE.onChange(function (count) { S.phone.count = count; if (WEATHER && S.c.cweather === 'on') WEATHER.refresh(false); if (isSettingsDetail(top()) || top().id === 'settings') render(); }); }
