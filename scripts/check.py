@@ -53,4 +53,9 @@ for reference in addon_files:
 for script in sorted((app / 'addons').glob('*.js')):
     assert 'addons/' + script.name in addon_files, 'Add-on file not listed in main.js ADDONS: ' + script.name
     subprocess.run(['node', '--check', str(script)], check=True)
+# A player button gets the class pl-<id> (prev, toggle, next, ...), so a bare .pl-<id> rule would restyle the button.
+player_ids = re.search(r"var PB = \[([^\]]*)\]", (app / 'addons/player.js').read_text()).group(1)
+for button in re.findall(r"'(\w+)'", player_ids):
+    for selector in re.findall(r"(?<![\w-])\.pl-" + button + r"(?![\w-])", (app / 'addons/player.css').read_text()):
+        raise AssertionError('player.css has a bare .pl-' + button + ' rule that also matches the ' + button + ' button; name the class differently')
 print('Widget identity, version, bundled resources and ' + str(len(addon_files)) + ' add-on files are valid.')

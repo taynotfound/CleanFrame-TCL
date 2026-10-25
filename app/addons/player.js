@@ -149,10 +149,10 @@
   FRAMES.player = function () {
       return '<div class="pl-bg" aria-hidden="true"><img class="pl-back" data-slot="back" alt=""></div><div class="pl-shade" aria-hidden="true"></div>'
         + '<div class="pl-art" data-slot="art"></div>'
-        + '<div class="pl-info"><p class="pl-app" data-slot="app"></p><h2 class="pl-title" data-slot="title"></h2><p class="pl-artist" data-slot="artist"></p>'
+        + '<div class="pl-info"><p class="pl-source" data-slot="app"></p><h2 class="pl-title" data-slot="title"></h2><p class="pl-artist" data-slot="artist"></p>'
         + '<div class="pl-bar" data-slot="bar" data-z="pbar" data-i="0"><div class="pl-track"><div class="pl-fill" data-slot="fill"></div><div class="pl-knob" data-slot="knob"></div></div>'
         + '<div class="pl-times"><span data-slot="pos"></span><span data-slot="dur"></span></div></div>'
-        + '<div class="pl-buttons" data-slot="buttons"></div><div class="pl-next" data-slot="queue"></div></div>'
+        + '<div class="pl-buttons" data-slot="buttons"></div><div class="pl-upnext" data-slot="queue"></div></div>'
         + '<div class="pl-words" data-slot="lyrics"><div class="pl-lines" data-slot="lines"></div></div>'
         + '<p class="pl-credit" data-slot="credit"></p><p class="pl-hint" data-slot="hint"></p>';
     };
@@ -194,8 +194,8 @@
         : '<p class="pl-state">' + esc(ly.state === 'pending' ? 'Looking for lyrics…' : ly.state === 'instrumental' ? 'Instrumental' : 'No lyrics for this song') + '</p>';
       if (el.lines._key !== P.lyKey + '|' + (ly && ly.state) + '|' + !!tr) { el.lines._key = P.lyKey + '|' + (ly && ly.state) + '|' + !!tr; el.lines.innerHTML = html; el.lines._at = null; el.lines._tops = null; el.lines.className = 'pl-lines is-jump'; FILLS.player(t, el, true); void el.lines.offsetHeight; el.lines.className = 'pl-lines'; } // a new song jumps, it doesn't scroll
       var wide = !!(ly && (ly.state === 'ok' || ly.state === 'pending'));
-      setHTML(el.queue, S.c.pqueue === 'on' && d.found && d.next && d.next.length && !wide ? '<p class="pl-next-h">' + esc('Up next') + '</p>' + d.next.map(function (x) {
-        return '<p class="pl-next-i"><span>' + escRaw(x.title) + '</span>' + (x.artist ? ' · ' + escRaw(x.artist) : '') + '</p>';
+      setHTML(el.queue, S.c.pqueue === 'on' && d.found && d.next && d.next.length && !wide ? '<p class="pl-upnext-h">' + esc('Up next') + '</p>' + d.next.map(function (x) {
+        return '<p class="pl-upnext-i"><span>' + escRaw(x.title) + '</span>' + (x.artist ? ' · ' + escRaw(x.artist) : '') + '</p>';
       }).join('') : '');
       el.lyrics.className = 'pl-words' + (wide ? ' is-on' : '') + (synced ? ' is-synced' : '') + (S.c.pword === 'on' ? '' : ' no-words');
       setHTML(el.credit, showLyrics ? esc(tr ? 'Lyrics from LRCLIB, translated by Google' : 'Lyrics from LRCLIB') : ly && ly.state === 'instrumental' ? esc('Instrumental') : ly && ly.state === 'none' ? esc('No lyrics for this song') : '');
