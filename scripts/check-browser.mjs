@@ -384,7 +384,7 @@ try {
   await run('Settings overview and visible choices', async () => {
     await page(); await scene('settings');
     const expected = ['settings.group.background', 'settings.group.layout', 'settings.editor', 'settings.group.focus', 'settings.group.typography', 'settings.group.display', 'settings.group.screensaver',
-      'settings.group.clock', 'settings.group.weather', 'settings.group.inputs', 'settings.group.samsung'];
+      'settings.group.clock', 'settings.group.weather', 'settings.group.inputs', 'settings.group.performance', 'settings.group.addons', 'settings.group.samsung'];
     check('Overview has every settings group', same((await call('actions')).filter(a => a.startsWith('settings.')).sort(), expected.slice().sort()), await call('actions'));
     check('Overview starts on Wallpaper', (await state()).focusAction === 'settings.group.background');
     await nav('down', 'down', 'down', 'down', 'down');
@@ -392,7 +392,7 @@ try {
     await nav('right');
     check('Right crosses to the nearest row of the other column', (await state()).focusAction === 'settings.group.samsung', await state());
     await nav('left');
-    check('Left returns to the nearest row of the Look column', (await state()).focusAction === 'settings.group.typography', await state());
+    check('Left returns to the nearest row of the Look column', (await state()).focusAction === 'settings.group.display', await state());
     await nav('back'); await scene('settings');
     const specs = {
       background: { bg: ['dark', 'light', 'photo'] },
@@ -965,6 +965,35 @@ try {
     await group('weather');
     check('Weather page offers Weather effects', (await current.evaluate(() => ShoreQA.actions())).includes('choice.wfx.on'));
   });
+  await run('Performance and add-ons on demand', async () => {
+    await page({ seed: baseline({ bg: 'photo', motion: 'drift', perf: 'full' }) });
+    const stageClass = () => current.evaluate(() => document.getElementById('stage').className);
+    const addonFetches = () => current.evaluate(() => performance.getEntriesByType('resource').map(r => r.name).filter(n => /\/addons\//.test(n)));
+    check('No add-on file is fetched at startup', (await addonFetches()).length === 0, await addonFetches());
+    check('Full keeps the chosen drift', /\bmo-drift\b/.test(await stageClass()) && !/perf-potato/.test(await stageClass()));
+    await group('performance');
+    const perfActions = await call('actions');
+    check('Performance offers Auto, Full and Potato', ['choice.perf.auto', 'choice.perf.full', 'choice.perf.potato'].every(a => perfActions.includes(a)), perfActions);
+    await act('choice.perf.potato'); await ready();
+    check('Potato persists', (await stored()).look.perf === 'potato');
+    await scene('home');
+    check('Potato stops drift and every animation', /perf-potato/.test(await stageClass()) && !/\bmo-drift\b/.test(await stageClass())
+      && await current.evaluate(() => document.getAnimations().filter(a => a.playState === 'running').length === 0));
+    check('Potato keeps the look itself', (await stored()).look.motion === 'drift' && (await stored()).look.bg === 'photo');
+    await nav('right');
+    check('Potato moves focus at once, with a single focus', (await call('where')).focusCount === 1
+      && await current.evaluate(() => getComputedStyle(document.querySelector('#track')).transitionDuration === '0s'));
+    await look({ wfx: 'on', cweather: 'on' });
+    await current.waitForFunction(() => ShoreQA.addons().wfx === 'ready');
+    check('Switching an add-on on fetches its files', (await addonFetches()).some(n => /weatherfx\.js$/.test(n)) && (await addonFetches()).some(n => /weatherfx\.css$/.test(n)), await addonFetches());
+    check('Only that add-on is fetched', (await addonFetches()).every(n => /weatherfx/.test(n)), await addonFetches());
+    check('Potato draws no weather effects', !(await current.evaluate(() => ShoreQA.weatherFx('rain'))));
+    await look({ perf: 'full' });
+    check('Full draws them again', await current.evaluate(() => ShoreQA.weatherFx('rain')));
+    await current.evaluate(() => ShoreQA.weatherFx(''));
+    await group('addons');
+    check('Add-ons lists Weather effects with what it costs', /Heavy on a slow TV/.test(await current.locator('[data-action="choice.wfx.on"]').innerText()));
+  });
   await run('Headlines under the clock', async () => {
     await page({ seed: baseline({ bg: 'photo', cnews: 'on' }) });
     check('No headline line without news', await current.evaluate(() => document.querySelector('.cap-news-line').textContent === ''));
@@ -1171,6 +1200,8 @@ try {
     const cards = () => current.evaluate(() => [...document.querySelectorAll('.cap-widgets .wg')].map(e => e.className.replace('wg ', '') + ': ' + e.innerText.replace(/\n/g, ' ')));
     check('Widgets stay off until switched on', (await cards()).length === 0);
     await look({ cwidget: 'on' }); await scene('home');
+    // Widgets is an add-on: its file arrives a moment after the switch.
+    await current.waitForFunction(() => document.querySelectorAll('.cap-widgets .wg').length === 3);
     const shown = await cards();
     check('Forecast, events and Home cards appear', shown.length === 3 && /18°/.test(shown[0]) && /Dentist/.test(shown[1]) && /Book club/.test(shown[1]) && /Inside \d+°/.test(shown[2]) && /Front Door · Open/.test(shown[2]), shown);
     check('The Inside reading is not repeated under the clock', !/Inside/.test(await current.evaluate(() => [...document.querySelectorAll('.caption .cap-date')].map(e => e.textContent).join(' '))));
@@ -1220,12 +1251,13 @@ try {
     await page();
     const haCalls = () => current.evaluate(() => window.__haCalls || []);
     const caption = () => current.evaluate(() => document.querySelector('#caption').textContent);
-    await scene('settings');
-    check('No Add-ons row without a Home Assistant bridge', !(await call('actions')).includes('settings.group.addons'));
+    check('Nothing of an add-on is loaded at startup', Object.values(await call('addons')).every(v => v === 'not loaded') && await current.evaluate(() => !window.CleanFrameHA && ![...document.scripts].some(s => /addons\//.test(s.src))), await call('addons'));
+    await group('addons');
+    check('No Home Assistant on Add-ons without its bridge', !(await call('actions')).includes('choice.aha.on'));
     check('Older preferences migrate with the add-on off', (await stored()).look.aha === 'off');
     await current.evaluate(fake => ShoreQA.homeAssistant(fake), HA_FAKE);
-    await scene('settings');
-    check('Add-ons row appears when the add-on can run', (await call('actions')).includes('settings.group.addons'));
+    await group('addons');
+    check('Home Assistant appears when the add-on can run', (await call('actions')).includes('choice.aha.on'));
     await scene('home');
     check('Off: no Smart home control and no indoor reading', !(await call('actions')).includes('util.ha') && !/Inside/.test(await caption()));
     await group('addons');

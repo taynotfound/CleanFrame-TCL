@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 import xml.etree.ElementTree as XML
 import re
+import subprocess
 
 root = Path(__file__).resolve().parents[1]
 app = root / 'app'
@@ -43,4 +44,13 @@ for wall in walls:
     assert (app / ('assets/wallpapers/' + wall_id + '-panel.jpg')).is_file(), 'Missing panel backdrop: ' + wall_id
 for icon in ['stremio', 'netflix', 'disneyplus', 'youtube', 'appletv', 'primevideo', 'abciview', 'sbs', 'applemusic', 'art', 'apps', 'settings']:
     assert (app / ('assets/icons/' + icon + '.svg')).is_file(), 'Missing icon: ' + icon
-print('Widget identity, version and bundled resources are valid.')
+# Add-ons are fetched by name when switched on (main.js, ADDONS), so the startup page must not load them.
+addon_files = sorted(set(re.findall(r"'(addons/[\w-]+\.(?:js|css))'", (app / 'main.js').read_text())))
+assert addon_files, 'No add-on files found in main.js'
+for reference in addon_files:
+    assert (app / reference).is_file(), 'Missing add-on file: ' + reference
+    assert reference not in (app / 'index.html').read_text(), 'Add-ons load on demand, not from index.html: ' + reference
+for script in sorted((app / 'addons').glob('*.js')):
+    assert 'addons/' + script.name in addon_files, 'Add-on file not listed in main.js ADDONS: ' + script.name
+    subprocess.run(['node', '--check', str(script)], check=True)
+print('Widget identity, version, bundled resources and ' + str(len(addon_files)) + ' add-on files are valid.')
