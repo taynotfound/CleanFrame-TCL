@@ -1,4 +1,6 @@
-# Android TV / Google TV (TCL and others)
+# Android TV and Google TV: how Shore works
+
+Using Shore? See the [wiki](https://github.com/taynotfound/shore/wiki). This page is for people changing the code.
 
 The Android app is called **Shore**. Its package ID stays `app.cleanframe.tv` so existing installs update in place.
 
@@ -20,53 +22,11 @@ CleanFrame was built for Tizen, but the UI is plain HTML/CSS/ES5 and every TV ca
 | TV settings | Samsung settings app | `Settings.ACTION_SETTINGS` |
 | Back | key 10009 | Back button forwarded as Escape (27) |
 
-Reference target: TCL 55" Mini LED, Google TV, software `V8-0008T01-LF1V548.002110`.
-Not yet verified on hardware.
+Reference TV: TCL 55C6KS, Google TV (Android TV 12). Other sets are listed on the wiki's [Tested TVs](https://github.com/taynotfound/shore/wiki/Tested-TVs).
 
-## Build
+## Build, install and Home
 
-GitHub: push to your fork, open **Actions → Android TV APK**, download the artifact.
-
-Locally (JDK 17 + Android SDK, or open `android/` in Android Studio):
-
-```sh
-gradle -p android assembleRelease
-```
-
-Without signing secrets the APK is signed with that machine's debug key. A runner's debug key
-changes between runs, so an update from a different key needs an uninstall first, which clears
-saved preferences. Add the four `KEYSTORE_*` / `KEY_*` secrets for in-place updates.
-
-## Install on the TV
-
-1. Settings → System → About → click **Android TV OS build** 7× to enable developer options.
-2. Settings → System → Developer options → enable **USB debugging** / **Network debugging**.
-3. `adb connect <TV-IP>:5555`, accept the prompt on the TV, then `adb install -r CleanFrame-*.apk`.
-
-CleanFrame then appears in the Apps row and can be opened like any app.
-
-## Making it the Home button (optional, riskier)
-
-Google TV has no "default Home app" setting. The Home button opens the Google TV launcher
-unless that launcher is disabled. CleanFrame declares a `HOME` intent filter, so once the stock
-launcher is disabled Android hands Home to CleanFrame.
-
-```sh
-# Before: note what is enabled, so you can restore it
-adb shell pm list packages -d > disabled-before.txt
-adb shell cmd package resolve-activity -a android.intent.action.MAIN -c android.intent.category.HOME
-
-# Disable the Google TV launcher for the main user (reversible, not an uninstall)
-adb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx
-
-# Restore
-adb shell pm enable com.google.android.apps.tv.launcherx
-```
-
-Expect side effects: the Google TV recommendations, profile switcher and some TCL shortcuts
-live in that launcher. Firmware updates can re-enable it. Keep adb access working before you
-try this; a factory reset also restores it. A gentler alternative is a key-remapping app
-(e.g. Button Mapper) that opens CleanFrame on Home.
+These are user steps and live on the wiki: [Build from source](https://github.com/taynotfound/shore/wiki/Build-from-source), [Installation](https://github.com/taynotfound/shore/wiki/Installation) and [Home button](https://github.com/taynotfound/shore/wiki/Home-button). In short, `gradle -p android assembleRelease` builds the APK, and `HomeButtonService` (an accessibility service the user turns on) catches the Home key. Disabling the Google TV launcher, an older approach, is no longer needed.
 
 ## Verified on hardware (TCL 55C6KS, Google TV / Android TV 12)
 
@@ -77,7 +37,7 @@ try this; a factory reset also restores it. A gentler alternative is a key-remap
 - Home: `cmd role add-role-holder android.app.role.HOME` and `cmd package set-home-activity` are accepted but
   ignored (launcherx has system priority 2). `HomeButtonService` (accessibility, user-enabled) catches the Home key instead.
 - Remote buttons: `HomeButtonService` also applies `RemoteKeys` assignments (SharedPreferences `remote_keys`, keyCode → action). The learn step captures the next non-navigation key and logs every key to logcat tag `CleanFrameKeys` (`adb logcat -s CleanFrameKeys`). Key layout files are unreadable and `dumpsys input` shows no key codes on this build, so learning is the only way to find a button's code.
-- Language (de, fr, es, nl, pl, uk): the WebView reports the system locale as `navigator.language`; `app/i18n.js` translates through `esc()`/`T()` in `main.js`. English is the source text, so new UI strings need a dictionary entry per language.
+- Language (de, fr, es, nl, pl, uk, it, tr): the WebView reports the system locale as `navigator.language`; `app/i18n.js` translates through `esc()`/`T()` in `main.js`. English is the source text, so new UI strings need a dictionary entry per language.
 - Online wallpapers are downloaded and pre-rendered natively (`OnlineWallpapers.java`), then served at the same
   `assets/wallpapers` and `assets/materials` paths as bundled photos, so the runtime still never blurs.
 - HDMI-CEC names: CEC devices are child `TvInputInfo`s (`getParentId()` = the HDMI port). `DeviceBridge.inputs()` hides the children and labels the port with the child's label unless the user renamed the input; `port` keeps the port name.

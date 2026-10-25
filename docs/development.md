@@ -1,12 +1,14 @@
 # Development
 
+> Shore (Android TV) notes are in [android-tv.md](android-tv.md). Sections below on Tizen signing, the Samsung TV and native Home describe the original CleanFrame build for Samsung The Frame. The browser preview, runtime map and release notes apply to both.
+
 ## Browser preview
 
 Start with Node.js 22+ and Python 3.10+, then `npm ci`. These are the supported development baselines; lower versions have not been checked. Install Chromium once with `npx playwright install chromium` for the optional browser tools. Linux hosts may also need Playwright's documented system dependencies (`npx playwright install --with-deps chromium`).
 
 `npm run dev` starts http://localhost:4795/home/, bound to this computer only. `/home/` serves `app/`, the same source used in the signed widget. Arrow keys, Enter and Escape mirror remote navigation. Device controls report that they require the TV; no success is simulated.
 
-`npm run dev:public` serves the same interface using only the bundled public fonts, even when paid Pangram files exist locally. For a contributor's fresh clone, use the README and `docs/for-agents.md`; the signing/device setup below describes the reference machine and needs adaptation for another owner.
+`npm run dev:public` serves the same interface using only the bundled public fonts, even when paid Pangram files exist locally. For a contributor's fresh clone, use the README, [CONTRIBUTING](../CONTRIBUTING.md) and `docs/for-agents.md`; the signing/device setup below describes the reference machine and needs adaptation for another owner.
 
 All UI assets, public fonts and the fifteen wallpapers are bundled. This private build also includes the three locally installed Pangram families through an ignored build overlay; their binaries are not in the public source tree. Glass materials and blurred panel backgrounds are rendered ahead of time; see app/assets/wallpapers/README.md.
 

@@ -118,8 +118,9 @@ figcaption{margin-top:10px;font-size:14px;line-height:1.5;color:var(--faint)}
 .trio{grid-template-columns:repeat(3,minmax(0,1fr))}
 .trio h3{margin:16px 0 4px;font-size:20px;letter-spacing:-.015em}
 .trio p{margin:0;font-size:16px;line-height:1.6;color:var(--mute)}
-.phones{display:flex;gap:clamp(12px,2vw,24px);justify-content:center}
-.phones figure{flex:0 1 260px;min-width:0;margin:0}
+.phones{display:grid;grid-template-columns:repeat(2,minmax(0,260px));gap:clamp(12px,2vw,24px);justify-content:center;align-items:start}
+.phones figure{min-width:0;margin:0}
+.phones figure:nth-child(even){margin-top:clamp(28px,6vw,64px)}
 .phones img{border-radius:clamp(18px,3vw,28px);box-shadow:0 0 0 1px var(--line),0 28px 50px -24px var(--shadow)}
 .stack{display:grid;gap:clamp(16px,2.4vw,28px)}
 .stack figure,.pair figure,.trio figure,.block>figure{margin:0}
@@ -168,7 +169,6 @@ footer a{color:var(--mute)}
   .actions{flex-direction:column;align-items:stretch}
   .facts li,.facts.links a{grid-template-columns:minmax(0,1fr);gap:2px}
   .steps li{padding-left:46px}
-  .phones figure{flex-basis:50%}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 </style>
@@ -184,6 +184,7 @@ footer a{color:var(--mute)}
       <a href="#install">Install</a>
       <a href="#phone">Phone</a>
       <a href="#faq">Questions</a>
+      <a href="https://github.com/taynotfound/shore/wiki">Wiki</a>
       <a href="https://github.com/taynotfound/shore">Source</a>
     </nav>
     <a class="btn btn-solid btn-sm" href="https://github.com/taynotfound/shore/releases/latest">Download</a>
@@ -283,11 +284,11 @@ footer a{color:var(--mute)}
   </div>
   <div class="copy">
     <ul class="facts links">
-      <li><a href="https://github.com/taynotfound/shore#screensaver"><b>Screensaver</b><span>Shore's own slideshow of your wallpapers, with a large clock that changes corner so nothing burns in.</span></a></li>
-      <li><a href="https://github.com/taynotfound/shore#night-mode"><b>Night mode</b><span>Dims everything on a timer or all the time, and can keep the rotation to darker photos.</span></a></li>
-      <li><a href="https://github.com/taynotfound/shore#sleep-timer"><b>Sleep timer</b><span>30 minutes to two hours, then the TV switches off, even in the middle of another app.</span></a></li>
-      <li><a href="https://github.com/taynotfound/shore#remote-buttons"><b>Remote buttons</b><span>Give the shortcut keys and the TV button a new job: an app, an input, the screensaver or the sleep timer.</span></a></li>
-      <li><a href="https://github.com/taynotfound/shore#updates"><b>Updates</b><span>Shore fetches new releases from GitHub, asks Android to install them, and shows what's new once.</span></a></li>
+      <li><a href="https://github.com/taynotfound/shore/wiki/Screensaver-night-and-sleep#screensaver"><b>Screensaver</b><span>Shore's own slideshow of your wallpapers, with a large clock that changes corner so nothing burns in.</span></a></li>
+      <li><a href="https://github.com/taynotfound/shore/wiki/Screensaver-night-and-sleep#night-mode"><b>Night mode</b><span>Dims everything on a timer or all the time, and can keep the rotation to darker photos.</span></a></li>
+      <li><a href="https://github.com/taynotfound/shore/wiki/Screensaver-night-and-sleep#sleep-timer"><b>Sleep timer</b><span>30 minutes to two hours, then the TV switches off, even in the middle of another app.</span></a></li>
+      <li><a href="https://github.com/taynotfound/shore/wiki/Remote-buttons"><b>Remote buttons</b><span>Give the shortcut keys and the TV button a new job: an app, an input, the screensaver or the sleep timer.</span></a></li>
+      <li><a href="https://github.com/taynotfound/shore/wiki/Updates"><b>Updates</b><span>Shore fetches new releases from GitHub, asks Android to install them, and shows what's new once.</span></a></li>
     </ul>
   </div>
 </section>
@@ -305,8 +306,10 @@ footer a{color:var(--mute)}
     </ul>
   </div>
   <div class="phones">
-    <figure><img src="shots/companion.jpg" width="585" height="1266" loading="lazy" decoding="async" alt="Shore Companion on a phone: send photos, my photos and the weather place"></figure>
-    <figure><img src="shots/crop.jpg" width="585" height="1266" loading="lazy" decoding="async" alt="Cropping a photo to the TV's 16:9 frame in Shore Companion"></figure>
+    <figure><img src="shots/companion.jpg" width="780" height="1688" loading="lazy" decoding="async" alt="Shore Companion's Photos tab on a phone: send photos, five photos already on the TV, and the weather place"></figure>
+    <figure><img src="shots/crop.jpg" width="780" height="1688" loading="lazy" decoding="async" alt="Framing a photo of the Golden Gate Bridge to the TV's 16:9 shape, with a zoom slider and Skip, Whole photo and Send buttons"></figure>
+    <figure><img src="shots/companion-settings.jpg" width="780" height="1688" loading="lazy" decoding="async" alt="The TV settings tab: a button to start the screensaver, and the Look group with a wallpaper strip, layout choices and switches"></figure>
+    <figure><img src="shots/companion-apps.jpg" width="780" height="1688" loading="lazy" decoding="async" alt="The Apps tab: the six apps on Home with up, down and remove buttons, and a list of other installed apps to add"></figure>
   </div>
 </section>
 
@@ -335,7 +338,7 @@ footer a{color:var(--mute)}
       <li><p><b>Point Home at Shore</b> by turning on Settings › System › Accessibility › Shore Home button.</p><p>On TCL sets, also allow Shore to auto start in TV Guard.</p></li>
     </ol>
     <p><a class="btn btn-solid" href="https://github.com/taynotfound/shore/releases/latest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>Download the APK</a></p>
-    <p class="after">From then on, Settings › Google TV › Shore updates fetches new releases and Android asks you before installing each one. The <a href="https://github.com/taynotfound/shore#install">README</a> covers Android 14 wireless debugging, the TCL auto start permission and an optional, reversible list of TCL extras to switch off.</p>
+    <p class="after">From then on, Settings › Google TV › Shore updates fetches new releases and Android asks you before installing each one. The <a href="https://github.com/taynotfound/shore/wiki/Installation">wiki</a> covers Android 14 wireless debugging, the TCL auto start permission and an optional, reversible list of TCL extras to switch off.</p>
   </div>
 </section>
 
@@ -387,7 +390,7 @@ footer a{color:var(--mute)}
       <a class="brand" href="#top"><svg viewBox="44 66 112 94" aria-hidden="true"><path d="M66 104a34 34 0 0 1 68 0Z"/><rect x="49" y="110.7" width="102" height="6.8" rx="3.4"/><rect x="60.9" y="129.8" width="78.2" height="6.8" rx="3.4"/><rect x="74.5" y="148.8" width="51" height="6.8" rx="3.4"/></svg>Shore</a>
       <p>Unofficial. Not affiliated with TCL, Google, Samsung or any streaming service. The screenshots with invented data come from the interface running in a desktop browser.</p>
     </div>
-    <p><a href="https://github.com/taynotfound/shore">Source</a> · <a href="https://github.com/taynotfound/shore/releases">Releases</a> · <a href="https://github.com/taynotfound/shore/blob/main/THIRD_PARTY_NOTICES.md">Licences</a> · <a href="https://github.com/taynotfound/shore/blob/main/LICENSE">MIT</a><br><a href="https://discord.gg/z6C4Mj9VPK">Discord</a> · <a href="https://ko-fi.com/taygotkofi">Ko-fi</a> · <a href="https://github.com/sponsors/taynotfound">GitHub Sponsors</a></p>
+    <p><a href="https://github.com/taynotfound/shore">Source</a> · <a href="https://github.com/taynotfound/shore/wiki">Wiki</a> · <a href="https://github.com/taynotfound/shore/releases">Releases</a> · <a href="https://github.com/taynotfound/shore/blob/main/THIRD_PARTY_NOTICES.md">Licences</a> · <a href="https://github.com/taynotfound/shore/blob/main/LICENSE">MIT</a><br><a href="https://discord.gg/z6C4Mj9VPK">Discord</a> · <a href="https://ko-fi.com/taygotkofi">Ko-fi</a> · <a href="https://github.com/sponsors/taynotfound">GitHub Sponsors</a></p>
     <p>Shore is a fork of <a href="https://github.com/nthnclrk/CleanFrame">CleanFrame</a> by Nathan Clark. Home Assistant add-on by <a href="https://github.com/mozthewah">mozthewah</a>. The backdrop at the top is a blurred copy of Bridge at dusk by Justin Wolff on Unsplash, one of the 15 bundled wallpapers.</p>
   </div>
 </footer>

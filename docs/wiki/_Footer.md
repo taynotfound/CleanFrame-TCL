@@ -1,0 +1,1 @@
+[Website](https://taynotfound.github.io/shore/) · [Download](https://github.com/taynotfound/shore/releases/latest) · [Discord](https://discord.gg/z6C4Mj9VPK) · [Report a problem](https://github.com/taynotfound/shore/issues/new/choose)
