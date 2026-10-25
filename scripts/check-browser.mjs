@@ -1017,6 +1017,22 @@ try {
     await current.reload(); await ready();
     check('The choice survives a restart', (await stored()).iconFor[id] === 'mark:hdmi');
   });
+  await run('Input names and icons', async () => {
+    await closePage(); await page();
+    let list = await current.evaluate(() => ShoreQA.inputs([{ id: 'hdmi1', name: 'PlayStation 5', state: 0 }, { id: 'hdmi2', name: 'HDMI 2', state: 0 }]));
+    check('A console gets the controller icon from its name', list[0].brand === 'console' && list[1].brand === 'hdmi', list);
+    await current.evaluate(() => ShoreQA.activate('choice.layout.dock'));
+    await group('inputs');
+    await act('inputpage.input.hdmi2');
+    check('Each input has its own page', (await state()).settingsGroup === 'input');
+    await act('inputname.input.hdmi2');
+    await act('inname.10');
+    check('A preset name is stored for that input', (await stored()).nameFor['input.hdmi2'] === 'Computer', (await stored()).nameFor);
+    list = await current.evaluate(() => ShoreQA.inputs([{ id: 'hdmi1', name: 'PlayStation 5', state: 0 }, { id: 'hdmi2', name: 'HDMI 2', state: 0 }]));
+    check('The new name picks its icon', list[1].name === 'Computer' && list[1].brand === 'computer', list);
+    await act('inname.-1');
+    check('Name from the device clears it', !(await stored()).nameFor['input.hdmi2']);
+  });
   await run('Parental lock', async () => {
     const pinHash = pin => { let h = 0x811c9dc5; for (const ch of 'shore:' + pin) { h ^= ch.charCodeAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
     await closePage(); await page();

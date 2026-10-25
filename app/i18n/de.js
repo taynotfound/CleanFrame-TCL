@@ -1,5 +1,7 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("de", {
+      "Use this name": "Diesen Namen verwenden",
+      "Rename": "Umbenennen", "Name": "Name", "Input": "Eingang", "Name from the device": "Name vom Gerät", "Your inputs": "Deine Eingänge", "Type any name in the phone companion, under Inputs.": "Jeden beliebigen Namen kannst du im Handy-Begleiter unter Eingänge eintippen.", "Game console": "Spielkonsole", "Set-top box": "Set-Top-Box", "Blu-ray player": "Blu-ray-Player", "Computer": "Computer", "Soundbar": "Soundbar", "Camera": "Kamera", "Input name": "Name des Eingangs", "Streaming stick": "Streaming-Stick", "Disc player": "Disc-Player",
       "Each press: 30, 60, 90, 120 minutes, then off.": "Jeder Druck: 30, 60, 90, 120 Minuten, dann aus.",
       /* Home Assistant add-on */
       'Warm white': 'Warmweiß', 'Soft white': 'Sanftweiß', 'Daylight': 'Tageslicht', 'Cool white': 'Kaltweiß', 'Red': 'Rot', 'Orange': 'Orange', 'Yellow': 'Gelb', 'Teal': 'Türkis', 'Blue': 'Blau', 'Purple': 'Lila', 'Pink': 'Pink', 'Heat': 'Heizen', 'Heat and cool': 'Heizen und Kühlen', 'Dry': 'Entfeuchten', 'Fan only': 'Nur Lüfter', 'Preheating': 'Vorheizen', 'Defrosting': 'Abtauen', 'Brightness': 'Helligkeit', 'Dimmer': 'Dunkler', 'Brighter': 'Heller', 'Colour': 'Farbe', 'Target temperature': 'Zieltemperatur', 'Cooler': 'Kühler', 'Warmer': 'Wärmer', 'Mode': 'Modus', 'Power': 'Ein/Aus', 'Set the range in Home Assistant': 'Bereich in Home Assistant einstellen', 'Left and right change the brightness': 'Links und rechts ändern die Helligkeit', 'Set this colour': 'Diese Farbe wählen', 'Left and right change the temperature': 'Links und rechts ändern die Temperatur', 'Use this mode': 'Diesen Modus verwenden', 'Temperature and mode': 'Temperatur und Modus', 'Hold OK': 'OK halten', 'Brightness and colour': 'Helligkeit und Farbe', 'unavailable': 'nicht verfügbar',
@@ -110,6 +112,7 @@ CleanFrameI18n.load("de", {
       "While music plays": "Während Musik läuft", "Album art as background": "Albumcover als Hintergrund", "Find artist pictures online": "Künstlerbilder online suchen", "Uses only the cover the music app provides.": "Nutzt nur das Cover der Musik-App.", "Artist pictures": "Künstlerbilder"
     },
 [
+      [/^The device calls itself (.+)\.$/, "Das Gerät nennt sich $1."],
       [/^(\d+) min$/, "$1 Min."], [/^Sleep in (\d+) min$/, "Aus in $1 Min."], [/^Sleep in (\d+) hr (\d+) min$/, "Aus in $1 Std. $2 Min."], [/^(.+) is locked\.$/, "$1 ist gesperrt."], [/^(\d+) apps locked$/, "$1 Apps gesperrt"],
       [/^(\d+) apps? chosen$/, '$1 gewählt'], 
       [/^Playing on (.+)$/, 'Läuft in $1'], [/^Paused · (.+)$/, 'Pausiert · $1'],

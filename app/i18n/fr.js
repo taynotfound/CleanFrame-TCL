@@ -1,5 +1,7 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("fr", {
+      "Use this name": "Utiliser ce nom",
+      "Rename": "Renommer", "Name": "Nom", "Input": "Entrée", "Name from the device": "Nom envoyé par l’appareil", "Your inputs": "Vos entrées", "Type any name in the phone companion, under Inputs.": "Tapez n’importe quel nom dans le compagnon du téléphone, sous Entrées.", "Game console": "Console de jeux", "Set-top box": "Décodeur", "Blu-ray player": "Lecteur Blu-ray", "Computer": "Ordinateur", "Soundbar": "Barre de son", "Camera": "Caméra", "Input name": "Nom de l’entrée", "Streaming stick": "Clé de streaming", "Disc player": "Lecteur de disques",
       "Each press: 30, 60, 90, 120 minutes, then off.": "Chaque appui : 30, 60, 90, 120 minutes, puis arrêt.",
       /* Home Assistant add-on */
       'Warm white': 'Blanc chaud', 'Soft white': 'Blanc doux', 'Daylight': 'Lumière du jour', 'Cool white': 'Blanc froid', 'Red': 'Rouge', 'Orange': 'Orange', 'Yellow': 'Jaune', 'Teal': 'Turquoise', 'Blue': 'Bleu', 'Purple': 'Violet', 'Pink': 'Rose', 'Heat': 'Chauffage', 'Heat and cool': 'Chaud et froid', 'Dry': 'Déshumidification', 'Fan only': 'Ventilation seule', 'Preheating': 'Préchauffage', 'Defrosting': 'Dégivrage', 'Brightness': 'Luminosité', 'Dimmer': 'Plus sombre', 'Brighter': 'Plus clair', 'Colour': 'Couleur', 'Target temperature': 'Température cible', 'Cooler': 'Plus frais', 'Warmer': 'Plus chaud', 'Mode': 'Mode', 'Power': 'Alimentation', 'Set the range in Home Assistant': 'Réglez la plage dans Home Assistant', 'Left and right change the brightness': 'Gauche et droite changent la luminosité', 'Set this colour': 'Choisir cette couleur', 'Left and right change the temperature': 'Gauche et droite changent la température', 'Use this mode': 'Utiliser ce mode', 'Temperature and mode': 'Température et mode', 'Hold OK': 'Maintenir OK', 'Brightness and colour': 'Luminosité et couleur', 'unavailable': 'indisponible',
@@ -106,6 +108,7 @@ CleanFrameI18n.load("fr", {
       "While music plays": "Pendant la musique", "Album art as background": "Pochette en fond", "Find artist pictures online": "Chercher des photos d’artistes en ligne", "Uses only the cover the music app provides.": "Utilise seulement la pochette fournie par l’app musicale.", "Artist pictures": "Photos d’artistes"
     },
 [
+      [/^The device calls itself (.+)\.$/, "L’appareil s’appelle $1."],
       [/^(\d+) min$/, "$1 min"], [/^Sleep in (\d+) min$/, "Veille dans $1 min"], [/^Sleep in (\d+) hr (\d+) min$/, "Veille dans $1 h $2 min"], [/^(.+) is locked\.$/, "$1 est verrouillée."], [/^(\d+) apps locked$/, "$1 apps verrouillées"],
       [/^1 app chosen$/, '1 choisie'], [/^(\d+) apps chosen$/, '$1 choisies'], 
       [/^Playing on (.+)$/, 'Lecture sur $1'], [/^Paused · (.+)$/, 'En pause · $1'],

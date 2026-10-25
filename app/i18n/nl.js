@@ -1,5 +1,7 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("nl", {
+      "Use this name": "Deze naam gebruiken",
+      "Rename": "Hernoemen", "Name": "Naam", "Input": "Ingang", "Name from the device": "Naam van het apparaat", "Your inputs": "Je ingangen", "Type any name in the phone companion, under Inputs.": "Typ elke naam die je wilt in de telefoon-companion, onder Ingangen.", "Game console": "Spelcomputer", "Set-top box": "Settopbox", "Blu-ray player": "Blu-rayspeler", "Computer": "Computer", "Soundbar": "Soundbar", "Camera": "Camera", "Input name": "Naam van de ingang", "Streaming stick": "Streamingstick", "Disc player": "Discspeler",
       "Each press: 30, 60, 90, 120 minutes, then off.": "Elke druk: 30, 60, 90, 120 minuten, dan uit.",
       /* Home Assistant add-on */
       'Warm white': 'Warm wit', 'Soft white': 'Zacht wit', 'Daylight': 'Daglicht', 'Cool white': 'Koel wit', 'Red': 'Rood', 'Orange': 'Oranje', 'Yellow': 'Geel', 'Teal': 'Turkoois', 'Blue': 'Blauw', 'Purple': 'Paars', 'Pink': 'Roze', 'Heat': 'Verwarmen', 'Heat and cool': 'Verwarmen en koelen', 'Dry': 'Ontvochtigen', 'Fan only': 'Alleen ventilator', 'Preheating': 'Voorverwarmen', 'Defrosting': 'Ontdooien', 'Brightness': 'Helderheid', 'Dimmer': 'Donkerder', 'Brighter': 'Lichter', 'Colour': 'Kleur', 'Target temperature': 'Doeltemperatuur', 'Cooler': 'Koeler', 'Warmer': 'Warmer', 'Mode': 'Modus', 'Power': 'Aan/uit', 'Set the range in Home Assistant': 'Stel het bereik in Home Assistant in', 'Left and right change the brightness': 'Links en rechts veranderen de helderheid', 'Set this colour': 'Deze kleur gebruiken', 'Left and right change the temperature': 'Links en rechts veranderen de temperatuur', 'Use this mode': 'Deze modus gebruiken', 'Temperature and mode': 'Temperatuur en modus', 'Hold OK': 'OK ingedrukt houden', 'Brightness and colour': 'Helderheid en kleur', 'unavailable': 'niet beschikbaar',
@@ -102,6 +104,7 @@ CleanFrameI18n.load("nl", {
       "While music plays": "Terwijl er muziek speelt", "Album art as background": "Albumhoes als achtergrond", "Find artist pictures online": "Artiestfoto’s online zoeken", "Uses only the cover the music app provides.": "Gebruikt alleen de hoes van de muziekapp.", "Artist pictures": "Artiestfoto’s"
     },
 [
+      [/^The device calls itself (.+)\.$/, "Het apparaat noemt zich $1."],
       [/^(\d+) min$/, "$1 min"], [/^Sleep in (\d+) min$/, "Uit over $1 min"], [/^Sleep in (\d+) hr (\d+) min$/, "Uit over $1 u $2 min"], [/^(.+) is locked\.$/, "$1 is vergrendeld."], [/^(\d+) apps locked$/, "$1 apps vergrendeld"],
       [/^(\d+) apps? chosen$/, '$1 gekozen'], 
       [/^Playing on (.+)$/, 'Speelt in $1'], [/^Paused · (.+)$/, 'Gepauzeerd · $1'],

@@ -263,6 +263,16 @@ final class Companion {
                 send(out, 200, "application/json", "{\"ok\":true}");
                 return;
             }
+            // An input's name typed on the phone: any text, so it skips set's value pattern; the page checks it again.
+            if (method.equals("POST") && api.equals("inputname")) {
+                String id = param(query, "id"), name = param(query, "name").trim();
+                Commands c = commands;
+                if (!id.matches("input\\.[A-Za-z0-9._-]{1,150}") || name.length() > 40) { send(out, 400, "application/json", "{\"error\":\"bad\"}"); return; }
+                if (c == null || state.isEmpty()) { send(out, 503, "application/json", "{\"offline\":true}"); return; }
+                c.set("input.name", id + "\n" + name);
+                send(out, 200, "application/json", "{\"ok\":true}");
+                return;
+            }
             if (method.equals("GET") && api.equals("backup")) {
                 JSONObject b = state.isEmpty() ? null : new JSONObject(state).optJSONObject("backup");
                 if (b == null) { send(out, 503, "application/json", "{\"offline\":true}"); return; }

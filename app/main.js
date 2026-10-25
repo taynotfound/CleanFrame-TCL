@@ -487,6 +487,15 @@
     if (v && typeof v === 'object') Object.keys(v).forEach(function (id) { if (n < 300 && safeId(id) && ICON_CHOICE.test(String(v[id]))) { out[id] = String(v[id]); n++; } });
     return out;
   }
+  /* Input names chosen on the TV or typed on the phone: id -> name, at most 40 characters. */
+  function nameMap(v) {
+    var out = {}, n = 0;
+    if (v && typeof v === 'object') Object.keys(v).forEach(function (id) {
+      var name = String(v[id] || '').replace(/[\u0000-\u001f\u007f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 40);
+      if (n < 50 && safeId(id) && id.indexOf('input.') === 0 && name) { out[id] = name; n++; }
+    });
+    return out;
+  }
   /* Parental lock: a hashed 4-digit PIN, whether Settings ask for it, and the apps that do. */
   function lockOf(v) {
     v = v && typeof v === 'object' ? v : {};
@@ -523,7 +532,7 @@
       home: h, recent: recent, lastApp: h.indexOf(s.lastApp) >= 0 ? s.lastApp : h[0],
       mode: pick(s.mode, MODES.map(function (m) { return m.id; }), 'fixed'),
       source: sourceCsv(ONLINE ? ONLINE_INFO.source : 'builtin'),
-      fav: idList(s.fav), hide: idList(s.hide), hidein: idList(s.hidein), iconFor: iconMap(s.iconFor), used: idList(s.used).slice(0, 8), lock: lockOf(s.lock),
+      fav: idList(s.fav), hide: idList(s.hide), hidein: idList(s.hidein), iconFor: iconMap(s.iconFor), used: idList(s.used).slice(0, 8), lock: lockOf(s.lock), nameFor: nameMap(s.nameFor),
       ipack: PKG_RE.test(String(modern.ipack || '')) ? String(modern.ipack) : ''
     };
     Object.keys(MORE_LOOK).forEach(function (k) { out[k] = pick(modern[k], LOOK_VALUES[k], MORE_LOOK[k]); });
@@ -553,6 +562,24 @@
     clearTimeout(askTimer);
     askTimer = setTimeout(function () { var m = top(); if (m.id === 'message' && m.content && m.content.actions[0][0] === 'input:' + id) { pop(); render(); } }, 20000);
   }
+  /* An input's name (yours, else the device's over HDMI-CEC) picks its mark: "PlayStation 5" gets the controller. */
+  var DEVICE_MARKS = [['appletv', /apple ?tv/i], ['console', /playstation|\bps[2-5]\b|xbox|nintendo|\bswitch\b|steam ?deck|\bwii\b|console|gaming/i],
+    ['stick', /chromecast|fire ?tv|roku|shield|\bstick\b|dongle|streamer/i], ['soundbar', /sound ?bar|receiver|\bavr\b|amplifier|sonos|denon|onkyo|marantz|\baudio\b|speaker/i],
+    ['disc', /blu-?ray|\bdvd\b|\bdisc\b|\bbd\b/i], ['computer', /\bpc\b|computer|laptop|macbook|mac ?mini|desktop|windows/i],
+    ['camera', /camera|\bcam\b|gopro|doorbell/i], ['settop', /set-?top|cable|satellite|\bsky\b|magenta|tivo|freeview|receiver|\bbox\b|decoder/i]];
+  function deviceMark(name) {
+    var marks = shoreMarks(), i;
+    for (i = 0; i < DEVICE_MARKS.length; i++) if (DEVICE_MARKS[i][1].test(name) && marks.indexOf(DEVICE_MARKS[i][0]) >= 0) return DEVICE_MARKS[i][0];
+    return 'hdmi';
+  }
+  function nameInput(a) { a.name = S.c.nameFor[a.id] || a.cec || a.name; a.brand = deviceMark(a.name); }
+  var INPUT_NAMES = ['PlayStation', 'Xbox', 'Nintendo Switch', 'Apple TV', 'Fire TV', 'Chromecast', 'Steam Deck', 'Game console', 'Set-top box', 'Blu-ray player', 'Computer', 'Soundbar', 'Camera'];
+  function setInputName(id, name) {
+    var c = next(S.c.home.slice(), S.c.recent.slice());
+    if (name) c.nameFor[id] = name; else delete c.nameFor[id];
+    c.nameFor = nameMap(c.nameFor);
+    if (write(c, 'Input name')) { if (app(id)) nameInput(app(id)); render(); }
+  }
   function refreshInputs() {
     if (!FrameDevice.inputs) return;
     FrameDevice.inputs(function (err, list) {
@@ -564,7 +591,7 @@
         if (!safeId(id)) return;
         a = app(id);
         if (!a) { a = { id: id }; APPS.push(a); }
-        a.appId = input.id; a.name = input.name.slice(0, 160); a.brand = 'hdmi'; a.mark = true; a.input = true;
+        a.appId = input.id; a.cec = input.name.slice(0, 160); a.mark = true; a.input = true; nameInput(a);
         INPUTS.push({ id: id, state: input.state });
         // Hidden inputs (a soundbar, say) never get a tile and never ask to be switched to.
         if (input.state === 0 && S.c.hidein.indexOf(id) < 0) live.push(id);
@@ -589,7 +616,7 @@
   }
   function clearSession() { S.undo = []; S.removedAt = {}; S.note = null; S.err = null; }
   function begin() { S.note = null; }
-  function next(home, recent) { var c = lookOf(S.c); c.home = home; c.recent = recent; c.lastApp = S.c.lastApp; c.mode = S.c.mode; c.source = S.c.source; c.fav = S.c.fav.slice(); c.hide = S.c.hide.slice(); c.hidein = S.c.hidein.slice(); c.iconFor = iconMap(S.c.iconFor); c.used = S.c.used.slice(); c.lock = lockOf(S.c.lock); return c; }
+  function next(home, recent) { var c = lookOf(S.c); c.home = home; c.recent = recent; c.lastApp = S.c.lastApp; c.mode = S.c.mode; c.source = S.c.source; c.fav = S.c.fav.slice(); c.hide = S.c.hide.slice(); c.hidein = S.c.hidein.slice(); c.iconFor = iconMap(S.c.iconFor); c.used = S.c.used.slice(); c.lock = lockOf(S.c.lock); c.nameFor = nameMap(S.c.nameFor); return c; }
   function snap() { return { home: S.c.home.slice(), recent: S.c.recent.slice() }; }
   function pushRecent(list, id) { return [id].concat(without(list, id)).slice(0, 5); }
   function write(c, label) {
@@ -905,7 +932,7 @@
     var a = app(id);
     if (!a || top().id !== 'home') return;
     if (settingsLocked()) { askPin('Settings', function () { S.unlocked = true; openQuick(id); }); return; }
-    if (a.input) { push({ id: 'message', content: { title: a.name, line: 'Quick actions', note: '', actions: [['quick.open:' + id, 'Switch'], ['quick.hidein:' + id, 'Hide from Home']] }, f: { b: 0 } }); render(); return; }
+    if (a.input) { push({ id: 'message', content: { title: a.name, line: 'Quick actions', note: '', actions: [['quick.open:' + id, 'Switch'], ['quick.name:' + id, 'Rename'], ['quick.icon:' + id, 'Icon'], ['quick.hidein:' + id, 'Hide from Home']] }, f: { b: 0 } }); render(); return; }
     push({ id: 'message', content: { title: a.name, line: 'Quick actions', note: '',
       actions: [['quick.open:' + id, 'Open'], ['quick.move:' + id, 'Move'], ['quick.icon:' + id, 'Icon'], ['quick.remove:' + id, 'Remove']].concat(FrameDevice.appInfo ? [['quick.info:' + id, 'App info']] : []) }, f: { b: 0 } });
     render();
@@ -917,6 +944,7 @@
     if (kind === 'hidein') { toggleInput(id); return; }
     if (kind === 'info') { perform('App info', function (done) { FrameDevice.appInfo(app(id).appId, done); }); return; }
     if (kind === 'icon') { openAppIcon(id, true); return; }
+    if (kind === 'name') { openInputName(id, true); return; }
     // Move and Remove use Apps on Home, which already has undo, so nothing here is final.
     S.sel = id; if (settingsLocked()) { guarded(function () { openEditor('home'); }); return; } openEditor('home'); t = top(); t.f.zone = 'home'; t.f.i = Math.max(0, S.c.home.indexOf(id));
     if (kind === 'move') { t.f.part = 'name'; t.lifted = { id: id, from: t.f.i, order: S.c.home.slice(), snap: snap() }; }
@@ -933,6 +961,11 @@
     var cur = S.c.iconFor[id];
     openAppearance('appicon');
     top().app = id; top().fromHome = !!fromHome; top().f.action = 'iconset.' + (cur || 'auto');
+    render();
+  }
+  function openInputName(id, fromHome) {
+    openAppearance('inputname');
+    top().app = id; top().fromHome = !!fromHome; top().f.action = 'inname.' + (S.c.nameFor[id] ? INPUT_NAMES.indexOf(S.c.nameFor[id]) : -1);
     render();
   }
   function setAppIcon(id, value) {
@@ -1333,9 +1366,9 @@
   function closeEditor() { clearSession(); pop(); }
 
   /* ---------- Settings, Layout and messages ---------- */
-  var PARENT = { ha: 'addons', musicview: 'music', health: 'samsung', updates: 'samsung', saverlook: 'screensaver', rotation: 'background', online: 'background', unsplash: 'online', animated: 'online', fonts: 'typography', icons: 'layout', iconpack: 'icons', iconapps: 'icons', appicon: 'iconapps', lock: 'samsung', lockapps: 'lock', remote: 'samsung', remotepick: 'remote', remoteapp: 'remotepick' };
-  function groupName(group, t) { return group === 'remotepick' ? buttonName(t.key) : group === 'appicon' && t && app(t.app) ? app(t.app).name : DETAIL_NAMES[group]; }
-  function parentName(t) { return t.group === 'appicon' && t.fromHome ? 'Home' : PARENT[t.group] ? groupName(PARENT[t.group], t) : 'Settings'; }
+  var PARENT = { ha: 'addons', musicview: 'music', health: 'samsung', updates: 'samsung', saverlook: 'screensaver', rotation: 'background', online: 'background', unsplash: 'online', animated: 'online', fonts: 'typography', icons: 'layout', iconpack: 'icons', iconapps: 'icons', appicon: 'iconapps', input: 'inputs', inputname: 'input', lock: 'samsung', lockapps: 'lock', remote: 'samsung', remotepick: 'remote', remoteapp: 'remotepick' };
+  function groupName(group, t) { return group === 'remotepick' ? buttonName(t.key) : (group === 'appicon' || group === 'input') && t && app(t.app) ? app(t.app).name : DETAIL_NAMES[group]; }
+  function parentName(t) { return (t.group === 'appicon' || t.group === 'inputname') && t.fromHome ? 'Home' : t.group === 'appicon' && app(t.app) && app(t.app).input ? app(t.app).name : PARENT[t.group] ? groupName(PARENT[t.group], t) : 'Settings'; }
   /* ---------- Wallpaper sources: any mix of Shore's own, My photos and online sources ----------
      S.c.source is a comma list in SOURCES order. Only photos from these sources rotate. */
   function sourceCsv(value) {
@@ -1414,7 +1447,7 @@
     else if (id === 'phone') openPhone();
     else openAppearance(id);
   }
-  var DETAIL_NAMES = { addons: 'Add-ons', ha: 'Home Assistant', musicview: 'Music view', health: 'Setup and health', updates: 'Shore updates', fonts: 'Font', clock: 'Clock', display: 'Night', online: 'Wallpaper sources', unsplash: 'Unsplash themes', animated: 'Animated wallpapers', background: 'Wallpaper', layout: 'Home screen', typography: 'Text', icons: 'App icons', iconpack: 'Icon pack', iconapps: 'Per-app icons', appicon: 'Icon', lock: 'Parental lock', lockapps: 'Locked apps', inputs: 'Inputs', focus: 'Style', rotation: 'Rotation', samsung: TV.brand, remote: 'Remote buttons', remoteapp: 'Choose an app', phone: 'Phone', weather: 'Weather', music: 'Music', news: 'News', screensaver: 'Screensaver', saverlook: 'Arrangement and clock' };
+  var DETAIL_NAMES = { addons: 'Add-ons', ha: 'Home Assistant', musicview: 'Music view', health: 'Setup and health', updates: 'Shore updates', fonts: 'Font', clock: 'Clock', display: 'Night', online: 'Wallpaper sources', unsplash: 'Unsplash themes', animated: 'Animated wallpapers', background: 'Wallpaper', layout: 'Home screen', typography: 'Text', icons: 'App icons', iconpack: 'Icon pack', iconapps: 'Per-app icons', appicon: 'Icon', input: 'Input', inputname: 'Name', lock: 'Parental lock', lockapps: 'Locked apps', inputs: 'Inputs', focus: 'Style', rotation: 'Rotation', samsung: TV.brand, remote: 'Remote buttons', remoteapp: 'Choose an app', phone: 'Phone', weather: 'Weather', music: 'Music', news: 'News', screensaver: 'Screensaver', saverlook: 'Arrangement and clock' };
   function choice(axis, value, disabled) {
     if (axis === 'source') return { action: 'online.' + value, axis: axis, value: value, disabled: !!disabled, label: sourceName(value), tick: true, applied: sourceOn(value) };
     return { action: axis === 'mode' ? 'rotation.' + value : 'choice.' + axis + '.' + value, axis: axis, value: value, disabled: !!disabled,
@@ -2173,7 +2206,8 @@
     return { version: 1, lang: (window.CleanFrameI18n && CleanFrameI18n.lang) || 'en', saver: !!S.saver, cap: CAP,
       groups: COMPANION_GROUPS.map(function (g) { return { name: T(g[0]), items: g[1].map(companionAxis).filter(Boolean) }; }).filter(function (g) { return g.items.length; }),
       home: home, others: others, backup: backupOf(),
-      labels: { start: T('Start the screensaver now'), apps: T('Apps on Home'), more: T('Other installed apps'), full: T(FULL) } };
+      inputs: INPUTS.map(function (i) { var a = app(i.id); return { id: i.id, name: a.name, cec: a.cec || '' }; }),
+      labels: { start: T('Start the screensaver now'), inputs: T('Inputs'), apps: T('Apps on Home'), more: T('Other installed apps'), full: T(FULL) } };
   }
   /* Backup for the companion: every saved preference, in the same format Shore stores. No timestamp, so an unchanged
      model is not republished; the phone dates the file. Photos stay on the TV and are not part of it. */
@@ -2216,6 +2250,7 @@
           homeMove(order, value, snap());
         }
       }
+      else if (axis === 'input.name') { i = value.indexOf('\n'); if (i > 0 && app(value.slice(0, i)) && app(value.slice(0, i)).input) setInputName(value.slice(0, i), value.slice(i + 1)); }
       else if (axis === 'wall') { if (wall(value)) setLook({ wall: value }, { row: 'bg' }); }
       else if (LOOK_VALUES[axis] && LOOK_VALUES[axis].indexOf(value) >= 0) { patch[axis] = value; setLook(patch, { row: axis }); }
     } catch (e) { log('Companion: ' + e.message); }
@@ -2269,9 +2304,25 @@
     if (t.group === 'inputs') return [
       { id: 'inputs', title: 'Place inputs', horizontal: true, items: options('inputs', ['front', 'row'], S.c.layout === 'list').concat(ANDROID ? options('iask', ['on']) : []),
         reason: S.c.layout === 'list' ? 'Own row needs the Dock layout.' : '' },
-      { id: 'inlist', title: 'Show on Home', items: INPUTS.map(function (i) {
-        return { action: 'input.toggle.' + i.id, label: app(i.id).name, tick: true, applied: S.c.hidein.indexOf(i.id) < 0 };
+      { id: 'inlist', title: 'Your inputs', items: INPUTS.map(function (i) {
+        return { action: 'inputpage.' + i.id, label: app(i.id).name, description: S.c.hidein.indexOf(i.id) >= 0 ? 'Hidden' : i.state === 0 ? 'On' : 'Off', glyph: appMark(app(i.id), 56, 40, 34), pair: true };
       }), reason: INPUTS.length ? 'Only devices that are switched on appear on Home.' : 'No HDMI inputs found.' }];
+    if (t.group === 'input') {
+      var inA = app(t.app);
+      if (!inA) return [];
+      return [{ id: 'input', title: '', items: [{ action: 'input.toggle.' + inA.id, label: 'Show on Home', tick: true, applied: S.c.hidein.indexOf(inA.id) < 0 },
+        { action: 'inputname.' + inA.id, label: 'Name', description: inA.name, pair: true },
+        { action: 'iconapp.' + inA.id, label: 'Icon', description: iconChoiceName(inA.id), glyph: appMark(inA, 56, 40, 34), pair: true }],
+        reason: inA.cec && inA.cec !== inA.name ? 'The device calls itself ' + inA.cec + '.' : '' }];
+    }
+    if (t.group === 'inputname') {
+      var nA = app(t.app), cur = nA ? S.c.nameFor[nA.id] || '' : '';
+      if (!nA) return [];
+      return [{ id: 'inname', title: '', items: [{ action: 'inname.-1', label: 'Name from the device', description: nA.cec || '', tick: true, applied: !cur }]
+        .concat(INPUT_NAMES.map(function (n, i) { return { action: 'inname.' + i, label: n, tick: true, applied: cur === n, glyph: markHtml(deviceMark(n), 56, 40, 34) }; }))
+        .concat(cur && INPUT_NAMES.indexOf(cur) < 0 ? [{ action: 'inname.own', label: cur, tick: true, applied: true }] : []),
+        reason: 'Type any name in the phone companion, under Inputs.' }];
+    }
     if (t.group === 'fonts') return [{ id: 'font', title: '', items: options('font', LOOK_VALUES.font) }];
     if (t.group === 'typography') return [
       { id: 'fontpick', title: 'Font', items: [{ action: 'typography.fonts', label: FONTS[S.c.font].name }] },
@@ -2502,6 +2553,9 @@
     else if (item.action === 'open.iconpack') { packList = null; openAppearance('iconpack'); }
     else if (item.action.indexOf('pack.') === 0) applyPack(item.action.slice(5));
     else if (item.action.indexOf('input.toggle.') === 0) toggleInput(item.action.slice(13));
+    else if (item.action.indexOf('inputpage.') === 0) { openAppearance('input'); top().app = item.action.slice(10); top().f.action = 'input.toggle.' + top().app; }
+    else if (item.action.indexOf('inputname.') === 0) openInputName(item.action.slice(10), false);
+    else if (/^inname\.-?\d+$/.test(item.action)) setInputName(t.app, INPUT_NAMES[+item.action.slice(7)] || '');
     else if (item.action === 'open.unsplash') openAppearance('unsplash');
     else if (item.action === 'open.animated') openAppearance('animated');
     else if (item.action === 'open.saverlook') openAppearance('saverlook');
@@ -3348,7 +3402,7 @@
         + command({ action: 'settings.retry', label: 'Try again' }, '<span>Try again</span>', 'setting-retry');
     }
     setHTML(appearanceStatus, status);
-    hint = selected.disabled ? '' : remoteHint(selected) || (selected.action === 'settings.back' ? 'Return to ' + (parentName(t)) : selected.action === 'settings.retry' ? 'Retry this change' : selected.axis === 'source' ? (selected.applied ? 'Remove from rotation' : 'Add to rotation') : selected.axis ? 'Apply selected setting' : selected.action === 'background.wallpaper' ? 'Choose a wallpaper' : selected.action === 'background.rotation' ? 'Choose a rotation interval' : selected.action === 'background.online' ? 'Choose a wallpaper source' : selected.action === 'phone.toggle' ? (S.phone.enabled ? 'Turn off' : 'Turn on') : selected.action === 'phone.forget' ? 'Phones scan a new code' : selected.action === 'phone.clear' ? 'Remove all my photos' : selected.action === 'nowplaying.access' ? 'Open Notification access' : /^open\./.test(selected.action) ? 'Open selected group' : selected.more ? 'Show these sources' : selected.action === 'typography.fonts' ? 'Choose a font' : selected.action === 'saver.start' ? 'Start the screensaver now' : selected.action === 'health.remote' ? 'Open Accessibility settings' : selected.action === 'health.phone' ? 'Open Phone settings' : selected.action === 'update.install' ? 'Download and install' : selected.action === 'update.check' ? 'Check now' : selected.action === 'update.auto' ? (S.update.auto ? 'Turn off' : 'Turn on') : selected.action === 'update.wait' ? 'Please wait' : selected.action.indexOf('iconapp.') === 0 ? 'Choose an icon' : selected.action.indexOf('iconset.') === 0 ? 'Use this icon' : selected.action === 'ha.refresh' ? 'Check again' : selected.action.indexOf('ha.area.') === 0 ? (selected.applied ? 'Hide this room' : 'Show this room') : selected.action === 'ha.forget' ? 'Forget the server and its token' : 'Open on the TV');
+    hint = selected.disabled ? '' : remoteHint(selected) || (selected.action === 'settings.back' ? 'Return to ' + (parentName(t)) : selected.action === 'settings.retry' ? 'Retry this change' : selected.axis === 'source' ? (selected.applied ? 'Remove from rotation' : 'Add to rotation') : selected.axis ? 'Apply selected setting' : selected.action === 'background.wallpaper' ? 'Choose a wallpaper' : selected.action === 'background.rotation' ? 'Choose a rotation interval' : selected.action === 'background.online' ? 'Choose a wallpaper source' : selected.action === 'phone.toggle' ? (S.phone.enabled ? 'Turn off' : 'Turn on') : selected.action === 'phone.forget' ? 'Phones scan a new code' : selected.action === 'phone.clear' ? 'Remove all my photos' : selected.action === 'nowplaying.access' ? 'Open Notification access' : /^open\./.test(selected.action) ? 'Open selected group' : selected.more ? 'Show these sources' : selected.action === 'typography.fonts' ? 'Choose a font' : selected.action === 'saver.start' ? 'Start the screensaver now' : selected.action === 'health.remote' ? 'Open Accessibility settings' : selected.action === 'health.phone' ? 'Open Phone settings' : selected.action === 'update.install' ? 'Download and install' : selected.action === 'update.check' ? 'Check now' : selected.action === 'update.auto' ? (S.update.auto ? 'Turn off' : 'Turn on') : selected.action === 'update.wait' ? 'Please wait' : selected.action.indexOf('iconapp.') === 0 ? 'Choose an icon' : selected.action.indexOf('iconset.') === 0 ? 'Use this icon' : selected.action.indexOf('inname.') === 0 ? 'Use this name' : /^input(page|name)\./.test(selected.action) ? 'Open selected group' : selected.action.indexOf('input.toggle.') === 0 ? (selected.applied ? 'Hide from Home' : 'Show on Home') : selected.action === 'ha.refresh' ? 'Check again' : selected.action.indexOf('ha.area.') === 0 ? (selected.applied ? 'Hide this room' : 'Show this room') : selected.action === 'ha.forget' ? 'Forget the server and its token' : 'Open on the TV');
     setHTML(appearanceDesc, hint ? '<span class="remote-key">OK</span><span>' + esc(hint) + '</span>' : '');
     fitRows();
   }
@@ -4134,6 +4188,8 @@
   };
   QA.ready = function () { return fontsReady && !S.pending && !!S.shown && S.shown.bg === S.c.bg && S.shown.wall === S.c.wall && S.shown.font === S.c.font; };
   QA.nav = function () { var keys = arguments.length === 1 && Array.isArray(arguments[0]) ? arguments[0] : Array.prototype.slice.call(arguments); keys.forEach(function (key) { if (!NAV[key]) throw new Error('Unknown key'); press(NAV[key]); }); return QA.state(); };
+  /* Browser checks: pretend these HDMI inputs exist ({id, name, state}). */
+  QA.inputs = function (list) { FrameDevice.inputs = function (done) { done(null, list); }; refreshInputs(); return INPUTS.map(function (i) { var a = app(i.id); return { id: i.id, name: a.name, brand: a.brand }; }); };
   QA.look = function (patch) { setLook(patch, {}); return QA.state(); };
   QA.scene = function (name) { if (['home', 'apps', 'settings', 'appearance', 'editor'].indexOf(name) < 0) throw new Error('Unknown view'); goScene(name); return QA.state(); };
   QA.activate = function (action) { return activate(action) ? QA.state() : null; };

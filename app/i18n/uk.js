@@ -1,5 +1,7 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("uk", {
+      "Use this name": "Використати цю назву",
+      "Rename": "Перейменувати", "Name": "Назва", "Input": "Вхід", "Name from the device": "Назва від пристрою", "Your inputs": "Ваші входи", "Type any name in the phone companion, under Inputs.": "Будь-яку назву можна ввести в компаньйоні на телефоні, у розділі «Входи».", "Game console": "Ігрова консоль", "Set-top box": "Приставка", "Blu-ray player": "Blu-ray-програвач", "Computer": "Комп’ютер", "Soundbar": "Саундбар", "Camera": "Камера", "Input name": "Назва входу", "Streaming stick": "Стрімінговий стик", "Disc player": "Програвач дисків",
       "Each press: 30, 60, 90, 120 minutes, then off.": "Кожне натискання: 30, 60, 90, 120 хвилин, потім вимкнено.",
       /* Home Assistant add-on */
       'Warm white': 'Теплий білий', 'Soft white': 'М’який білий', 'Daylight': 'Денне світло', 'Cool white': 'Холодний білий', 'Red': 'Червоний', 'Orange': 'Помаранчевий', 'Yellow': 'Жовтий', 'Teal': 'Бірюзовий', 'Blue': 'Синій', 'Purple': 'Фіолетовий', 'Pink': 'Рожевий', 'Heat': 'Обігрів', 'Heat and cool': 'Обігрів і охолодження', 'Dry': 'Осушення', 'Fan only': 'Лише вентилятор', 'Preheating': 'Попередній обігрів', 'Defrosting': 'Розморожування', 'Brightness': 'Яскравість', 'Dimmer': 'Тьмяніше', 'Brighter': 'Яскравіше', 'Colour': 'Колір', 'Target temperature': 'Цільова температура', 'Cooler': 'Прохолодніше', 'Warmer': 'Тепліше', 'Mode': 'Режим', 'Power': 'Живлення', 'Set the range in Home Assistant': 'Задайте діапазон у Home Assistant', 'Left and right change the brightness': 'Ліворуч і праворуч змінюють яскравість', 'Set this colour': 'Вибрати цей колір', 'Left and right change the temperature': 'Ліворуч і праворуч змінюють температуру', 'Use this mode': 'Увімкнути цей режим', 'Temperature and mode': 'Температура й режим', 'Hold OK': 'Утримуйте OK', 'Brightness and colour': 'Яскравість і колір', 'unavailable': 'недоступно',
@@ -397,6 +399,7 @@ CleanFrameI18n.load("uk", {
       'Artist pictures': 'Фото виконавців'
     },
 [
+      [/^The device calls itself (.+)\.$/, "Пристрій називає себе $1."],
       [/^(\d+) min$/, "$1 хв"], [/^Sleep in (\d+) min$/, "Вимкнення через $1 хв"], [/^Sleep in (\d+) hr (\d+) min$/, "Вимкнення через $1 год $2 хв"], [/^(.+) is locked\.$/, "$1 заблоковано."], [/^(\d+) apps locked$/, "Заблоковано застосунків: $1"],
       [/^(\d+) apps? chosen$/, 'Вибрано: $1'], 
       [/^Playing on (.+)$/, 'Грає в $1'], [/^Paused · (.+)$/, 'Пауза · $1'],

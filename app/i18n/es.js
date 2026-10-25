@@ -1,5 +1,7 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("es", {
+      "Use this name": "Usar este nombre",
+      "Rename": "Cambiar nombre", "Name": "Nombre", "Input": "Entrada", "Name from the device": "Nombre del dispositivo", "Your inputs": "Tus entradas", "Type any name in the phone companion, under Inputs.": "Escribe cualquier nombre en el compañero del teléfono, en Entradas.", "Game console": "Consola", "Set-top box": "Decodificador", "Blu-ray player": "Reproductor Blu-ray", "Computer": "Ordenador", "Soundbar": "Barra de sonido", "Camera": "Cámara", "Input name": "Nombre de la entrada", "Streaming stick": "Stick de streaming", "Disc player": "Reproductor de discos",
       "Each press: 30, 60, 90, 120 minutes, then off.": "Cada pulsación: 30, 60, 90, 120 minutos y luego apagado.",
       /* Home Assistant add-on */
       'Warm white': 'Blanco cálido', 'Soft white': 'Blanco suave', 'Daylight': 'Luz diurna', 'Cool white': 'Blanco frío', 'Red': 'Rojo', 'Orange': 'Naranja', 'Yellow': 'Amarillo', 'Teal': 'Turquesa', 'Blue': 'Azul', 'Purple': 'Morado', 'Pink': 'Rosa', 'Heat': 'Calor', 'Heat and cool': 'Calor y frío', 'Dry': 'Deshumidificar', 'Fan only': 'Solo ventilador', 'Preheating': 'Precalentando', 'Defrosting': 'Descongelando', 'Brightness': 'Brillo', 'Dimmer': 'Más tenue', 'Brighter': 'Más brillo', 'Colour': 'Color', 'Target temperature': 'Temperatura objetivo', 'Cooler': 'Más fresco', 'Warmer': 'Más cálido', 'Mode': 'Modo', 'Power': 'Encendido', 'Set the range in Home Assistant': 'Ajusta el rango en Home Assistant', 'Left and right change the brightness': 'Izquierda y derecha cambian el brillo', 'Set this colour': 'Usar este color', 'Left and right change the temperature': 'Izquierda y derecha cambian la temperatura', 'Use this mode': 'Usar este modo', 'Temperature and mode': 'Temperatura y modo', 'Hold OK': 'Mantén OK', 'Brightness and colour': 'Brillo y color', 'unavailable': 'no disponible',
@@ -105,6 +107,7 @@ CleanFrameI18n.load("es", {
       "While music plays": "Mientras suena música", "Album art as background": "Portada como fondo", "Find artist pictures online": "Buscar fotos de artistas en línea", "Uses only the cover the music app provides.": "Usa solo la portada que da la app de música.", "Artist pictures": "Fotos de artistas"
     },
 [
+      [/^The device calls itself (.+)\.$/, "El dispositivo se llama $1."],
       [/^(\d+) min$/, "$1 min"], [/^Sleep in (\d+) min$/, "Se apaga en $1 min"], [/^Sleep in (\d+) hr (\d+) min$/, "Se apaga en $1 h $2 min"], [/^(.+) is locked\.$/, "$1 está bloqueada."], [/^(\d+) apps locked$/, "$1 apps bloqueadas"],
       [/^1 app chosen$/, '1 elegida'], [/^(\d+) apps chosen$/, '$1 elegidas'], 
       [/^Playing on (.+)$/, 'Sonando en $1'], [/^Paused · (.+)$/, 'En pausa · $1'],

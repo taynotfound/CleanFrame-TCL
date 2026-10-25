@@ -17,5 +17,12 @@
   "ard": "https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/daserste.svg (Das Erste mark, used for ARD Mediathek)",
   "joyn": "https://commons.wikimedia.org/wiki/File:Joyn_logo.svg (public domain; recoloured white)",
   "arte": "https://commons.wikimedia.org/wiki/File:Arte_Logo_2026.svg (public domain; recoloured white)",
-  "waipu": "https://commons.wikimedia.org/wiki/File:Waipu_TV_Logo_2016.svg (public domain; gradient symbol and wordmark merged to one white silhouette)"
+  "waipu": "https://commons.wikimedia.org/wiki/File:Waipu_TV_Logo_2016.svg (public domain; gradient symbol and wordmark merged to one white silhouette)",
+  "console": "Shore original device glyph, 24px grid, filled",
+  "settop": "Shore original device glyph, 24px grid, filled",
+  "disc": "Shore original device glyph, 24px grid, filled",
+  "computer": "Shore original device glyph, 24px grid, filled",
+  "soundbar": "Shore original device glyph, 24px grid, filled",
+  "stick": "Shore original device glyph, 24px grid, filled",
+  "camera": "Shore original device glyph, 24px grid, filled"
 }
