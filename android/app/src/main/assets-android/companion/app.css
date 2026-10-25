@@ -71,8 +71,9 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:22px}
 .crop-zoom::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-10px;border-radius:50%;background:var(--ink);box-shadow:0 2px 10px rgba(0,0,0,.4)}
 .crop-zoom::-moz-range-thumb{width:24px;height:24px;border:0;border-radius:50%;background:var(--ink)}
 /* Tabs, TV settings and Apps */
-.tabs{position:sticky;top:calc(8px + env(safe-area-inset-top));z-index:2;display:flex;gap:4px;padding:4px;margin:0 0 14px;border-radius:999px;background:rgba(14,20,24,.62);border:1px solid var(--line);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
-.tabs button{flex:1 1 auto;padding:0 3px;letter-spacing:-.1px;white-space:nowrap;min-height:42px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:600 14px Manrope,system-ui,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .2s,color .2s}
+.tabs{position:sticky;top:calc(8px + env(safe-area-inset-top));z-index:2;display:flex;gap:4px;padding:4px;margin:0 0 14px;border-radius:999px;background:rgba(14,20,24,.62);border:1px solid var(--line);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:1 0 auto;padding:0 8px;letter-spacing:-.1px;white-space:nowrap;min-height:42px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:600 14px Manrope,system-ui,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .2s,color .2s}
 .tabs button[aria-selected=true]{background:var(--ink);color:#141b20}
 .tab{animation:tab-in .28s ease}
 @keyframes tab-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}

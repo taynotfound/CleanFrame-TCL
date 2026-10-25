@@ -369,7 +369,7 @@ final class DeviceBridge {
     public String remoteInfo() {
         try {
             boolean on = remoteServiceOn();
-            return new JSONObject().put("service", on).put("blocked", !on && remoteServiceListed()).put("learning", RemoteKeys.learning()).put("keys", RemoteKeys.list(context)).toString();
+            return new JSONObject().put("service", on).put("blocked", !on && remoteServiceListed()).put("learning", RemoteKeys.learning()).put("keyboard", PhoneKeyboardService.on()).put("keys", RemoteKeys.list(context)).toString();
         } catch (Exception e) { return "{}"; }
     }
 

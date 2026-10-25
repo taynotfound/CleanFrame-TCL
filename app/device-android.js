@@ -110,7 +110,7 @@
     info: function () {
       var info;
       try { info = JSON.parse(bridge.remoteInfo()); } catch (e) { info = {}; }
-      return { service: !!info.service, blocked: !!info.blocked, learning: !!info.learning, keys: (info.keys || []).filter(function (k) { return k && typeof k.code === 'number' && typeof k.action === 'string'; }) };
+      return { service: !!info.service, blocked: !!info.blocked, keyboard: !!info.keyboard, learning: !!info.learning, keys: (info.keys || []).filter(function (k) { return k && typeof k.code === 'number' && typeof k.action === 'string'; }) };
     },
     learn: function (on) { try { return !!bridge.remoteLearn(!!on); } catch (e) { return false; } },
     set: function (code, name, action) { try { bridge.remoteSet(code, String(name), String(action)); return true; } catch (e) { return false; } },

@@ -1149,6 +1149,12 @@ try {
     check('Back again leaves Search', (await state()).view === 'home');
     await scene('apps');
     check('All apps offers Search', (await call('actions')).includes('apps.search'));
+    await scene('home');
+    await current.evaluate(() => { window.__tv.calls.length = 0; window.CleanFrameTyped('stre', false); });
+    check('Text from the phone keyboard opens Search', (await state()).view === 'search' && (await state()).search.q === 'stre' && (await state()).search.results[0] === 'app:stremio', (await state()).search);
+    await current.evaluate(() => window.CleanFrameTyped('stremio', true));
+    await current.waitForTimeout(50);
+    check('Enter from the phone opens the first result', (await current.evaluate(() => window.__tv.calls.some(c => /launch/.test(c.method)))), await current.evaluate(() => window.__tv.calls));
   });
   await run('Screen time', async () => {
     const pinHash = pin => { let h = 0x811c9dc5; for (const ch of 'shore:' + pin) { h ^= ch.charCodeAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };

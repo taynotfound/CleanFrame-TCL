@@ -24,6 +24,8 @@ public class MainActivity extends Activity {
     static final String EXTRA_SAVER = "app.cleanframe.tv.SAVER", EXTRA_HOME_KEY = "app.cleanframe.tv.HOME_KEY";
     private static volatile boolean saverRequest;
     private boolean loaded, resumed, homeRequest;
+    /** Shore is on screen: the phone keyboard types into Shore's Search instead of another app's field. */
+    static volatile boolean front;
     private android.widget.ImageView curtain;
 
     static boolean takeSaverRequest() { boolean r = saverRequest; saverRequest = false; return r; }
@@ -97,6 +99,9 @@ public class MainActivity extends Activity {
         phone.setCommands(new Companion.Commands() {
             @Override public void set(String axis, String value) {
                 runOnUiThread(() -> { if (web != null) web.evaluateJavascript("window.CleanFrameCompanionSet&&window.CleanFrameCompanionSet(" + org.json.JSONObject.quote(axis) + "," + org.json.JSONObject.quote(value) + ")", null); });
+            }
+            @Override public void type(String text, boolean enter) {
+                runOnUiThread(() -> { if (web != null) web.evaluateJavascript("window.CleanFrameTyped&&window.CleanFrameTyped(" + org.json.JSONObject.quote(text) + "," + enter + ")", null); });
             }
             @Override public void restore(String json) {
                 runOnUiThread(() -> { if (web != null) web.evaluateJavascript("window.CleanFrameCompanionRestore&&window.CleanFrameCompanionRestore(" + org.json.JSONObject.quote(json) + ")", null); });
@@ -232,7 +237,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        resumed = true;
+        resumed = true; front = true;
         if (web != null) {
             web.onResume(); web.resumeTimers(); web.requestFocus(); inputsChanged(); remoteChanged(); watchNextChanged();
             // Some TVs hand back a black surface after an app closes until the next key press: ask for fresh frames.
@@ -248,7 +253,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
-        resumed = false;
+        resumed = false; front = false;
         RemoteKeys.learn(false); // never capture a button while another app is in front
         Beat.stop();
         HomeAssistant.get(this).setActive(false); // no polling and no camera stream behind another app

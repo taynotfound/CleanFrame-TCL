@@ -52,6 +52,8 @@ final class Companion {
         void set(String axis, String value);
         /** A settings backup from the phone, already checked to be a Shore backup. */
         void restore(String json);
+        /** Text from the phone keyboard while Shore is in front: it goes to Shore's Search. */
+        void type(String text, boolean enter);
     }
 
     static final int MAX_FILES = 30, MAX_BYTES = 60 * 1024 * 1024;
@@ -323,6 +325,23 @@ final class Companion {
                 send(out, 200, "application/json", apiInfo());
                 return;
             }
+            // Phone keyboard: the text comes in the body (it may be a password) and replaces the focused field's text.
+            if (method.equals("POST") && api.equals("type")) {
+                if (length <= 0 || length > 16384) { send(out, 413, "application/json", "{\"error\":\"size\"}"); return; }
+                byte[] body = new byte[(int) length];
+                for (int got = 0, n; got < body.length; got += n) if ((n = in.read(body, got, body.length - got)) < 0) throw new IOException("Body cut short");
+                JSONObject b;
+                try { b = new JSONObject(new String(body, StandardCharsets.UTF_8)); } catch (Exception e) { b = new JSONObject(); }
+                String text = b.has("text") ? b.optString("text") : null;
+                boolean enter = b.optBoolean("enter");
+                if (text != null && text.length() > 2000) { send(out, 400, "application/json", "{\"error\":\"size\"}"); return; }
+                Commands c = commands;
+                String failed = "";
+                if (MainActivity.front && c != null) c.type(text == null ? "" : text, enter);
+                else failed = PhoneKeyboardService.type(text, enter);
+                send(out, failed.isEmpty() ? 200 : 409, "application/json", failed.isEmpty() ? "{\"ok\":true}" : new JSONObject().put("error", failed).toString());
+                return;
+            }
             // Home Assistant add-on: the address and token come in the body (never the URL) and are never sent back.
             if (method.equals("POST") && api.equals("ha")) {
                 if (length <= 0 || length > 8192) { send(out, 413, "application/json", "{\"error\":\"size\"}"); return; }
@@ -367,7 +386,7 @@ final class Companion {
         File[] all = files();
         for (int i = all.length - 1; i >= 0; i--) photos.put(all[i].getName());
         return new JSONObject().put("name", "Shore").put("install", PAIR_URL).put("count", all.length).put("max", MAX_FILES).put("place", place()).put("feed", feed()).put("calendar", calendar()).put("photos", photos)
-                .put("ha", HomeAssistant.get(context).summary()).put("adblock", AdBlock.get(context).summary()).toString();
+                .put("keyboard", PhoneKeyboardService.on()).put("front", MainActivity.front).put("ha", HomeAssistant.get(context).summary()).put("adblock", AdBlock.get(context).summary()).toString();
     }
 
     private void asset(OutputStream out, String name) throws IOException {

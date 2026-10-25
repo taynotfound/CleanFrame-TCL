@@ -2335,12 +2335,14 @@
       items.push({ action: 'background.online', label: 'Wallpaper sources', tick: true, applied: !failed.length,
         description: failed.length ? T('Couldn’t reach') + ' ' + failed.map(function (id) { return T(sourceName(id)); }).join(', ') : sourceNote() });
     }
+    if (REMOTE) items.push({ action: 'health.keyboard', label: 'Type from your phone', tick: true, applied: !!r.keyboard, optional: true,
+      description: r.keyboard ? 'On · use the Keyboard tab on your phone' : 'Optional: turn on Shore phone keyboard in Accessibility' });
     if (PHONE) items.push({ action: 'health.phone', label: 'Phone companion', tick: true, applied: S.phone.enabled,
       description: S.phone.enabled ? (S.phone.url ? 'On · ' + S.phone.url.replace(/^https?:\/\//, '') : 'On') : 'Send photos and change settings from your phone' });
     if (UPDATE) items.push({ action: 'open.updates', label: 'Shore updates', tick: true, applied: !updateReady() && S.update.status !== 'error', description: updateLine() });
     return items;
   }
-  function healthTodo() { return healthItems().filter(function (i) { return !i.applied; }).length; }
+  function healthTodo() { return healthItems().filter(function (i) { return !i.applied && !i.optional; }).length; }
   function healthLine() { var n = healthTodo(); return !n ? 'Everything is set up' : n === 1 ? '1 thing to check' : n + ' things to check'; }
   /* Things that stopped working, for the dot on Settings: not choices like a phone companion left off. */
   function healthAlerts() {
@@ -2454,6 +2456,18 @@
     if (text === companionLast) return;
     companionLast = text; PHONE.publish(text);
   }
+  /* Text from the phone's Keyboard tab while Shore is on screen: it searches. Enter opens the first result. */
+  window.CleanFrameTyped = function (text, enter) {
+    var t = top(), list;
+    text = String(text || '').replace(/[\r\n\t]+/g, ' ').slice(0, 40);
+    if (t.id === 'pin') return;
+    if (S.saver) stopSaver();
+    if (t.id !== 'search') { if (!text) return; openSearch(''); t = top(); }
+    t.q = text; t.f.j = 0;
+    list = searchResults(t.q);
+    if (enter && list.length) { searchOpen(list[0]); return; }
+    render();
+  };
   window.CleanFrameCompanionSet = function (axis, value) {
     var patch = {}, i, order;
     axis = String(axis); value = String(value);
@@ -2841,7 +2855,7 @@
     else if (item.action === 'ha.refresh') HA.refresh();
     else if (item.action.indexOf('ha.area.') === 0) haArea(+item.action.slice(8));
     else if (item.action === 'ha.forget') openMessage('haforget');
-    else if (item.action === 'health.remote') perform('Accessibility settings', REMOTE.openSettings);
+    else if (item.action === 'health.remote' || item.action === 'health.keyboard') perform('Accessibility settings', REMOTE.openSettings);
     else if (item.action === 'health.phone') openPhone();
     else if (item.action === 'open.updates') { S.update = UPDATE.info(); openAppearance('updates'); }
     else if (item.action === 'update.check') UPDATE.check();
@@ -3683,7 +3697,7 @@
         + command({ action: 'settings.retry', label: 'Try again' }, '<span>Try again</span>', 'setting-retry');
     }
     setHTML(appearanceStatus, status);
-    hint = selected.disabled ? '' : remoteHint(selected) || (selected.action === 'settings.back' ? 'Return to ' + (parentName(t)) : selected.action === 'settings.retry' ? 'Retry this change' : selected.axis === 'source' ? (selected.applied ? 'Remove from rotation' : 'Add to rotation') : selected.axis ? 'Apply selected setting' : selected.action === 'background.wallpaper' ? 'Choose a wallpaper' : selected.action === 'background.rotation' ? 'Choose a rotation interval' : selected.action === 'background.online' ? 'Choose a wallpaper source' : selected.action === 'phone.toggle' ? (S.phone.enabled ? 'Turn off' : 'Turn on') : selected.action === 'phone.forget' ? 'Phones scan a new code' : selected.action === 'phone.clear' ? 'Remove all my photos' : selected.action === 'nowplaying.access' ? 'Open Notification access' : /^open\./.test(selected.action) ? 'Open selected group' : selected.more ? 'Show these sources' : selected.action === 'typography.fonts' ? 'Choose a font' : selected.action === 'saver.start' ? 'Start the screensaver now' : selected.action === 'health.remote' ? 'Open Accessibility settings' : selected.action === 'health.phone' ? 'Open Phone settings' : selected.action === 'update.install' ? 'Download and install' : selected.action === 'update.check' ? 'Check now' : selected.action === 'update.auto' ? (S.update.auto ? 'Turn off' : 'Turn on') : selected.action === 'update.wait' ? 'Please wait' : selected.action.indexOf('iconapp.') === 0 ? 'Choose an icon' : selected.action.indexOf('iconset.') === 0 ? 'Use this icon' : selected.action.indexOf('inname.') === 0 ? 'Use this name' : selected.action.indexOf('todpart.') === 0 ? 'Choose a photo for this part of the day' : selected.action.indexOf('todauto.') === 0 ? 'Pick one automatically' : selected.action.indexOf('todpick.') === 0 ? 'Choose a photo' : /^input(page|name)\./.test(selected.action) ? 'Open selected group' : selected.action.indexOf('input.toggle.') === 0 ? (selected.applied ? 'Hide from Home' : 'Show on Home') : selected.action === 'ha.refresh' ? 'Check again' : /^hadoor\./.test(selected.action) ? 'Use this doorbell' : /^hadoorcam\./.test(selected.action) ? 'Show this camera' : selected.action === 'ad.refresh' ? 'Check again' : selected.action === 'ad.pause.0' ? 'Turn blocking back on' : selected.action.indexOf('ad.pause.') === 0 ? 'Pause blocking' : selected.action === 'ad.forget' ? 'Forget the server and its password' : selected.action.indexOf('ha.area.') === 0 ? (selected.applied ? 'Hide this room' : 'Show this room') : selected.action === 'ha.forget' ? 'Forget the server and its token' : 'Open on the TV');
+    hint = selected.disabled ? '' : remoteHint(selected) || (selected.action === 'settings.back' ? 'Return to ' + (parentName(t)) : selected.action === 'settings.retry' ? 'Retry this change' : selected.axis === 'source' ? (selected.applied ? 'Remove from rotation' : 'Add to rotation') : selected.axis ? 'Apply selected setting' : selected.action === 'background.wallpaper' ? 'Choose a wallpaper' : selected.action === 'background.rotation' ? 'Choose a rotation interval' : selected.action === 'background.online' ? 'Choose a wallpaper source' : selected.action === 'phone.toggle' ? (S.phone.enabled ? 'Turn off' : 'Turn on') : selected.action === 'phone.forget' ? 'Phones scan a new code' : selected.action === 'phone.clear' ? 'Remove all my photos' : selected.action === 'nowplaying.access' ? 'Open Notification access' : /^open\./.test(selected.action) ? 'Open selected group' : selected.more ? 'Show these sources' : selected.action === 'typography.fonts' ? 'Choose a font' : selected.action === 'saver.start' ? 'Start the screensaver now' : selected.action === 'health.remote' || selected.action === 'health.keyboard' ? 'Open Accessibility settings' : selected.action === 'health.phone' ? 'Open Phone settings' : selected.action === 'update.install' ? 'Download and install' : selected.action === 'update.check' ? 'Check now' : selected.action === 'update.auto' ? (S.update.auto ? 'Turn off' : 'Turn on') : selected.action === 'update.wait' ? 'Please wait' : selected.action.indexOf('iconapp.') === 0 ? 'Choose an icon' : selected.action.indexOf('iconset.') === 0 ? 'Use this icon' : selected.action.indexOf('inname.') === 0 ? 'Use this name' : selected.action.indexOf('todpart.') === 0 ? 'Choose a photo for this part of the day' : selected.action.indexOf('todauto.') === 0 ? 'Pick one automatically' : selected.action.indexOf('todpick.') === 0 ? 'Choose a photo' : /^input(page|name)\./.test(selected.action) ? 'Open selected group' : selected.action.indexOf('input.toggle.') === 0 ? (selected.applied ? 'Hide from Home' : 'Show on Home') : selected.action === 'ha.refresh' ? 'Check again' : /^hadoor\./.test(selected.action) ? 'Use this doorbell' : /^hadoorcam\./.test(selected.action) ? 'Show this camera' : selected.action === 'ad.refresh' ? 'Check again' : selected.action === 'ad.pause.0' ? 'Turn blocking back on' : selected.action.indexOf('ad.pause.') === 0 ? 'Pause blocking' : selected.action === 'ad.forget' ? 'Forget the server and its password' : selected.action.indexOf('ha.area.') === 0 ? (selected.applied ? 'Hide this room' : 'Show this room') : selected.action === 'ha.forget' ? 'Forget the server and its token' : 'Open on the TV');
     setHTML(appearanceDesc, hint ? '<span class="remote-key">OK</span><span>' + esc(hint) + '</span>' : '');
     fitRows();
   }

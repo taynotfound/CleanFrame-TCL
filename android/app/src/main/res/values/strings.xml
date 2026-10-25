@@ -4,4 +4,6 @@
     <string name="now_playing_label">Shore Now playing</string>
     <string name="screensaver_label">Shore</string>
     <string name="home_service_description">Opens Shore when you press the remote\'s Home button. Hold Home to open Google TV Home instead. Also applies the remote buttons you reassign in Shore\'s settings. Shore only watches remote keys and which app is in front; it does not read screen content.</string>
+    <string name="keyboard_service_label">Shore phone keyboard</string>
+    <string name="keyboard_service_description">Optional. Lets the Shore companion on your paired phone type into the text field that has focus on the TV, for example a search box or a password. Shore looks for that field only when you send text from the phone, and changes nothing else.</string>
 </resources>
