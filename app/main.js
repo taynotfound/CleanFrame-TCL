@@ -92,7 +92,11 @@
     { id: 'tvn24', name: 'TVN24', url: 'https://tvn24.pl/najnowsze.xml', lang: 'pl' },
     { id: 'rmf24', name: 'RMF24', url: 'https://www.rmf24.pl/feed', lang: 'pl' },
     { id: 'pravda', name: 'Українська правда', url: 'https://www.pravda.com.ua/rss/', lang: 'uk' },
-    { id: 'bbcua', name: 'BBC Україна', url: 'https://feeds.bbci.co.uk/ukrainian/rss.xml', lang: 'uk' }];
+    { id: 'bbcua', name: 'BBC Україна', url: 'https://feeds.bbci.co.uk/ukrainian/rss.xml', lang: 'uk' },
+    { id: 'ansa', name: 'ANSA', url: 'https://www.ansa.it/sito/ansait_rss.xml', lang: 'it' },
+    { id: 'repubblica', name: 'la Repubblica', url: 'https://www.repubblica.it/rss/homepage/rss2.0.xml', lang: 'it' },
+    { id: 'bbctr', name: 'BBC News Türkçe', url: 'https://feeds.bbci.co.uk/turkce/rss.xml', lang: 'tr' },
+    { id: 'dwtr', name: 'DW Türkçe', url: 'https://rss.dw.com/rdf/rss-tur-all', lang: 'tr' }];
   var LOOK_VALUES = { bg: ['dark', 'light', 'photo'], layout: ['list', 'dock'], apps: ['icons', 'both', 'text'], font: Object.keys(FONTS).filter(function (id) { return id === 'manrope' || PRIVATE_FONTS.indexOf(id) >= 0; }), controls: ['icons', 'both', 'text'], inputs: ['front', 'row'], lstyle: ['glass', 'shelf'], motion: ['still', 'drift'], tweight: ['auto', 'light', 'regular', 'bold'], tsize: ['small', 'default', 'large'],
     cformat: ['12', '24'], cdate: ['off', 'on'], cweather: ['off', 'on'], wunit: ['c', 'f'], cplaying: ['off', 'on'], cart: ['off', 'on'], clook: ['off', 'on'], saver: ['off', '5', '10', '15'], csize: ['small', 'medium', 'large', 'huge'], cweight: ['auto', 'thin', 'light', 'regular', 'bold'],
     night: ['off', 'scheduled', 'always'], nhours: ['20-7', '21-7', '22-6', '23-7'], ndim: ['soft', 'medium', 'strong'], idle: ['off', '1', '5'], focus: ['type', 'glass'], material: ['soft', 'frost', 'tint'],

@@ -289,6 +289,7 @@ final class HomeAssistant {
         switch (lang) {
             case "de": note = "Es hat geklingelt"; break; case "fr": note = "On sonne à la porte"; break; case "es": note = "Llaman a la puerta"; break;
             case "nl": note = "Er wordt aangebeld"; break; case "pl": note = "Ktoś dzwoni do drzwi"; break; case "uk": note = "Дзвонять у двері"; break;
+            case "it": note = "C’è qualcuno alla porta"; break; case "tr": note = "Kapıda biri var"; break;
             default: note = "Someone’s at the door";
         }
         final String text = note;

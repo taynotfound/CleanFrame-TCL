@@ -1,9 +1,9 @@
 /* Shore interface language. Follows the TV's system language (the WebView reports it as
    navigator.language); English is the source text and the fallback. ?lang=de overrides it in previews.
-   Built in: de, fr, es, nl, pl, uk, each in i18n/<lang>.js and loaded only for that language.
+   Built in: de, fr, es, nl, pl, uk, it, tr, each in i18n/<lang>.js and loaded only for that language.
    T(s) translates a whole English string; composite messages are matched by RULES. */
 (function (root) {
-  var LANGS = ['de', 'fr', 'es', 'nl', 'pl', 'uk'];
+  var LANGS = ['de', 'fr', 'es', 'nl', 'pl', 'uk', 'it', 'tr'];
   function pick() {
     var forced = /[?&]lang=([a-z]{2})/i.exec(root.location ? root.location.search : '');
     var nav = root.navigator || {}, tag = forced ? forced[1] : (nav.languages && nav.languages[0]) || nav.language || 'en';

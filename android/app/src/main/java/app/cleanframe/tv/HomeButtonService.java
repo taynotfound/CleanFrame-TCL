@@ -91,19 +91,21 @@ public class HomeButtonService extends AccessibilityService {
         android.widget.Toast.makeText(this, sleepNote(minutes), android.widget.Toast.LENGTH_SHORT).show();
     }
 
-    /** The note in the TV's language (the six Shore speaks), English otherwise. */
+    /** The note in the TV's language (the eight Shore speaks), English otherwise. */
     static String sleepNote(int minutes) {
         String lang = java.util.Locale.getDefault().getLanguage();
         if (minutes <= 0) {
             switch (lang) {
                 case "de": return "Sleep-Timer aus"; case "fr": return "Minuterie de veille désactivée"; case "es": return "Temporizador apagado";
                 case "nl": return "Slaaptimer uit"; case "pl": return "Wyłącznik czasowy wyłączony"; case "uk": return "Таймер вимкнення вимкнено";
+                case "it": return "Timer di spegnimento disattivato"; case "tr": return "Uyku zamanlayıcısı kapalı";
                 default: return "Sleep timer off";
             }
         }
         switch (lang) {
             case "de": return "Aus in " + minutes + " Min."; case "fr": return "Veille dans " + minutes + " min"; case "es": return "Se apaga en " + minutes + " min";
             case "nl": return "Uit over " + minutes + " min"; case "pl": return "Wyłączenie za " + minutes + " min"; case "uk": return "Вимкнення через " + minutes + " хв";
+            case "it": return "Spegnimento tra " + minutes + " min"; case "tr": return minutes + " dk sonra kapanacak";
             default: return "Sleep in " + minutes + " min";
         }
     }
