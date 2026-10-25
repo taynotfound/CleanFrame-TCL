@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Shore, a home screen for Google TV</title>
 <meta name="description" content="Shore replaces the Google TV home screen with your apps, your HDMI devices and a photo you chose, plus the time, the weather and a headline. Free and open source.">
-<meta name="theme-color" content="#0f1416">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f2f4f0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1416" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://taynotfound.github.io/shore/">
+<meta property="og:type" content="website">
 <meta property="og:title" content="Shore, a home screen for Google TV">
 <meta property="og:description" content="Your apps, your HDMI devices and a photo you chose, with the time in the corner.">
 <meta property="og:image" content="https://taynotfound.github.io/shore/social.png">
@@ -14,304 +18,378 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.png">
 <link rel="apple-touch-icon" href="icon.png">
+<link rel="preload" href="manrope.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face{font-family:Manrope;src:url(manrope.woff2) format("woff2");font-weight:200 800;font-display:swap}
 @font-face{font-family:Manrope;src:url(manrope-cyrillic.woff2) format("woff2");font-weight:200 800;font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
 @font-face{font-family:Manrope;src:url(manrope-latin-ext.woff2) format("woff2");font-weight:200 800;font-display:swap;unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
-/* The same tokens as the TV interface (app/style.css), at roughly half the TV's pixel sizes. */
-:root{color-scheme:dark;--ground:#0f1416;--ink:#f6f1e7;--mute:rgba(246,241,231,.76);--faint:rgba(246,241,231,.58);--line:rgba(246,241,231,.18);--solid:#f3f3ef;--solid-ink:#141618;--solid-mute:rgba(29,26,22,.68);--plate:linear-gradient(170deg,rgba(255,255,255,.30),rgba(255,255,255,.16) 58%,rgba(255,255,255,.22));--lift:linear-gradient(170deg,rgba(255,255,255,.44),rgba(255,255,255,.27) 58%,rgba(255,255,255,.34));--edge:inset 0 1px 0 rgba(255,255,255,.34);--ease:cubic-bezier(.2,.7,.2,1)}
+
+/* Shore's own colours (docs/brand): ivory on a deep blue-grey, one warm accent. Light is the same family, turned over. */
+:root{
+  color-scheme:light dark;
+  --ground:#f2f4f0;--ground-2:#e6ebe4;--ink:#111b20;--mute:#42525a;--faint:#4a5b63;
+  --line:rgba(17,27,32,.14);--line-2:rgba(17,27,32,.5);
+  --solid:#111b20;--solid-ink:#f4f2ec;--accent:#8a5416;
+  --veil:rgba(242,244,240,.82);--shadow:rgba(10,24,32,.34);
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --gutter:clamp(16px,4vw,40px);
+}
+@media (prefers-color-scheme:dark){:root{
+  --ground:#0f1416;--ground-2:#161e22;--ink:#f3f1ea;--mute:rgba(243,241,234,.78);--faint:rgba(243,241,234,.62);
+  --line:rgba(243,241,234,.14);--line-2:rgba(243,241,234,.5);
+  --solid:#f3f1ea;--solid-ink:#13181b;--accent:#f2c58b;
+  --veil:rgba(15,20,22,.7);--shadow:rgba(0,0,0,.6);
+}}
+
 *{box-sizing:border-box}
-body{margin:0;background:var(--ground);color:var(--ink);font:16px/1.55 Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:500;letter-spacing:-.1px;-webkit-font-smoothing:antialiased}
-a{color:inherit}
-img{max-width:100%;height:auto;display:block}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font:500 17px/1.65 Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;overflow-wrap:break-word}
+img{display:block;max-width:100%;height:auto}
 p{margin:0 0 1em}
-h1,h2,h3{margin:0;font-weight:500}
-:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
-.ico{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;background:rgba(246,241,231,.1);padding:2px 6px;border-radius:6px;overflow-wrap:anywhere}
+h1,h2,h3{margin:0;font-weight:600;text-wrap:balance}
+a{color:inherit;text-decoration-thickness:1px;text-underline-offset:.2em}
+a:hover{text-decoration-thickness:2px}
+::selection{background:var(--accent);color:var(--ground)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+code{font:500 .86em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--ground-2);padding:.15em .45em;border-radius:6px;overflow-wrap:anywhere}
+.skip{position:absolute;left:var(--gutter);top:-80px;z-index:10;padding:10px 16px;border-radius:999px;background:var(--solid);color:var(--solid-ink);font-weight:600;text-decoration:none}
+.skip:focus{top:12px}
+.wrap{width:min(100%,1120px);margin-inline:auto;padding-inline:var(--gutter)}
 
-/* Settings backdrop: the wallpaper's pre-blurred panel image under a veil, as on the TV. */
-.backdrop{position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(8,12,14,.58),rgba(8,12,14,.58)),url(bridge-panel.jpg) center/cover,var(--ground)}
+/* Buttons: solid is Shore's focused tile, ghost is an outline. */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 24px;border-radius:999px;font-size:16px;font-weight:600;line-height:1.2;text-decoration:none;white-space:nowrap;transition:background-color 140ms linear,color 140ms linear,box-shadow 140ms linear}
+.btn svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.btn-solid{background:var(--solid);color:var(--solid-ink)}
+.btn-solid:hover{box-shadow:0 0 0 4px var(--line);text-decoration:none}
+.btn-ghost{box-shadow:inset 0 0 0 1.5px var(--line-2)}
+.btn-ghost:hover{background:var(--ground-2);text-decoration:none}
+.btn-sm{min-height:44px;padding:0 20px;font-size:15px}
 
-/* Home: photo, shade and scrim, caption top left, utilities top right, dock at the bottom. */
-.home{position:relative;min-height:max(620px,min(100svh,56.25vw));display:flex;flex-direction:column;padding:36px 70px 44px;background:var(--ground) url(bridge.jpg) center/cover;overflow:hidden}
-.home::before{content:"";position:absolute;inset:0 0 auto;height:42%;background:linear-gradient(rgba(4,10,12,.42),rgba(4,10,12,.2) 50%,rgba(4,10,12,0))}
-.home::after{content:"";position:absolute;inset:auto 0 0;height:52%;background:linear-gradient(rgba(4,10,12,0),rgba(4,10,12,.42) 70%,rgba(4,10,12,.56))}
-.home>*{position:relative;z-index:1}
-.top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
-.caption{max-width:620px;text-shadow:0 1px 3px rgba(0,0,0,.3)}
-.caption h1{font-size:clamp(34px,4.4vw,56px);line-height:1.12;letter-spacing:-.03em}
-.caption p{margin:10px 0 0;font-size:clamp(16px,1.5vw,19px);line-height:1.5;color:rgba(255,255,255,.88)}
-.utils{display:flex;gap:4px;margin:4px -10px 0 0}
-.utils a{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 12px;border-radius:20px;font-size:15px;text-decoration:none;color:#f6f1e7;opacity:.76;text-shadow:0 1px 2px rgba(14,10,6,.4);white-space:nowrap;transition:background-color 140ms linear,color 140ms linear}
-.utils .ico{width:18px;height:18px}
-.utils a:hover,.utils a:focus-visible{opacity:1;background:var(--solid);color:var(--solid-ink);text-shadow:none;outline:0}
-.dock{margin:auto auto 0;width:min(100%,760px);display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:8px;border-radius:28px;background:rgba(255,255,255,.11);box-shadow:var(--edge);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)}
-.tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;height:104px;border-radius:22px;text-decoration:none;font-size:15px;color:var(--mute);transition:background 140ms linear,color 140ms linear,transform 180ms var(--ease)}
-.tile .ico{width:30px;height:30px}
-.tile:hover,.tile:focus-visible,.dock:not(:hover):not(:focus-within) .tile.first{background:var(--lift);box-shadow:var(--edge);color:var(--ink);transform:translateY(-2px);outline:0}
-.hint{margin:16px auto 0;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--mute)}
-.key{display:inline-grid;place-items:center;min-width:30px;height:22px;padding:0 7px;border:1.5px solid currentColor;border-radius:11px;font-size:11px;font-weight:700;letter-spacing:.3px}
+/* Top bar sits over the hero's backdrop. */
+.topbar{position:absolute;inset:0 0 auto;z-index:2}
+.bar{display:flex;align-items:center;gap:24px;min-height:72px}
+.brand{display:inline-flex;align-items:center;gap:10px;min-height:44px;margin-right:auto;font-size:21px;font-weight:700;letter-spacing:-.02em;text-decoration:none}
+.brand svg{width:34px;height:30px;fill:currentColor}
+.bar nav{display:flex;gap:4px}
+.bar nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border-radius:999px;font-size:15px;text-decoration:none;color:var(--mute);transition:background-color 140ms linear,color 140ms linear}
+.bar nav a:hover{background:var(--solid);color:var(--solid-ink)}
 
-/* Pages: titles and rows like Shore's settings. */
-main{max-width:1040px;margin:0 auto;padding:0 32px 40px}
-section{padding:88px 0 0;display:grid;grid-template-columns:240px minmax(0,1fr);gap:16px 48px}
-section h2{font-size:34px;line-height:1.15;letter-spacing:-.03em}
-.head{display:block;margin-bottom:6px;font-size:13px;color:var(--faint)}
-.body{max-width:680px}
-.body>p,.body li{color:var(--mute)}
-.body strong{color:var(--ink);font-weight:600}
-figure{margin:28px 0}
-.shot{border-radius:16px;overflow:hidden;background:#0b0f11;box-shadow:0 0 0 1px var(--line),0 18px 50px rgba(0,0,0,.35)}
-figcaption{margin-top:10px;font-size:13.5px;color:var(--faint)}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}
-.pair figure{margin:0}
-.rows{margin:24px 0;padding:0;list-style:none}
-.row{display:flex;align-items:baseline;justify-content:space-between;gap:24px;min-height:48px;padding:12px 18px;border-radius:12px;color:var(--ink);transition:background-color 140ms linear,color 140ms linear}
-.row+.row{margin-top:3px}
-.row b{flex:none;font-size:18px;font-weight:500;letter-spacing:-.3px}
-.row span{min-width:0;text-align:right;font-size:14.5px;color:var(--mute)}
-.row:hover{background:var(--solid);color:var(--solid-ink)}
-.row:hover span{color:var(--solid-mute)}
-.parts .row{display:block;padding:14px 18px}
-.parts .row b{display:block;margin-bottom:4px}
-.parts .row span{display:block;text-align:left;font-size:15px;line-height:1.55}
-ul.plain{margin:0 0 1em;padding-left:1.1em}
-ul.plain li{margin:0 0 .5em}
-ul.plain li::marker{color:var(--faint)}
-.phones{display:flex;gap:16px;margin:28px 0}
-.phones figure{margin:0;flex:0 1 220px;min-width:0}
-.phones img{border-radius:22px;box-shadow:0 0 0 1px var(--line),0 18px 50px rgba(0,0,0,.35)}
-ol.steps{margin:0 0 1em;padding:0;list-style:none;counter-reset:s}
-ol.steps li{counter-increment:s;position:relative;padding:0 0 18px 42px}
-ol.steps li::before{content:counter(s);position:absolute;left:0;top:1px;display:grid;place-items:center;width:26px;height:22px;border:1.5px solid var(--faint);border-radius:11px;font-size:12px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
-ol.steps b{color:var(--ink);font-weight:600}
-.button{display:inline-flex;align-items:center;gap:10px;height:48px;padding:0 24px 0 18px;border-radius:24px;background:var(--solid);color:var(--solid-ink);text-decoration:none;font-weight:600}
-.button .ico{width:20px;height:20px}
-.button:hover{background:#fff}
-.button.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--faint)}.button.ghost:hover{background:var(--lift)}
-.support-buttons{display:flex;flex-wrap:wrap;gap:12px}
-.utils .support-link{opacity:1}.utils .support-link .ico{color:#ff7a8a}
-details{border-radius:12px;transition:background-color 140ms linear}
-details+details{margin-top:3px}
-summary{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:52px;padding:12px 18px;border-radius:12px;font-size:17px;cursor:pointer;list-style:none}
+/* Hero: the TV's own pre-blurred photo panel under a veil, then the product itself. */
+.hero{background:linear-gradient(var(--veil),var(--ground) 94%),url(bridge-panel.jpg) center top/cover no-repeat,var(--ground);padding-bottom:clamp(40px,6vw,72px)}
+.hero-text{padding-top:calc(72px + clamp(32px,6vw,88px));text-align:center}
+.hero h1{max-width:15ch;margin-inline:auto;font-size:clamp(40px,7.4vw,92px);line-height:1.04;letter-spacing:-.035em}
+.lede{max-width:34em;margin:clamp(18px,2.4vw,28px) auto 0;font-size:clamp(17px,1.7vw,21px);line-height:1.55;color:var(--mute)}
+.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:clamp(24px,3vw,36px) 0 0}
+.fine{margin:20px auto 0;max-width:46em;font-size:14.5px;line-height:1.6;color:var(--faint)}
+.fine a{color:var(--mute)}
+.tv{margin:clamp(36px,5vw,64px) auto 0;width:min(100%,1080px)}
+.tv figcaption{margin-top:14px;text-align:center}
+.shot{overflow:hidden;border-radius:clamp(10px,1.6vw,18px);background:#0b0f11;box-shadow:0 0 0 1px var(--line),0 28px 60px -24px var(--shadow)}
+.shot img{width:100%}
+figcaption{margin-top:10px;font-size:14px;line-height:1.5;color:var(--faint)}
+@media (prefers-reduced-motion:no-preference){.tv{animation:rise .8s var(--ease) both}@keyframes rise{from{transform:translateY(20px)}}}
+
+/* Feature blocks */
+.block{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,5vw,80px);align-items:start;padding-block:clamp(48px,7vw,96px);border-top:1px solid var(--line);scroll-margin-top:8px}
+.block.flip .copy{order:2}
+.block.wide{grid-template-columns:minmax(0,1fr);row-gap:clamp(28px,4vw,48px)}
+.block.wide .copy{max-width:44rem}
+.copy h2,.stage .head h2,.section-title{font-size:clamp(30px,4vw,48px);line-height:1.1;letter-spacing:-.03em;margin-bottom:.5em}
+.copy p{color:var(--mute)}
+.copy p.note{font-size:15px;color:var(--faint)}
+.copy p a:not(.btn),.faq p a,.after a{color:var(--ink)}
+.facts{margin:1.6em 0 0;padding:0;list-style:none}
+.facts li{align-content:start;display:grid;grid-template-columns:minmax(0,9.5rem) minmax(0,1fr);gap:4px 24px;padding:14px 0;border-top:1px solid var(--line)}
+.facts b{font-weight:600}
+.facts span{color:var(--mute);font-size:16px;line-height:1.6}
+.block:not(.wide) .facts li,.block:not(.wide) .facts.links a{grid-template-columns:minmax(0,1fr);gap:2px}
+.block.stage{grid-template-columns:minmax(0,1fr);row-gap:clamp(28px,4vw,48px)}
+.stage .head{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:20px clamp(28px,5vw,80px);align-items:end}
+.stage .head h2{margin:0}
+.stage .head p{margin:0;color:var(--mute)}
+.facts.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:clamp(28px,5vw,80px);margin:0}
+.facts.flush{margin-top:0}
+.facts.links li{display:block;padding:0}
+.facts.links a{display:grid;grid-template-columns:minmax(0,9.5rem) minmax(0,1fr);gap:4px 24px;padding:14px 8px;margin-inline:-8px;border-radius:8px;text-decoration:none;transition:background-color 140ms linear}
+.facts.links a:hover{background:var(--ground-2)}
+.facts.links a:hover b{text-decoration:underline}
+.pair,.trio{display:grid;gap:clamp(16px,2.4vw,28px);margin:0}
+.pair{grid-template-columns:repeat(2,minmax(0,1fr))}
+.trio{grid-template-columns:repeat(3,minmax(0,1fr))}
+.trio h3{margin:16px 0 4px;font-size:20px;letter-spacing:-.015em}
+.trio p{margin:0;font-size:16px;line-height:1.6;color:var(--mute)}
+.phones{display:flex;gap:clamp(12px,2vw,24px);justify-content:center}
+.phones figure{flex:0 1 260px;min-width:0;margin:0}
+.phones img{border-radius:clamp(18px,3vw,28px);box-shadow:0 0 0 1px var(--line),0 28px 50px -24px var(--shadow)}
+.stack{display:grid;gap:clamp(16px,2.4vw,28px)}
+.stack figure,.pair figure,.trio figure,.block>figure{margin:0}
+
+/* Install */
+.steps{margin:1.6em 0;padding:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:0 0 22px 52px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:1px;display:grid;place-items:center;width:34px;height:28px;border:1.5px solid var(--line-2);border-radius:14px;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.steps b{font-weight:600}
+.steps p{margin:0 0 .6em;color:var(--mute)}
+.steps p:first-child{color:var(--ink)}
+pre{margin:.6em 0 0;padding:14px 18px;border-radius:12px;background:var(--ground-2);box-shadow:0 0 0 1px var(--line);white-space:pre-wrap;overflow-wrap:anywhere;font:500 15px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+pre code{padding:0;background:none}
+.after{color:var(--mute)}
+
+/* Questions */
+.faq{border-bottom:1px solid var(--line)}
+details{border-top:1px solid var(--line)}
+summary{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:60px;padding:14px 4px;font-size:18px;font-weight:600;cursor:pointer;list-style:none;border-radius:8px}
 summary::-webkit-details-marker{display:none}
-summary .ico{width:18px;height:18px;color:var(--mute);transition:transform 180ms var(--ease)}
-summary:hover{background:var(--solid);color:var(--solid-ink)}
-summary:hover .ico{color:var(--solid-mute)}
-details[open] summary .ico{transform:rotate(90deg)}
-details p{margin:4px 18px 18px;color:var(--mute)}
-footer{max-width:1040px;margin:96px auto 0;padding:24px 32px 48px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px 32px;font-size:13.5px;color:var(--faint)}
+summary svg{width:20px;height:20px;flex:none;fill:none;stroke:var(--faint);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform 180ms var(--ease)}
+summary:hover{background:var(--ground-2)}
+details[open] summary svg{transform:rotate(90deg)}
+details p{margin:0 4px 20px;max-width:46rem;color:var(--mute)}
+.support-buttons{display:flex;flex-wrap:wrap;gap:12px;margin:1.6em 0}
+
+footer{border-top:1px solid var(--line);padding-block:40px 56px;font-size:14.5px;line-height:1.7;color:var(--faint)}
+footer .wrap{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px 40px}
 footer p{margin:0}
+footer .brand{margin:0 0 10px;color:var(--ink);font-size:19px}
+footer .brand svg{width:30px;height:26px}
+footer a{color:var(--mute)}
 
 @media (max-width:900px){
-  .home{padding:24px 24px 28px}
-  .utils{display:none}
-  section{grid-template-columns:1fr;padding-top:64px}
+  .bar nav{display:none}
+  .block,.block.flip{grid-template-columns:minmax(0,1fr)}
+  .stage .head,.facts.cols{grid-template-columns:minmax(0,1fr)}
+  .block.flip .copy{order:0}
+  .trio,.pair{grid-template-columns:minmax(0,1fr)}
+  footer .wrap{grid-template-columns:minmax(0,1fr)}
 }
-@media (max-width:600px){
-  .home{min-height:max(560px,88svh);padding:24px 16px 20px}
-  .dock{padding:6px;border-radius:24px}
-  .tile{height:84px;font-size:13px;border-radius:18px}
-  .tile .ico{width:26px;height:26px}
-  main{padding:0 16px 32px}
-  section h2{font-size:28px}
-  .pair{grid-template-columns:1fr}
-  .row{padding:12px 14px}
-  .parts .row{padding:12px 14px}
-  footer{padding:24px 16px 40px}
+@media (max-width:560px){
+  body{font-size:16.5px}
+  .btn{width:100%}
+  .btn-sm{width:auto}
+  .actions{flex-direction:column;align-items:stretch}
+  .facts li,.facts.links a{grid-template-columns:minmax(0,1fr);gap:2px}
+  .steps li{padding-left:46px}
+  .phones figure{flex-basis:50%}
 }
-.caption .new{margin-top:14px}
-.caption .new a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;opacity:.9}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 </style>
 </head>
 <body>
-<div class="backdrop" aria-hidden="true"></div>
+<a class="skip" href="#home">Skip to the features</a>
 
-<header class="home">
-  <div class="top">
-    <div class="caption">
-      <h1>A plainer home screen for Google&nbsp;TV</h1>
-      <p>Shore puts your apps, the devices plugged into HDMI and a photo you chose on the screen, with the time, the weather and a headline in the corner. Hold Home and you're back in Google TV.</p>
-      <p class="new"><a href="#home">New: your own icon for every app, recently used apps, a parental lock, a sleep timer and your calendar under the clock.</a></p>
-    </div>
-    <nav class="utils" aria-label="Sections">
-      <a href="#clock"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>Under the clock</a>
-      <a href="#music"><svg class="ico" viewBox="0 0 24 24"><path d="M9 17.5V6l10-2v11.5"/><circle cx="6.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="15.5" r="2.5"/></svg>Music</a>
-      <a href="#faq"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .8-1 1.5v.4M12 16.6v.1"/></svg>Questions</a>
-      <a class="support-link" href="#support"><svg class="ico" viewBox="0 0 24 24"><path d="M12 19.5s-7-4.3-7-9.6A3.9 3.9 0 0 1 12 7.6a3.9 3.9 0 0 1 7 2.3c0 5.3-7 9.6-7 9.6Z"/></svg>Support Shore</a>
+<header class="topbar">
+  <div class="wrap bar">
+    <a class="brand" href="#top" aria-label="Shore, top of the page"><svg viewBox="44 66 112 94" aria-hidden="true"><path d="M66 104a34 34 0 0 1 68 0Z"/><rect x="49" y="110.7" width="102" height="6.8" rx="3.4"/><rect x="60.9" y="129.8" width="78.2" height="6.8" rx="3.4"/><rect x="74.5" y="148.8" width="51" height="6.8" rx="3.4"/></svg>Shore</a>
+    <nav aria-label="Sections">
+      <a href="#home">Features</a>
+      <a href="#install">Install</a>
+      <a href="#phone">Phone</a>
+      <a href="#faq">Questions</a>
+      <a href="https://github.com/taynotfound/shore">Source</a>
     </nav>
+    <a class="btn btn-solid btn-sm" href="https://github.com/taynotfound/shore/releases/latest">Download</a>
   </div>
-  <nav class="dock" aria-label="Get Shore">
-    <a class="tile first" href="https://github.com/taynotfound/shore/releases/latest"><svg class="ico" viewBox="0 0 24 24"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>Download</a>
-    <a class="tile" href="#install"><svg class="ico" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="11.5" rx="2"/><path d="M8.5 19.5h7M12 16.5v3"/></svg>Install</a>
-    <a class="tile" href="#phone"><svg class="ico" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 17.5h2"/></svg>Phone</a>
-    <a class="tile" href="https://github.com/taynotfound/shore"><svg class="ico" viewBox="0 0 24 24"><path d="m8.5 8-4 4 4 4M15.5 8l4 4-4 4M13.5 5.5l-3 13"/></svg>Source</a>
-    <a class="tile" href="https://discord.gg/z6C4Mj9VPK"><svg class="ico" viewBox="0 0 24 24"><path d="M5 6.5c4.5-2 9.5-2 14 0 1.6 3.5 2 7 1.5 10.5-1.5 1.2-3.2 2-5 2.5l-1-2M5 6.5C3.4 10 3 13.5 3.5 17c1.5 1.2 3.2 2 5 2.5l1-2M7.5 16c3 1.3 6 1.3 9 0"/><circle cx="9.3" cy="12" r=".9"/><circle cx="14.7" cy="12" r=".9"/></svg>Discord</a>
-  </nav>
-  <p class="hint"><span class="key">OK</span>Download the latest APK, free under the MIT licence</p>
 </header>
 
-<main>
-<section id="tv">
-  <h2><span class="head">Shore</span>On the TV</h2>
-  <div class="body">
-    <figure><div class="shot"><img src="shots/home-news.jpg" width="1600" height="900" alt="Shore's Home screen over the Golden Gate Bridge: the time, the date, 7 °C and cloudy, one headline, and a dock with Stremio, Netflix, Disney+, YouTube, Apple TV and Prime Video"></div><figcaption>Home on a TCL 55C6KS, in the Dock layout.</figcaption></figure>
-    <ul class="rows">
-      <li class="row"><b>Tested on</b><span>TCL 55C6KS (Android TV 12), TCL 65C7K, CHiQ L32QM8G (Android 14), Hisense A6N (Android TV 12)</span></li>
-      <li class="row"><b>Languages</b><span>English, German, French, Spanish, Dutch, Polish, Ukrainian, Italian, Turkish</span></li>
-      <li class="row"><b>Install</b><span>Once with adb, then it updates itself</span></li>
-      <li class="row"><b>Price</b><span>Free, MIT licence</span></li>
-    </ul>
-  </div>
-</section>
-
-<section id="home">
-  <h2><span class="head">Look</span>Apps and inputs</h2>
-  <div class="body">
-    <p>Shore finds your installed apps and puts up to nine on Home, in the order you choose. The Dock and List layouts draw every logo the same way: Shore's own drawings in colour or in one colour, or the icons from a pack you've installed, such as one made for Projectivy Launcher. Hold OK on any app to give it a different icon.</p>
-    <p>Apps you opened lately but haven't put on Home follow your own ones in the dock, up to three of them.</p>
-    <p>Shelf uses each app's own banner instead. The focused app fills the screen with what's on there, and Down opens a row of picks. ARD, ZDF and ARTE work as they are. YouTube, Twitch and the apps covered by TMDB need API keys in a build of your own.</p>
-    <div class="pair">
-      <figure><div class="shot"><img src="images/home.jpg" width="1280" height="720" loading="lazy" alt="Dock layout over Sydney Harbour with YouTube, waipu.tv, Joyn, Spotify, Twitch and ARD Mediathek"></div><figcaption>Dock</figcaption></figure>
-      <figure><div class="shot"><img src="images/shelf.jpg" width="1280" height="720" loading="lazy" alt="Shelf layout: a row of colourful app banners over a photo of two wolves"></div><figcaption>Shelf</figcaption></figure>
+<main id="top">
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-text">
+      <h1>A plainer home screen for Google&nbsp;TV</h1>
+      <p class="lede">Shore puts your apps, the devices plugged into HDMI and a photo you chose on the screen, with the time, the weather and a headline in the corner. Hold Home and you're back in Google&nbsp;TV.</p>
+      <p class="actions">
+        <a class="btn btn-solid" href="https://github.com/taynotfound/shore/releases/latest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>Download the APK</a>
+        <a class="btn btn-ghost" href="#install">How to install</a>
+      </p>
+      <p class="fine">Free and open source, no ads, no accounts. New: <a href="#more">Search, screen time limits and a Performance setting</a>, <a href="#clock">widgets</a>, and <a href="#home">Italian and Turkish</a>. Unofficial: not affiliated with TCL, Google, Samsung or any streaming service.</p>
     </div>
-    <p>A console or set-top box gets a tile when you switch it on and loses it when you switch it off. The name comes over HDMI-CEC, so you see "PlayStation 5" rather than "HDMI 2". Inputs can go first in the dock or in a row of their own, and you can hide the ones you never use. If a device turns on while Home is showing, Shore asks whether to switch to it.</p>
-    <figure><div class="shot"><img src="images/inputs-row.jpg" width="1280" height="720" loading="lazy" alt="Home with an HDMI 2 tile in its own row above the app dock"></div><figcaption>Inputs in their own row.</figcaption></figure>
-    <p>Pressing Home opens Shore and holding it opens Google TV's own Home. The app shortcut keys and the TV button on the remote can be given new jobs: an app, an input or the screensaver.</p>
-    <ul class="rows parts">
-      <li class="row"><b>Parental lock</b><span>A four-digit PIN before the apps you choose open, and before Settings if you like. Type it with the number keys or pick each digit with the arrows.</span></li>
-      <li class="row"><b>Sleep timer</b><span>30 minutes to two hours, then the TV switches off, even in the middle of another app.</span></li>
+    <figure class="tv">
+      <div class="shot"><img src="shots/home-news.jpg" width="1600" height="900" fetchpriority="high" decoding="async" alt="Shore's Home screen over the Golden Gate Bridge: the time, the date, 7 °C and cloudy, one headline, and a dock with Stremio, Netflix, Disney+, YouTube, Apple TV and Prime Video"></div>
+      <figcaption>Home on a TCL 55C6KS, in the Dock layout.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<div class="wrap">
+
+<section class="block wide" id="home" aria-labelledby="h-home">
+  <div class="copy">
+    <h2 id="h-home">Your apps, and what's plugged in</h2>
+    <p>Shore finds your installed apps and puts up to nine on Home, in the order you choose. Dock and List draw every logo the same way, in colour or in one colour, or from an icon pack you've installed. Hold OK on an app to give it its own icon, to move it or to open its App info. Apps you used lately follow yours, and Continue watching picks up where Twitch or Apple TV left off.</p>
+  </div>
+  <div class="trio">
+    <figure><div class="shot"><img src="images/home.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Dock layout over Sydney Harbour with YouTube, waipu.tv, Joyn, Spotify, Twitch and ARD Mediathek"></div><figcaption><b>Dock</b>: a row of logos over the photo.</figcaption></figure>
+    <figure><div class="shot"><img src="images/shelf.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Shelf layout: a row of colourful app banners over a photo of two wolves"></div><figcaption><b>Shelf</b>: each app's own banner, and Down opens a row of picks.</figcaption></figure>
+    <figure><div class="shot"><img src="images/inputs-row.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Home with an HDMI 2 tile in its own row above the app dock"></div><figcaption><b>Inputs</b> first in the dock, or in a row of their own.</figcaption></figure>
+  </div>
+  <div class="copy">
+    <p>A console or set-top box gets a tile when you switch it on and loses it when you switch it off. The name comes over HDMI-CEC, so you see "PlayStation 5" rather than "HDMI 2", with an icon to match. If a device turns on while Home is showing, Shore asks whether to switch to it.</p>
+    <p class="note">In Shelf, ARD, ZDF and ARTE show their picks as they are. YouTube, Twitch and the apps covered by TMDB need API keys in a build of your own. Shore is in English, German, French, Spanish, Dutch, Polish, Ukrainian, Italian and Turkish, following the TV's language.</p>
+  </div>
+</section>
+
+<section class="block" id="pictures" aria-labelledby="h-pictures">
+  <div class="copy">
+    <h2 id="h-pictures">A photo you chose</h2>
+    <p>Fifteen photographs come with Shore. Online, it can fetch from NASA, Bing, Wikimedia Commons and Picsum without keys, and from Unsplash, Pexels and Klipy if you build it with your own. Bundled animated loops are included, and your phone can send photos, GIFs and short clips.</p>
+    <ul class="facts">
+      <li><b>Rotation</b><span>A new picture each time Home opens, every 5, 15 or 60 minutes, or by time of day: a brighter photo in the morning, a darker one in the evening.</span></li>
+      <li><b>Favourites</b><span>Favourites always stay in rotation; hidden photos never come back.</span></li>
+      <li><b>Smooth</b><span>The frosted panels are rendered once when a photo arrives, so the TV never blurs anything while you use it.</span></li>
+    </ul>
+  </div>
+  <div class="stack">
+    <figure><div class="shot"><img src="images/gallery.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Wallpaper gallery with a list of photos and their credits beside a preview"></div><figcaption>The gallery, with credits for online photos.</figcaption></figure>
+    <figure><div class="shot"><img src="images/online.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Wallpaper sources page with NASA, Bing, Wikimedia and other sources ticked"></div><figcaption>Tick the sources you want.</figcaption></figure>
+  </div>
+</section>
+
+<section class="block stage" id="clock" aria-labelledby="h-clock">
+  <div class="head">
+    <h2 id="h-clock">The time, and a little more</h2>
+    <p>Optional lines and cards sit under the clock. Each is off until you turn it on, and has its own settings page.</p>
+  </div>
+  <figure><div class="shot"><img src="shots/widgets.jpg" width="1920" height="1080" loading="lazy" decoding="async" alt="Home with the time, the date and three widgets under the clock: a three-day forecast, upcoming events and Home Assistant readings, above two HDMI inputs and a dock of apps"></div><figcaption>The Widgets row, with Home Assistant switched on.</figcaption></figure>
+  <ul class="facts cols">
+    <li><b>Weather</b><span>Temperature and sky from Open-Meteo, which needs no key or account. Rain, snow, fog or a storm can play over the photo while it's happening.</span></li>
+    <li><b>Widgets</b><span>A row of small cards: three days of forecast, your next events and, with Home Assistant, the inside temperature, lights on and any open door.</span></li>
+    <li><b>Headlines</b><span>One headline every 20 seconds from Google News, an outlet like tagesschau or BBC News, or an RSS feed you paste on your phone. Shore keeps only the titles.</span></li>
+    <li><b>Calendar</b><span>Paste your calendar's iCal address on your phone and the next event shows up: "Tomorrow 9:30 · Dentist". Google Calendar, iCloud and Outlook all have one.</span></li>
+    <li><b>Now playing</b><span>What another app is playing, such as Spotify in the background. If an app shares only a small cover, Shore can look for a sharper one; you can turn that off.</span></li>
+  </ul>
+</section>
+
+<section class="block stage" id="music" aria-labelledby="h-music">
+  <div class="head">
+    <h2 id="h-music">Music, full screen</h2>
+    <p>While something plays, the ♪ button on Home opens the song full screen: the cover, a progress bar you can skip through, the controls, and lyrics that keep time with the music. Lines slide up as the song moves on and the words light up as they're sung.</p>
+  </div>
+  <figure><div class="shot"><img src="shots/music.jpg" width="1920" height="1080" loading="lazy" decoding="async" alt="Shore's music view: an album cover, Harbour Lights by Tidal Rooms, a progress bar at 1:03, playback buttons, and synced lyrics with the current line in white"></div><figcaption>A made-up song, with its lyrics in time.</figcaption></figure>
+  <ul class="facts cols">
+    <li><b>Lyrics</b><span>From LRCLIB, free and without an account. Shore only shows lyrics that match the version playing, so a radio edit or a cover gets none rather than the wrong words.</span></li>
+    <li><b>Beat pulse</b><span>Optional. The beat pushes the cover and background out a little. It listens to the TV's own sound, never a microphone.</span></li>
+    <li><b>Up next</b><span>The next three songs, when the music app shares its queue.</span></li>
+    <li><b>Translation</b><span>Optional: each line translated into your TV's language, through Google Translate. Off until you turn it on.</span></li>
+  </ul>
+</section>
+
+<section class="block wide" id="more" aria-labelledby="h-more">
+  <div class="copy">
+    <h2 id="h-more">And a few more things</h2>
+  </div>
+  <div class="trio">
+    <div><figure><div class="shot"><img src="shots/search.jpg" width="1920" height="1080" loading="lazy" decoding="async" alt="Search with the letters p and l typed and PlayStation 5, Apple Music, Apple TV and the Phone settings page listed"></div></figure><h3>Search</h3><p>Apps, inputs and Settings pages in one place. Pick letters with the remote, or type on your phone.</p></div>
+    <div><figure><div class="shot"><img src="shots/screentime.jpg" width="1920" height="1080" loading="lazy" decoding="async" alt="Screen time: a list of apps with daily limits such as 2 hours for Netflix with 38 minutes used today"></div></figure><h3>Screen time</h3><p>A daily limit for each app, behind the parental lock's PIN. When time's up Shore comes back, and the PIN gives 30 more minutes.</p></div>
+    <div><figure><div class="shot"><img src="shots/performance.jpg" width="1920" height="1080" loading="lazy" decoding="async" alt="Performance: Auto, High end, Balanced and Potato, with Auto's choice explained"></div></figure><h3>Performance</h3><p>Auto measures your TV and picks High end, Balanced or Potato. The look and your settings stay the same; only what moves changes.</p></div>
+  </div>
+  <div class="copy">
+    <ul class="facts links">
+      <li><a href="https://github.com/taynotfound/shore#screensaver"><b>Screensaver</b><span>Shore's own slideshow of your wallpapers, with a large clock that changes corner so nothing burns in.</span></a></li>
+      <li><a href="https://github.com/taynotfound/shore#night-mode"><b>Night mode</b><span>Dims everything on a timer or all the time, and can keep the rotation to darker photos.</span></a></li>
+      <li><a href="https://github.com/taynotfound/shore#sleep-timer"><b>Sleep timer</b><span>30 minutes to two hours, then the TV switches off, even in the middle of another app.</span></a></li>
+      <li><a href="https://github.com/taynotfound/shore#remote-buttons"><b>Remote buttons</b><span>Give the shortcut keys and the TV button a new job: an app, an input, the screensaver or the sleep timer.</span></a></li>
+      <li><a href="https://github.com/taynotfound/shore#updates"><b>Updates</b><span>Shore fetches new releases from GitHub, asks Android to install them, and shows what's new once.</span></a></li>
     </ul>
   </div>
 </section>
 
-<section id="clock">
-  <h2><span class="head">Clock and info</span>Under the clock</h2>
-  <div class="body">
-    <p>Optional lines sit under the time. Each has its own settings page.</p>
-    <figure><div class="shot"><img src="shots/nowplaying.jpg" width="1600" height="900" loading="lazy" alt="Home with a blurred album cover as the background and Tidal Lights, Harbour Room, Spotify under the clock"></div><figcaption>While music plays, the album cover can take over the background.</figcaption></figure>
-    <ul class="rows parts">
-      <li class="row"><b>Weather</b><span>Temperature and sky from Open-Meteo, which needs no key or account. The place follows the TV's time zone unless you type a city on your phone. Weather effects draw rain, snow, fog or a storm over the photo while it's happening; clear skies leave it alone.</span></li>
-      <li class="row"><b>Music</b><span>With notification access, Shore shows what another app is playing, such as Spotify in the background. If an app shares only a small cover, Shore looks for an artist photo on TheAudioDB or a bigger cover on iTunes. You can turn that lookup off.</span></li>
-      <li class="row"><b>News</b><span>One headline every 20 seconds from Google News for your language and country, an outlet like BBC News or tagesschau, or an RSS feed you paste on your phone. Shore fetches it at most twice an hour and keeps only the titles.</span></li>
-      <li class="row"><b>Calendar</b><span>Paste your calendar's iCal address on your phone and the next event shows up: "Tomorrow 9:30 · Dentist". Google Calendar, iCloud and Outlook all have one.</span></li>
-    </ul>
-  </div>
-</section>
-
-<section id="music">
-  <h2><span class="head">Clock and info</span>Music view</h2>
-  <div class="body">
-    <p>While something plays, the ♪ button on Home opens the song full screen: the cover, a progress bar you can skip through, the controls, and lyrics that keep time with the music. Lines slide up as the song moves on and the words light up as they're sung, like Apple Music on a phone.</p>
-    <figure><div class="shot"><img src="shots/music.jpg" width="1600" height="900" loading="lazy" alt="Shore's music view: an album cover, Harbour Lights by Tidal Rooms, a progress bar at 1:03, playback buttons, and synced lyrics with the current line in white"></div><figcaption>Lyrics come from LRCLIB, free and without an account.</figcaption></figure>
-    <ul class="rows parts">
-      <li class="row"><b>Lyrics</b><span>Shore only shows lyrics whose title, artist and length match the version that's playing, so a radio edit or a cover gets none rather than the wrong words. Only the artist, title, album and length leave the TV.</span></li>
-      <li class="row"><b>Beat pulse</b><span>Turn it on and the beat pushes the cover and the background out a little. Shore listens for where each song keeps it, whether that's an 808, a kick, claps or hi-hats. It listens to the TV's own sound, not a microphone, though Android still asks to allow recording audio.</span></li>
-      <li class="row"><b>Up next</b><span>The next three songs, when the music app shares its queue. With a song playing, the screensaver stays away.</span></li>
-      <li class="row"><b>Translation</b><span>Optional: a translation into your TV's language under every line. The lyrics go to Google Translate for that, so it's off until you turn it on.</span></li>
-      <li class="row"><b>Continue watching</b><span>In Dock, a row under your apps with what you were watching in apps that share it, such as Twitch and Apple TV. Down to pick, OK to carry on.</span></li>
-    </ul>
-  </div>
-</section>
-
-<section id="wallpapers">
-  <h2><span class="head">Look</span>Wallpapers</h2>
-  <div class="body">
-    <p>Fifteen photographs come with the app. Online, Shore can fetch from NASA, Bing, Wikimedia Commons and Picsum without keys, and from Unsplash, Pexels and Klipy if you build it with your own. There are three animated loops, and your phone can send photos, GIFs and short clips.</p>
-    <p>The picture changes each time Home opens or every 5, 15 or 60 minutes. Favourites always stay in rotation; hidden photos never come back. The frosted panels are rendered once when a photo arrives, so the TV never blurs anything while you use it.</p>
-    <div class="pair">
-      <figure><div class="shot"><img src="images/gallery.jpg" width="1280" height="720" loading="lazy" alt="Wallpaper gallery with a list of photos and their credits beside a preview"></div><figcaption>The gallery, with credits for online photos.</figcaption></figure>
-      <figure><div class="shot"><img src="images/online.jpg" width="1280" height="720" loading="lazy" alt="Wallpaper sources page with NASA, Bing, Wikimedia and other sources ticked"></div><figcaption>Tick the sources you want.</figcaption></figure>
-    </div>
-  </div>
-</section>
-
-<section id="screensaver">
-  <h2><span class="head">When you're away</span>Screensaver and night</h2>
-  <div class="body">
-    <p>After 5, 10 or 15 minutes without a button press, Shore fades to its own screensaver. Your wallpapers drift past one at a time or as a mosaic of two or three, under a large clock with the date and the weather. The clock changes corner every few minutes so nothing stays on the same pixels, and after four hours Shore hands over to the TV's sleep timer.</p>
-    <figure><div class="shot"><img src="shots/screensaver-mosaic.jpg" width="1600" height="900" loading="lazy" alt="Screensaver mosaic of three mountain photos with 7:43 and 8 °C partly cloudy"></div></figure>
-    <p>Night mode dims everything from 21:00 to 07:00, 22:00 to 06:00 or 23:00 to 07:00, or all the time. It can also keep the rotation to darker photos while it's on.</p>
-  </div>
-</section>
-
-<section id="settings">
-  <h2><span class="head">Shore</span>Settings</h2>
-  <div class="body">
-    <p>Settings are two columns of short pages. Up and Down move within a column and Left and Right switch columns. No page scrolls, and most show a preview of what you're changing.</p>
-    <figure><div class="shot"><img src="images/settings.jpg" width="1920" height="1080" loading="lazy" alt="Shore's settings in two columns: Look, When you're away, Clock and info, and Shore"></div></figure>
-    <ul class="rows">
-      <li class="row"><b>Look</b><span>Wallpaper, Home screen, Apps on Home, Style, Text and icons</span></li>
-      <li class="row"><b>When you're away</b><span>Night, Screensaver</span></li>
-      <li class="row"><b>Clock and info</b><span>Clock, Weather, Music, News</span></li>
-      <li class="row"><b>Shore</b><span>Inputs, Phone, Google TV</span></li>
-    </ul>
-  </div>
-</section>
-
-<section id="phone">
-  <h2><span class="head">Shore</span>Phone companion</h2>
-  <div class="body">
+<section class="block flip" id="phone" aria-labelledby="h-phone">
+  <div class="copy">
+    <h2 id="h-phone">Your phone, as a second remote</h2>
     <p>Turn on Settings › Phone and scan the code. The TV serves a small web app to your phone over your home Wi-Fi. Nothing passes through the internet, and the TV only answers phones that scanned its code.</p>
-    <div class="phones">
-      <figure><img src="shots/companion.jpg" width="585" height="1266" loading="lazy" alt="Shore Companion on a phone: send photos, my photos and the weather place"></figure>
-      <figure><img src="shots/crop.jpg" width="585" height="1266" loading="lazy" alt="Cropping a photo to the TV's 16:9 frame in Shore Companion"></figure>
-    </div>
-    <ul class="plain">
-      <li>Send photos, GIFs and short videos. Each photo opens in a 16:9 frame first so you can crop it for the TV.</li>
-      <li>Change any TV setting, and add, remove or reorder the apps on Home.</li>
-      <li>Type the weather city, paste a news feed or your calendar's address instead of spelling it out with the remote.</li>
-      <li>Save every setting to a backup file and restore it later, or on another TV.</li>
+    <ul class="facts">
+      <li><b>Photos</b><span>Send photos, GIFs and short videos. Each photo opens in a 16:9 frame first, so you can crop it for the TV.</span></li>
+      <li><b>Settings and apps</b><span>Change any TV setting, reorder the apps on Home and name your HDMI inputs.</span></li>
+      <li><b>Keyboard</b><span>Type on the phone instead of the remote: into Shore's Search, or, once you turn on the optional phone keyboard, into a field in another app.</span></li>
+      <li><b>Paste, don't spell</b><span>The weather city, a news feed, your calendar's address, and the address of your Home Assistant or Pi-hole.</span></li>
+      <li><b>Backup and problems</b><span>Save every setting to a file and restore it later or on another TV. If something breaks, download a report to attach to a bug.</span></li>
     </ul>
+  </div>
+  <div class="phones">
+    <figure><img src="shots/companion.jpg" width="585" height="1266" loading="lazy" decoding="async" alt="Shore Companion on a phone: send photos, my photos and the weather place"></figure>
+    <figure><img src="shots/crop.jpg" width="585" height="1266" loading="lazy" decoding="async" alt="Cropping a photo to the TV's 16:9 frame in Shore Companion"></figure>
   </div>
 </section>
 
-<section id="install">
-  <h2><span class="head">Get Shore</span>Install</h2>
-  <div class="body">
+<section class="block stage" id="addons" aria-labelledby="h-addons">
+  <div class="head">
+    <h2 id="h-addons">Add-ons for the rest of your home</h2>
+    <p>Add-ons are optional and off until you switch them on. While one is off it isn't even loaded, so it costs your TV nothing, and each says what it costs on a slow TV.</p>
+  </div>
+  <figure><div class="shot"><img src="shots/smarthome.jpg" width="1920" height="1080" loading="lazy" decoding="async" alt="Smart home page: Living Room with a ceiling light, lamp, thermostat and speaker, Kitchen, Front Door with a lock, and a camera on the right"></div><figcaption>The Smart home page, with made-up rooms.</figcaption></figure>
+  <ul class="facts cols">
+    <li><b>Home Assistant</b><span>Rooms, lights, switches, thermostats and cameras on a Smart home page, and your door camera when the bell rings. Built by <a href="https://github.com/mozthewah">mozthewah</a>.</span></li>
+    <li><b>Pi-hole and AdGuard</b><span>Today's blocked share under the clock, and a pause for 5, 30 or 60 minutes. The password stays on the TV.</span></li>
+    <li><b>Also add-ons</b><span>Weather effects, Headlines and Widgets.</span></li>
+  </ul>
+</section>
+
+<section class="block wide" id="install" aria-labelledby="h-install">
+  <div class="copy">
+    <h2 id="h-install">Install</h2>
     <p>You need a computer on the same network with Android's <code>adb</code>, once. Shore installs next to Google TV and doesn't replace or remove anything.</p>
     <ol class="steps">
-      <li><b>Turn on developer options.</b> On the TV, open Settings › System › About and press OK on <i>Android TV OS build</i> seven times.</li>
-      <li><b>Allow debugging</b> in Settings › System › Developer options.</li>
-      <li><b>Connect</b> with <code>adb connect &lt;tv-ip&gt;:5555</code> and accept the prompt on the TV.</li>
-      <li><b>Install</b> the APK from the latest release with <code>adb install -r Shore.apk</code>.</li>
-      <li><b>Point Home at Shore</b> by turning on Settings › System › Accessibility › Shore Home button. On TCL sets, also allow Shore to auto start in TV Guard.</li>
+      <li><p><b>Turn on developer options.</b></p><p>On the TV, open Settings › System › About and press OK on <i>Android TV OS build</i> seven times.</p></li>
+      <li><p><b>Allow debugging</b> in Settings › System › Developer options.</p></li>
+      <li><p><b>Connect</b> and accept the prompt on the TV.</p><pre><code>adb connect &lt;tv-ip&gt;:5555</code></pre></li>
+      <li><p><b>Install</b> the APK from the latest release.</p><pre><code>adb install -r Shore.apk</code></pre></li>
+      <li><p><b>Point Home at Shore</b> by turning on Settings › System › Accessibility › Shore Home button.</p><p>On TCL sets, also allow Shore to auto start in TV Guard.</p></li>
     </ol>
-    <p>From then on, Settings › Google TV › Shore updates fetches new releases from GitHub, and Android asks you before installing each one. The <a href="https://github.com/taynotfound/shore#install">README</a> covers Android 14 wireless debugging and an optional, reversible list of TCL extras to switch off.</p>
-    <p><a class="button" href="https://github.com/taynotfound/shore/releases/latest"><svg class="ico" viewBox="0 0 24 24"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>Download the APK</a></p>
+    <p><a class="btn btn-solid" href="https://github.com/taynotfound/shore/releases/latest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>Download the APK</a></p>
+    <p class="after">From then on, Settings › Google TV › Shore updates fetches new releases and Android asks you before installing each one. The <a href="https://github.com/taynotfound/shore#install">README</a> covers Android 14 wireless debugging, the TCL auto start permission and an optional, reversible list of TCL extras to switch off.</p>
   </div>
 </section>
 
-<section id="support">
-  <h2><span class="head">Shore</span>Support it</h2>
-  <div class="body">
+<section class="block" id="tested" aria-labelledby="h-tested">
+  <div class="copy">
+    <h2 id="h-tested">Tested on</h2>
+    <p>Shore is an ordinary Android TV app, so other Google TV and Android TV sets will probably work too. On a slow one, choose Potato in Settings › Performance.</p>
+    <p class="after">Tried it on another TV? <a href="https://github.com/taynotfound/shore/issues/new?template=3-tv-report.yml">Send a TV report</a>.</p>
+  </div>
+  <ul class="facts flush">
+    <li><b>TCL 55C6KS</b><span>Android TV 12 (Google TV). The reference TV: everything is built and checked here.</span></li>
+    <li><b>TCL 65C7K</b><span>Google TV. Reported working.</span></li>
+    <li><b>CHiQ L32QM8G</b><span>Android 14. Reported working.</span></li>
+    <li><b>Hisense A6N</b><span>Android TV 12, with 2 GB of memory. Works with about 360 MB free; the Home Assistant add-on was tested here.</span></li>
+  </ul>
+</section>
+
+<section class="block wide" id="faq" aria-labelledby="h-faq">
+  <h2 class="section-title" id="h-faq">Questions</h2>
+  <div class="faq">
+    <details><summary>How do I get the normal Google TV home screen back?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg></summary><p>Hold Home for a second. To stop Home opening Shore altogether, turn off Shore Home button in Accessibility, or uninstall Shore.</p></details>
+    <details><summary>What does Shore send over the internet?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg></summary><p>Only what the features you turned on need: weather from Open-Meteo, headlines from your news source, photos from the wallpaper sources you ticked, lyrics from LRCLIB, Top Shelf picks, the artist and title for album art if you allow it, and a check for new releases on GitHub. The addresses and passwords of Home Assistant, Pi-hole and AdGuard stay on the TV. There are no accounts, analytics or ads.</p></details>
+    <details><summary>What can the Home button service see?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg></summary><p>Only remote keys and which app is in front. It never reads screen content. The phone keyboard is a second, optional accessibility service that stays off until you turn it on and looks for the focused text field only when your phone sends text.</p></details>
+    <details><summary>Will it work on my TV?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg></summary><p>It's built on a TCL 55C6KS with Google TV on Android 12, and people have it running on a TCL 65C7K, a CHiQ L32QM8G with Android 14 and a Hisense A6N with 2 GB of memory. It's an ordinary Android TV app, so other Google TV and Android TV devices will probably work too.</p></details>
+    <details><summary>Is it slow on an older TV?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg></summary><p>Settings › Performance is on Auto: Shore checks what your TV reports, measures how long it takes to show a key press and keeps the animations it can draw smoothly. You can choose High end, Balanced or Potato yourself. None of them changes the look or your settings. Add-ons are only loaded when you switch them on.</p></details>
+    <details><summary>Do updates keep my settings?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg></summary><p>Yes. Your settings and photos stay. A copy you built yourself is signed with a different key, so it tells you about new versions instead of installing them.</p></details>
+    <details><summary>Who made it?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg></summary><p>Shore is a fork of <a href="https://github.com/nthnclrk/CleanFrame">CleanFrame</a> by Nathan Clark, which was written for Samsung's The Frame. Both are MIT licensed. The Home Assistant add-on was made by <a href="https://github.com/mozthewah">mozthewah</a>. Fonts, photos and app logos keep their own licences, listed in <a href="https://github.com/taynotfound/shore/blob/main/THIRD_PARTY_NOTICES.md">THIRD_PARTY_NOTICES.md</a>.</p></details>
+  </div>
+</section>
+
+<section class="block" id="support" aria-labelledby="h-support">
+  <div class="copy">
+    <h2 id="h-support">Support it</h2>
     <p>Shore is free, with no ads and no tracking, and it's made in spare time. If it made your TV nicer, a coffee or a monthly sponsorship keeps new features and fixes coming.</p>
     <p class="support-buttons">
-      <a class="button" href="https://ko-fi.com/taygotkofi"><svg class="ico" viewBox="0 0 24 24"><path d="M12 19.5s-7-4.3-7-9.6A3.9 3.9 0 0 1 12 7.6a3.9 3.9 0 0 1 7 2.3c0 5.3-7 9.6-7 9.6Z"/></svg>Buy me a coffee on Ko-fi</a>
-      <a class="button ghost" href="https://github.com/sponsors/taynotfound"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3.5a8.5 8.5 0 0 0-2.7 16.6c.4 0 .6-.2.6-.5v-1.7c-2.4.5-2.9-1.1-2.9-1.1-.4-1-1-1.3-1-1.3-.8-.5 0-.5 0-.5.9.1 1.3.9 1.3.9.8 1.3 2 1 2.5.7.1-.6.3-1 .6-1.2-1.9-.2-3.9-1-3.9-4.2 0-.9.3-1.7.9-2.3-.1-.2-.4-1.1.1-2.3 0 0 .7-.2 2.3.9a8 8 0 0 1 4.2 0c1.6-1.1 2.3-.9 2.3-.9.5 1.2.2 2.1.1 2.3.5.6.9 1.4.9 2.3 0 3.3-2 4-3.9 4.2.3.3.6.8.6 1.6v2.4c0 .3.2.6.6.5A8.5 8.5 0 0 0 12 3.5Z"/></svg>Sponsor on GitHub</a>
+      <a class="btn btn-solid" href="https://ko-fi.com/taygotkofi">Buy me a coffee on Ko-fi</a>
+      <a class="btn btn-ghost" href="https://github.com/sponsors/taynotfound">Sponsor on GitHub</a>
     </p>
     <p>Questions, ideas or a TV to report? The <a href="https://discord.gg/z6C4Mj9VPK">Discord</a> is the fastest way to reach me.</p>
   </div>
 </section>
 
-<section id="faq">
-  <h2><span class="head">Shore</span>Questions</h2>
-  <div class="body">
-    <details><summary>How do I get the normal Google TV home screen back?<svg class="ico" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></svg></summary><p>Hold Home for a second. To stop Home opening Shore altogether, turn off Shore Home button in Accessibility, or uninstall Shore.</p></details>
-    <details><summary>What does Shore send over the internet?<svg class="ico" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></svg></summary><p>Only what the features you turned on need: weather from Open-Meteo, headlines from your news source, photos from the wallpaper sources you ticked, Top Shelf picks, and the artist and title for album art if you allow it. There are no accounts, analytics or ads.</p></details>
-    <details><summary>Will it work on my TV?<svg class="ico" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></svg></summary><p>It's built on a TCL 55C6KS with Google TV on Android 12, and people have it running on a TCL 65C7K, a CHiQ L32QM8G with Android 14 and a Hisense A6N with 2 GB of memory. It's an ordinary Android TV app, so other Google TV and Android TV devices will probably work too.</p></details>
-    <details><summary>Do updates keep my settings?<svg class="ico" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></svg></summary><p>Yes. Your settings and photos stay. A copy you built yourself is signed with a different key, so it tells you about new versions instead of installing them.</p></details>
-    <details><summary>Who made it?<svg class="ico" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></svg></summary><p>Shore is a fork of <a href="https://github.com/nthnclrk/CleanFrame">CleanFrame</a> by Nathan Clark, which was written for Samsung's The Frame. Both are MIT licensed. The Home Assistant add-on was made by <a href="https://github.com/mozthewah">mozthewah</a>. Fonts, photos and app logos keep their own licences, listed in <a href="https://github.com/taynotfound/shore/blob/main/THIRD_PARTY_NOTICES.md">THIRD_PARTY_NOTICES.md</a>.</p></details>
-  </div>
-</section>
+</div>
 </main>
 
 <footer>
-  <p>Photo at the top: Bridge at dusk by Justin Wolff on Unsplash, one of the 15 bundled wallpapers.<br>Unofficial. Not affiliated with TCL, Google, Samsung or any streaming service.</p>
-  <p><a href="https://github.com/taynotfound/shore">Source</a> · <a href="https://github.com/taynotfound/shore/releases">Releases</a> · <a href="https://github.com/taynotfound/shore/blob/main/THIRD_PARTY_NOTICES.md">Licences</a></p>
-  <p>Questions or a TV to report? Join the <a href="https://discord.gg/z6C4Mj9VPK">Discord</a> for the fastest answers.<br>Shore is free. If you like it, you can support it on <a href="https://ko-fi.com/taygotkofi">Ko-fi</a> or <a href="https://github.com/sponsors/taynotfound">GitHub Sponsors</a>.</p>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="#top"><svg viewBox="44 66 112 94" aria-hidden="true"><path d="M66 104a34 34 0 0 1 68 0Z"/><rect x="49" y="110.7" width="102" height="6.8" rx="3.4"/><rect x="60.9" y="129.8" width="78.2" height="6.8" rx="3.4"/><rect x="74.5" y="148.8" width="51" height="6.8" rx="3.4"/></svg>Shore</a>
+      <p>Unofficial. Not affiliated with TCL, Google, Samsung or any streaming service. The screenshots with invented data come from the interface running in a desktop browser.</p>
+    </div>
+    <p><a href="https://github.com/taynotfound/shore">Source</a> · <a href="https://github.com/taynotfound/shore/releases">Releases</a> · <a href="https://github.com/taynotfound/shore/blob/main/THIRD_PARTY_NOTICES.md">Licences</a> · <a href="https://github.com/taynotfound/shore/blob/main/LICENSE">MIT</a><br><a href="https://discord.gg/z6C4Mj9VPK">Discord</a> · <a href="https://ko-fi.com/taygotkofi">Ko-fi</a> · <a href="https://github.com/sponsors/taynotfound">GitHub Sponsors</a></p>
+    <p>Shore is a fork of <a href="https://github.com/nthnclrk/CleanFrame">CleanFrame</a> by Nathan Clark. Home Assistant add-on by <a href="https://github.com/mozthewah">mozthewah</a>. The backdrop at the top is a blurred copy of Bridge at dusk by Justin Wolff on Unsplash, one of the 15 bundled wallpapers.</p>
+  </div>
 </footer>
 </body>
 </html>
