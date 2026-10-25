@@ -1023,6 +1023,25 @@ try {
     await current.reload(); await ready();
     check('A restart begins with the kept tier', await current.evaluate(() => { ShoreQA.tier = ''; return ShoreQA.tierSamples([]).tier; }) === 'balanced');
   });
+  await run('Auto performance says what held it back', async () => {
+    await page({ seed: baseline({ bg: 'photo' }) });
+    await current.evaluate(() => Object.defineProperty(navigator, 'deviceMemory', { get: () => 2, configurable: true }));
+    await current.evaluate(() => { ShoreQA.tier = ''; return ShoreQA.tierSamples(Array(12).fill(23)); });
+    await group('performance');
+    const text = await current.locator('#appearance').innerText();
+    check('A fast TV with 2 GB is held at Balanced, and the page says why', /Balanced: this TV shows a key press in 23 ms\.\s+That is quick enough for High end, but this TV has about 2 GB of memory\. You can still choose High end\./.test(text), text);
+    await current.evaluate(() => { ShoreQA.tier = ''; return ShoreQA.tierSamples(Array(12).fill(45)); });
+    await scene('settings'); await group('performance');
+    check('When the speed alone says Balanced, there is no hardware excuse', !/quick enough/.test(await current.locator('#appearance').innerText()));
+    await current.evaluate(() => Object.defineProperty(navigator, 'deviceMemory', { get: () => 8, configurable: true }));
+    await act('choice.perf.potato');
+    await nav('left');
+    const hint = () => current.locator('.remote-key + span').last().innerText();
+    check('The hint describes the focused tier', (await state()).focusAction === 'choice.perf.balanced' && /Nothing animates while Home sits there/.test(await hint()), [(await state()).focusAction, await hint()]);
+    await nav('right');
+    check('Potato: no animations at all', /No animations at all/.test(await hint()), await hint());
+    await act('choice.perf.auto');
+  });
   await run('Headlines under the clock', async () => {
     await page({ seed: baseline({ bg: 'photo', cnews: 'on' }) });
     check('No headline line without news', await current.evaluate(() => document.querySelector('.cap-news-line').textContent === ''));
