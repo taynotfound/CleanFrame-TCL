@@ -1,5 +1,7 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("uk", {
+      "Choose a photo for this part of the day": "Вибрати фото для цієї частини доби", "Pick one automatically": "Вибрати автоматично",
+      "By time of day": "За часом доби", "Parts of the day": "Частини доби", "Morning": "Ранок", "Day": "День", "Evening": "Вечір", "Choose a photo": "Вибрати фото", "A different photo from your rotation each day": "Щодня інше фото з вашої ротації", "Automatic prefers darker photos.": "Автоматично вибирає темніші фото.", "Automatic prefers brighter photos.": "Автоматично вибирає світліші фото.", "Morning from 5, day from 11, evening from 17 and night from 21.": "Ранок з 5, день з 11, вечір з 17 і ніч з 21.", "Part of the day": "Частина доби",
       "Use this name": "Використати цю назву",
       "Rename": "Перейменувати", "Name": "Назва", "Input": "Вхід", "Name from the device": "Назва від пристрою", "Your inputs": "Ваші входи", "Type any name in the phone companion, under Inputs.": "Будь-яку назву можна ввести в компаньйоні на телефоні, у розділі «Входи».", "Game console": "Ігрова консоль", "Set-top box": "Приставка", "Blu-ray player": "Blu-ray-програвач", "Computer": "Комп’ютер", "Soundbar": "Саундбар", "Camera": "Камера", "Input name": "Назва входу", "Streaming stick": "Стрімінговий стик", "Disc player": "Програвач дисків",
       "Each press: 30, 60, 90, 120 minutes, then off.": "Кожне натискання: 30, 60, 90, 120 хвилин, потім вимкнено.",

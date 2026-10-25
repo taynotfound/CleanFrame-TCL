@@ -418,7 +418,7 @@ try {
     check('Photo tools are reachable from Background', backgroundActions.includes('background.wallpaper') && backgroundActions.includes('background.rotation'), backgroundActions);
     await act('background.rotation');
     const rotationRows = (await radios()).filter(r => r.action.startsWith('rotation.'));
-    check('All rotation modes are visible together', same(rotationRows.map(r => r.action).sort(), ['fixed', 'open', '5', '15', '30', '60', 'day'].map(v => 'rotation.' + v).sort()), rotationRows);
+    check('All rotation modes are visible together', same(rotationRows.map(r => r.action).sort(), ['fixed', 'open', '5', '15', '30', '60', 'day', 'tod'].map(v => 'rotation.' + v).sort()), rotationRows);
     await nav('back');
     check('Rotation Back restores its Background row', (await state()).settingsGroup === 'background' && (await state()).focusAction === 'background.rotation', await call('where'));
     await group('samsung');
@@ -1032,6 +1032,23 @@ try {
     check('The new name picks its icon', list[1].name === 'Computer' && list[1].brand === 'computer', list);
     await act('inname.-1');
     check('Name from the device clears it', !(await stored()).nameFor['input.hdmi2']);
+  });
+  await run('Wallpaper by time of day', async () => {
+    await closePage(); await page();
+    const part = await current.evaluate(() => { const h = new Date().getHours(); return h < 5 || h >= 21 ? 'night' : h >= 17 ? 'evening' : h >= 11 ? 'day' : 'morning'; });
+    const other = part === 'night' ? 'morning' : 'night';
+    await group('background'); await act('background.rotation'); await act('rotation.tod');
+    check('By time of day is a rotation mode', (await stored()).mode === 'tod');
+    const partRows = await call('actions');
+    check('It lists the four parts of the day', ['morning', 'day', 'evening', 'night'].every(p => partRows.includes('todpart.' + p)), partRows);
+    await act('todpart.' + other); await act('todpick.' + other);
+    check('The picker opens for that part', (await state()).view === 'wallpaper');
+    const before = (await stored()).wall;
+    await nav('down', 'ok');
+    const pinned = (await stored()).wallFor[other];
+    check('A photo is kept for another part without changing Home now', !!pinned && (await stored()).wall === before && (await state()).view === 'appearance', [pinned, before]);
+    await act('todauto.' + other);
+    check('Automatic forgets it again', !(await stored()).wallFor[other]);
   });
   await run('Parental lock', async () => {
     const pinHash = pin => { let h = 0x811c9dc5; for (const ch of 'shore:' + pin) { h ^= ch.charCodeAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };

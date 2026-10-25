@@ -1,5 +1,7 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("de", {
+      "Choose a photo for this part of the day": "Foto für diese Tageszeit wählen", "Pick one automatically": "Automatisch auswählen",
+      "By time of day": "Nach Tageszeit", "Parts of the day": "Tageszeiten", "Morning": "Morgen", "Day": "Tag", "Evening": "Abend", "Choose a photo": "Foto wählen", "A different photo from your rotation each day": "Jeden Tag ein anderes Foto aus deiner Rotation", "Automatic prefers darker photos.": "Automatisch bevorzugt dunklere Fotos.", "Automatic prefers brighter photos.": "Automatisch bevorzugt hellere Fotos.", "Morning from 5, day from 11, evening from 17 and night from 21.": "Morgen ab 5, Tag ab 11, Abend ab 17 und Nacht ab 21 Uhr.", "Part of the day": "Tageszeit",
       "Use this name": "Diesen Namen verwenden",
       "Rename": "Umbenennen", "Name": "Name", "Input": "Eingang", "Name from the device": "Name vom Gerät", "Your inputs": "Deine Eingänge", "Type any name in the phone companion, under Inputs.": "Jeden beliebigen Namen kannst du im Handy-Begleiter unter Eingänge eintippen.", "Game console": "Spielkonsole", "Set-top box": "Set-Top-Box", "Blu-ray player": "Blu-ray-Player", "Computer": "Computer", "Soundbar": "Soundbar", "Camera": "Kamera", "Input name": "Name des Eingangs", "Streaming stick": "Streaming-Stick", "Disc player": "Disc-Player",
       "Each press: 30, 60, 90, 120 minutes, then off.": "Jeder Druck: 30, 60, 90, 120 Minuten, dann aus.",

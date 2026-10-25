@@ -43,7 +43,7 @@ Shore (formerly CleanFrame-TCL) brings [Nathan Clark's CleanFrame](https://githu
 - Animated wallpapers: bundled seamless loops, Pexels video loops and Klipy GIFs.
 - [Phone companion](#phone-companion): scan a QR code and send photos, GIFs and short videos to the TV, from a web app styled like the launcher.
 - Drift: a slow Ken Burns zoom where the photo and its glass move together.
-- Rotation: a new picture each time Home opens, or every 5, 15 or 60 minutes.
+- Rotation: a new picture each time Home opens, every 5, 15 or 60 minutes, once a day, or *By time of day*: morning, day, evening and night each get their own photo. Pin one to each part, or leave it on *Automatic* for a darker photo in the evening and at night and a brighter one by day, different every day.
 - Night mode dims everything on a timer (21–07, 22–06, 23–07) or all the time, in three strengths. With *Calmer photos at night*, rotation sticks to dark photos while it is on, and a bright wallpaper gives way to a dark one when night begins.
 
 ### Text, clock and info

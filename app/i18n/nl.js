@@ -1,5 +1,7 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("nl", {
+      "Choose a photo for this part of the day": "Kies een foto voor dit dagdeel", "Pick one automatically": "Automatisch kiezen",
+      "By time of day": "Op tijd van de dag", "Parts of the day": "Dagdelen", "Morning": "Ochtend", "Day": "Dag", "Evening": "Avond", "Choose a photo": "Kies een foto", "A different photo from your rotation each day": "Elke dag een andere foto uit je rotatie", "Automatic prefers darker photos.": "Automatisch kiest liever donkere foto’s.", "Automatic prefers brighter photos.": "Automatisch kiest liever lichte foto’s.", "Morning from 5, day from 11, evening from 17 and night from 21.": "Ochtend vanaf 5, dag vanaf 11, avond vanaf 17 en nacht vanaf 21 uur.", "Part of the day": "Dagdeel",
       "Use this name": "Deze naam gebruiken",
       "Rename": "Hernoemen", "Name": "Naam", "Input": "Ingang", "Name from the device": "Naam van het apparaat", "Your inputs": "Je ingangen", "Type any name in the phone companion, under Inputs.": "Typ elke naam die je wilt in de telefoon-companion, onder Ingangen.", "Game console": "Spelcomputer", "Set-top box": "Settopbox", "Blu-ray player": "Blu-rayspeler", "Computer": "Computer", "Soundbar": "Soundbar", "Camera": "Camera", "Input name": "Naam van de ingang", "Streaming stick": "Streamingstick", "Disc player": "Discspeler",
       "Each press: 30, 60, 90, 120 minutes, then off.": "Elke druk: 30, 60, 90, 120 minuten, dan uit.",

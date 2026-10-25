@@ -52,7 +52,7 @@
   var MODES = [
     { id: 'fixed', name: 'Fixed', min: 0 }, { id: 'open', name: 'Each time Home opens', min: 0 },
     { id: '5', name: 'Every 5 minutes', min: 5 }, { id: '15', name: 'Every 15 minutes', min: 15 }, { id: '30', name: 'Every 30 minutes', min: 30 },
-    { id: '60', name: 'Every hour', min: 60 }, { id: 'day', name: 'Once a day', min: 1440 }
+    { id: '60', name: 'Every hour', min: 60 }, { id: 'day', name: 'Once a day', min: 1440 }, { id: 'tod', name: 'By time of day', min: 0 }
   ];
   var KEY = 'cleanframe.home.v1', storageOk = true, catalog = { loading: false, loaded: false, error: null, request: 0, revision: 0 };
   var QA = window.ShoreQA = { minuteMs: window.ShoreQA && window.ShoreQA.minuteMs || 60000 };
@@ -487,6 +487,9 @@
     if (v && typeof v === 'object') Object.keys(v).forEach(function (id) { if (n < 300 && safeId(id) && ICON_CHOICE.test(String(v[id]))) { out[id] = String(v[id]); n++; } });
     return out;
   }
+  /* Wallpaper by time of day: a photo pinned to each part of the day, by id. */
+  var PARTS = [['morning', 'Morning', 5], ['day', 'Day', 11], ['evening', 'Evening', 17], ['night', 'Night', 21]];
+  function partMap(v) { var out = {}; PARTS.forEach(function (p) { if (v && typeof v === 'object' && wall(v[p[0]])) out[p[0]] = String(v[p[0]]); }); return out; }
   /* Input names chosen on the TV or typed on the phone: id -> name, at most 40 characters. */
   function nameMap(v) {
     var out = {}, n = 0;
@@ -532,7 +535,7 @@
       home: h, recent: recent, lastApp: h.indexOf(s.lastApp) >= 0 ? s.lastApp : h[0],
       mode: pick(s.mode, MODES.map(function (m) { return m.id; }), 'fixed'),
       source: sourceCsv(ONLINE ? ONLINE_INFO.source : 'builtin'),
-      fav: idList(s.fav), hide: idList(s.hide), hidein: idList(s.hidein), iconFor: iconMap(s.iconFor), used: idList(s.used).slice(0, 8), lock: lockOf(s.lock), nameFor: nameMap(s.nameFor),
+      fav: idList(s.fav), hide: idList(s.hide), hidein: idList(s.hidein), iconFor: iconMap(s.iconFor), used: idList(s.used).slice(0, 8), lock: lockOf(s.lock), nameFor: nameMap(s.nameFor), wallFor: partMap(s.wallFor),
       ipack: PKG_RE.test(String(modern.ipack || '')) ? String(modern.ipack) : ''
     };
     Object.keys(MORE_LOOK).forEach(function (k) { out[k] = pick(modern[k], LOOK_VALUES[k], MORE_LOOK[k]); });
@@ -616,7 +619,7 @@
   }
   function clearSession() { S.undo = []; S.removedAt = {}; S.note = null; S.err = null; }
   function begin() { S.note = null; }
-  function next(home, recent) { var c = lookOf(S.c); c.home = home; c.recent = recent; c.lastApp = S.c.lastApp; c.mode = S.c.mode; c.source = S.c.source; c.fav = S.c.fav.slice(); c.hide = S.c.hide.slice(); c.hidein = S.c.hidein.slice(); c.iconFor = iconMap(S.c.iconFor); c.used = S.c.used.slice(); c.lock = lockOf(S.c.lock); c.nameFor = nameMap(S.c.nameFor); return c; }
+  function next(home, recent) { var c = lookOf(S.c); c.home = home; c.recent = recent; c.lastApp = S.c.lastApp; c.mode = S.c.mode; c.source = S.c.source; c.fav = S.c.fav.slice(); c.hide = S.c.hide.slice(); c.hidein = S.c.hidein.slice(); c.iconFor = iconMap(S.c.iconFor); c.used = S.c.used.slice(); c.lock = lockOf(S.c.lock); c.nameFor = nameMap(S.c.nameFor); c.wallFor = partMap(S.c.wallFor); return c; }
   function snap() { return { home: S.c.home.slice(), recent: S.c.recent.slice() }; }
   function pushRecent(list, id) { return [id].concat(without(list, id)).slice(0, 5); }
   function write(c, label) {
@@ -1025,11 +1028,11 @@
     refreshCatalog();
     push({ id: 'editor', origin: origin, lifted: null, top: 0, otherReturn: { id: otherList()[0] || null, index: 0, top: 0 }, f: { zone: S.c.home.length ? 'home' : 'other', i: Math.max(0, i), part: 'name', h: 1, j: 0 } });
   }
-  function openWallpaper() {
-    var i = wallIndex(S.c.wall);
+  function openWallpaper(slot) {
+    var i = wallIndex(slot && S.c.wallFor[slot] || S.c.wall);
     S.err = null; S.wallError = null;
     push({ id: 'wallpaper', i: i, top: clamp(i - 2, 0, Math.max(0, WALLS.length - WALL_VISIBLE)), f: { zone: 'photo' },
-      previewTimer: 0, previewDue: null, applyPending: null, failedId: null, failedApply: false, retryBundle: null });
+      previewTimer: 0, previewDue: null, applyPending: null, failedId: null, failedApply: false, retryBundle: null, slot: slot || '' });
   }
   function isSettingsDetail(t) { return t.id === 'appearance' || t.id === 'wallpaper'; }
 
@@ -1123,6 +1126,9 @@
   }
   function applyWallpaper(t, prepared) {
     var w = WALLS[t.i], c, bundle = prepared || S.previewBundle;
+    // A part of the day: keep the photo for it; only the part it is now also changes Home straight away.
+    if (t.slot && S.c.wallFor[t.slot] !== w.id) setPartWall(t.slot, w.id);
+    if (t.slot && (t.slot !== partNow() || S.c.mode !== 'tod')) { closeWallpaper(t); return; }
     if (!prepared && (S.wallPending || t.previewDue || S.wallShown !== w.id || S.wallError)) {
       t.applyPending = w.id;
       if (t.previewDue || S.wallPending !== w.id) { cancelWallpaperTimer(t); loadWallpaperPreview(t); }
@@ -1366,8 +1372,8 @@
   function closeEditor() { clearSession(); pop(); }
 
   /* ---------- Settings, Layout and messages ---------- */
-  var PARENT = { ha: 'addons', musicview: 'music', health: 'samsung', updates: 'samsung', saverlook: 'screensaver', rotation: 'background', online: 'background', unsplash: 'online', animated: 'online', fonts: 'typography', icons: 'layout', iconpack: 'icons', iconapps: 'icons', appicon: 'iconapps', input: 'inputs', inputname: 'input', lock: 'samsung', lockapps: 'lock', remote: 'samsung', remotepick: 'remote', remoteapp: 'remotepick' };
-  function groupName(group, t) { return group === 'remotepick' ? buttonName(t.key) : (group === 'appicon' || group === 'input') && t && app(t.app) ? app(t.app).name : DETAIL_NAMES[group]; }
+  var PARENT = { ha: 'addons', musicview: 'music', health: 'samsung', updates: 'samsung', saverlook: 'screensaver', rotation: 'background', online: 'background', unsplash: 'online', animated: 'online', fonts: 'typography', icons: 'layout', iconpack: 'icons', iconapps: 'icons', appicon: 'iconapps', input: 'inputs', inputname: 'input', todpart: 'rotation', lock: 'samsung', lockapps: 'lock', remote: 'samsung', remotepick: 'remote', remoteapp: 'remotepick' };
+  function groupName(group, t) { return group === 'remotepick' ? buttonName(t.key) : (group === 'appicon' || group === 'input') && t && app(t.app) ? app(t.app).name : group === 'todpart' && t && t.part ? partName(t.part) : DETAIL_NAMES[group]; }
   function parentName(t) { return (t.group === 'appicon' || t.group === 'inputname') && t.fromHome ? 'Home' : t.group === 'appicon' && app(t.app) && app(t.app).input ? app(t.app).name : PARENT[t.group] ? groupName(PARENT[t.group], t) : 'Settings'; }
   /* ---------- Wallpaper sources: any mix of Shore's own, My photos and online sources ----------
      S.c.source is a comma list in SOURCES order. Only photos from these sources rotate. */
@@ -1447,7 +1453,7 @@
     else if (id === 'phone') openPhone();
     else openAppearance(id);
   }
-  var DETAIL_NAMES = { addons: 'Add-ons', ha: 'Home Assistant', musicview: 'Music view', health: 'Setup and health', updates: 'Shore updates', fonts: 'Font', clock: 'Clock', display: 'Night', online: 'Wallpaper sources', unsplash: 'Unsplash themes', animated: 'Animated wallpapers', background: 'Wallpaper', layout: 'Home screen', typography: 'Text', icons: 'App icons', iconpack: 'Icon pack', iconapps: 'Per-app icons', appicon: 'Icon', input: 'Input', inputname: 'Name', lock: 'Parental lock', lockapps: 'Locked apps', inputs: 'Inputs', focus: 'Style', rotation: 'Rotation', samsung: TV.brand, remote: 'Remote buttons', remoteapp: 'Choose an app', phone: 'Phone', weather: 'Weather', music: 'Music', news: 'News', screensaver: 'Screensaver', saverlook: 'Arrangement and clock' };
+  var DETAIL_NAMES = { addons: 'Add-ons', ha: 'Home Assistant', musicview: 'Music view', health: 'Setup and health', updates: 'Shore updates', fonts: 'Font', clock: 'Clock', display: 'Night', online: 'Wallpaper sources', unsplash: 'Unsplash themes', animated: 'Animated wallpapers', background: 'Wallpaper', layout: 'Home screen', typography: 'Text', icons: 'App icons', iconpack: 'Icon pack', iconapps: 'Per-app icons', appicon: 'Icon', input: 'Input', inputname: 'Name', todpart: 'Part of the day', lock: 'Parental lock', lockapps: 'Locked apps', inputs: 'Inputs', focus: 'Style', rotation: 'Rotation', samsung: TV.brand, remote: 'Remote buttons', remoteapp: 'Choose an app', phone: 'Phone', weather: 'Weather', music: 'Music', news: 'News', screensaver: 'Screensaver', saverlook: 'Arrangement and clock' };
   function choice(axis, value, disabled) {
     if (axis === 'source') return { action: 'online.' + value, axis: axis, value: value, disabled: !!disabled, label: sourceName(value), tick: true, applied: sourceOn(value) };
     return { action: axis === 'mode' ? 'rotation.' + value : 'choice.' + axis + '.' + value, axis: axis, value: value, disabled: !!disabled,
@@ -2397,7 +2403,14 @@
         reason: flat ? 'Choose Photo in Background to use online wallpapers.' : sourceNote() || (missing.length ? keyNote(missing) : '') }];
     }
     if (t.group === 'rotation') return [{ id: 'mode', title: '', items: options('mode', MODES.map(function (m) { return m.id; }), flat),
-      reason: flat ? 'Choose Photo in Background to use rotation.' : '' }];
+      reason: flat ? 'Choose Photo in Background to use rotation.' : '' }]
+      .concat(S.c.mode === 'tod' && !flat ? [{ id: 'parts', title: 'Parts of the day', items: PARTS.map(function (p) {
+        return { action: 'todpart.' + p[0], label: p[1], description: S.c.wallFor[p[0]] ? wall(S.c.wallFor[p[0]]).name : 'Automatic', pair: true };
+      }), reason: 'Morning from 5, day from 11, evening from 17 and night from 21.' }] : []);
+    if (t.group === 'todpart') return [{ id: 'todpart', title: '', items: [
+      { action: 'todauto.' + t.part, label: 'Automatic', description: 'A different photo from your rotation each day', tick: true, applied: !S.c.wallFor[t.part] },
+      { action: 'todpick.' + t.part, label: S.c.wallFor[t.part] ? wall(S.c.wallFor[t.part]).name : 'Choose a photo', thumbnail: S.c.wallFor[t.part] || false, tick: true, applied: !!S.c.wallFor[t.part] }],
+      reason: t.part === 'evening' || t.part === 'night' ? 'Automatic prefers darker photos.' : 'Automatic prefers brighter photos.' }];
     if (PARENT[t.group] && remotePage(t)) return remoteSections(t);
     if (t.group === 'lock') return lockSections();
     if (t.group === 'lockapps') return [{ id: 'lockapps', title: '', items: S.c.home.concat(S.c.lock.apps.filter(function (id) { return S.c.home.indexOf(id) < 0; })).filter(function (id) { return app(id) && !app(id).input; }).map(function (id) {
@@ -2439,6 +2452,31 @@
     if (column !== undefined) t.f.column = column;
     if (item.axis) S.appearanceFocus = item.axis;
   }
+  /* Morning from 5, day from 11, evening from 17, night from 21. */
+  function partNow(d) { var h = (d || new Date()).getHours(), at = 'night'; PARTS.forEach(function (p) { if (h >= p[2]) at = p[0]; }); return h < 5 ? 'night' : at; }
+  function partName(id) { return PARTS.filter(function (p) { return p[0] === id; })[0][1]; }
+  /* The part's own photo, else one from the rotation: dark in the evening and at night, brighter by day, a different one each day. */
+  function partWall(part) {
+    var pinned = S.c.wallFor[part], pool, want, pick, day = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
+    if (pinned && wall(pinned)) return pinned;
+    pool = rotationPool(); want = part === 'evening' || part === 'night' ? 'dark' : 'light';
+    pick = pool.filter(function (w) { return w.tone === want; });
+    if (!pick.length) pick = pool;
+    return pick.length ? pick[(day + PARTS.map(function (p) { return p[0]; }).indexOf(part)) % pick.length].id : '';
+  }
+  /* On Home, with By time of day: move to the photo of the part of the day it is now. */
+  function applyPart() {
+    var id;
+    if (S.c.mode !== 'tod' || S.c.bg !== 'photo' || S.pending || S.saver || top().id !== 'home' || document.hidden) return;
+    id = partWall(partNow());
+    if (id && id !== S.c.wall) setLook({ wall: id }, { row: 'bg' });
+  }
+  function setPartWall(part, id) {
+    var c = next(S.c.home.slice(), S.c.recent.slice());
+    if (id) c.wallFor[part] = id; else delete c.wallFor[part];
+    c.wallFor = partMap(c.wallFor);
+    if (write(c, 'Wallpaper for the ' + part)) render();
+  }
   function applyRotation(value) {
     var c;
     if (S.c.bg !== 'photo') return;
@@ -2446,6 +2484,7 @@
     if (value === S.c.mode) return;
     c = next(S.c.home.slice(), S.c.recent.slice()); c.mode = value;
     if (!write(c, 'Wallpaper rotation')) S.lookError = { type: 'save', patch: { mode: value }, row: 'mode', transient: false };
+    else if (value === 'tod') setTimeout(applyPart, 0); // takes effect back on Home
   }
   function pageCount(page, label) { var n = SOURCES.filter(function (o) { return o.page === page && sourceOn(o.id); }).length; return n ? T(label) + ' · ' + n : label; }
   /* What rotates now, and what could not be reached. */
@@ -2553,6 +2592,9 @@
     else if (item.action === 'open.iconpack') { packList = null; openAppearance('iconpack'); }
     else if (item.action.indexOf('pack.') === 0) applyPack(item.action.slice(5));
     else if (item.action.indexOf('input.toggle.') === 0) toggleInput(item.action.slice(13));
+    else if (item.action.indexOf('todpart.') === 0) { openAppearance('todpart'); top().part = item.action.slice(8); top().f.action = (S.c.wallFor[top().part] ? 'todpick.' : 'todauto.') + top().part; }
+    else if (item.action.indexOf('todauto.') === 0) { setPartWall(t.part, ''); }
+    else if (item.action.indexOf('todpick.') === 0) openWallpaper(t.part);
     else if (item.action.indexOf('inputpage.') === 0) { openAppearance('input'); top().app = item.action.slice(10); top().f.action = 'input.toggle.' + top().app; }
     else if (item.action.indexOf('inputname.') === 0) openInputName(item.action.slice(10), false);
     else if (/^inname\.-?\d+$/.test(item.action)) setInputName(t.app, INPUT_NAMES[+item.action.slice(7)] || '');
@@ -3387,7 +3429,7 @@
           var swatch = item.axis === 'bg' && !section.horizontal, body = '';
           if (swatch || item.thumbnail) body += item.value === 'light' || item.value === 'dark'
             ? '<span class="setting-swatch swatch-' + item.value + '" aria-hidden="true"></span>'
-            : '<img class="setting-swatch" src="' + WP + S.c.wall + '-thumb.jpg" alt="">';
+            : '<img class="setting-swatch" src="' + WP + (item.thumbnail === true || !item.thumbnail ? S.c.wall : item.thumbnail) + '-thumb.jpg" alt="">';
           if (item.glyph) body += '<span class="setting-glyph" aria-hidden="true">' + item.glyph + '</span>';
           body += '<span class="setting-copy"><span class="setting-name">' + esc(item.label) + '</span>'
             + (item.description ? '<span class="setting-description">' + esc(item.description) + '</span>' : '') + '</span>';
@@ -3402,7 +3444,7 @@
         + command({ action: 'settings.retry', label: 'Try again' }, '<span>Try again</span>', 'setting-retry');
     }
     setHTML(appearanceStatus, status);
-    hint = selected.disabled ? '' : remoteHint(selected) || (selected.action === 'settings.back' ? 'Return to ' + (parentName(t)) : selected.action === 'settings.retry' ? 'Retry this change' : selected.axis === 'source' ? (selected.applied ? 'Remove from rotation' : 'Add to rotation') : selected.axis ? 'Apply selected setting' : selected.action === 'background.wallpaper' ? 'Choose a wallpaper' : selected.action === 'background.rotation' ? 'Choose a rotation interval' : selected.action === 'background.online' ? 'Choose a wallpaper source' : selected.action === 'phone.toggle' ? (S.phone.enabled ? 'Turn off' : 'Turn on') : selected.action === 'phone.forget' ? 'Phones scan a new code' : selected.action === 'phone.clear' ? 'Remove all my photos' : selected.action === 'nowplaying.access' ? 'Open Notification access' : /^open\./.test(selected.action) ? 'Open selected group' : selected.more ? 'Show these sources' : selected.action === 'typography.fonts' ? 'Choose a font' : selected.action === 'saver.start' ? 'Start the screensaver now' : selected.action === 'health.remote' ? 'Open Accessibility settings' : selected.action === 'health.phone' ? 'Open Phone settings' : selected.action === 'update.install' ? 'Download and install' : selected.action === 'update.check' ? 'Check now' : selected.action === 'update.auto' ? (S.update.auto ? 'Turn off' : 'Turn on') : selected.action === 'update.wait' ? 'Please wait' : selected.action.indexOf('iconapp.') === 0 ? 'Choose an icon' : selected.action.indexOf('iconset.') === 0 ? 'Use this icon' : selected.action.indexOf('inname.') === 0 ? 'Use this name' : /^input(page|name)\./.test(selected.action) ? 'Open selected group' : selected.action.indexOf('input.toggle.') === 0 ? (selected.applied ? 'Hide from Home' : 'Show on Home') : selected.action === 'ha.refresh' ? 'Check again' : selected.action.indexOf('ha.area.') === 0 ? (selected.applied ? 'Hide this room' : 'Show this room') : selected.action === 'ha.forget' ? 'Forget the server and its token' : 'Open on the TV');
+    hint = selected.disabled ? '' : remoteHint(selected) || (selected.action === 'settings.back' ? 'Return to ' + (parentName(t)) : selected.action === 'settings.retry' ? 'Retry this change' : selected.axis === 'source' ? (selected.applied ? 'Remove from rotation' : 'Add to rotation') : selected.axis ? 'Apply selected setting' : selected.action === 'background.wallpaper' ? 'Choose a wallpaper' : selected.action === 'background.rotation' ? 'Choose a rotation interval' : selected.action === 'background.online' ? 'Choose a wallpaper source' : selected.action === 'phone.toggle' ? (S.phone.enabled ? 'Turn off' : 'Turn on') : selected.action === 'phone.forget' ? 'Phones scan a new code' : selected.action === 'phone.clear' ? 'Remove all my photos' : selected.action === 'nowplaying.access' ? 'Open Notification access' : /^open\./.test(selected.action) ? 'Open selected group' : selected.more ? 'Show these sources' : selected.action === 'typography.fonts' ? 'Choose a font' : selected.action === 'saver.start' ? 'Start the screensaver now' : selected.action === 'health.remote' ? 'Open Accessibility settings' : selected.action === 'health.phone' ? 'Open Phone settings' : selected.action === 'update.install' ? 'Download and install' : selected.action === 'update.check' ? 'Check now' : selected.action === 'update.auto' ? (S.update.auto ? 'Turn off' : 'Turn on') : selected.action === 'update.wait' ? 'Please wait' : selected.action.indexOf('iconapp.') === 0 ? 'Choose an icon' : selected.action.indexOf('iconset.') === 0 ? 'Use this icon' : selected.action.indexOf('inname.') === 0 ? 'Use this name' : selected.action.indexOf('todpart.') === 0 ? 'Choose a photo for this part of the day' : selected.action.indexOf('todauto.') === 0 ? 'Pick one automatically' : selected.action.indexOf('todpick.') === 0 ? 'Choose a photo' : /^input(page|name)\./.test(selected.action) ? 'Open selected group' : selected.action.indexOf('input.toggle.') === 0 ? (selected.applied ? 'Hide from Home' : 'Show on Home') : selected.action === 'ha.refresh' ? 'Check again' : selected.action.indexOf('ha.area.') === 0 ? (selected.applied ? 'Hide this room' : 'Show this room') : selected.action === 'ha.forget' ? 'Forget the server and its token' : 'Open on the TV');
     setHTML(appearanceDesc, hint ? '<span class="remote-key">OK</span><span>' + esc(hint) + '</span>' : '');
     fitRows();
   }
@@ -3432,15 +3474,15 @@
   function renderWallpaper(t) {
     V.wallpaper.norm(t);
     appearanceEl.className = 'appearance detail-wallpaper';
-    appearanceTitle.textContent = T('Wallpaper');
+    appearanceTitle.textContent = T(t.slot ? partName(t.slot) : 'Wallpaper');
     appearanceRows.className = 'appearance-rows wallpaper-picker';
-    setHTML(appearanceBack, '<button type="button" tabindex="-1" class="setting-choice setting-back' + (t.f.zone === 'back' ? ' is-focus' : '') + '" data-z="wall-back" data-action="wallpaper.back">' + icon('left') + '<span>Background</span></button>');
+    setHTML(appearanceBack, '<button type="button" tabindex="-1" class="setting-choice setting-back' + (t.f.zone === 'back' ? ' is-focus' : '') + '" data-z="wall-back" data-action="wallpaper.back">' + icon('left') + '<span>' + esc(t.slot ? partName(t.slot) : 'Background') + '</span></button>');
     setHTML(appearanceRows, '<div class="wallpaper-edge wallpaper-before" aria-hidden="true">' + icon('up') + '</div><div class="wallpaper-list" role="radiogroup" aria-label="Wallpaper"><div class="wallpaper-rows"></div></div><div class="wallpaper-edge wallpaper-after" aria-hidden="true">' + icon('down') + '</div>');
     var rows = appearanceRows.querySelector('.wallpaper-rows'), shown = wall(S.wallShown) || wall(S.c.wall), candidate = WALLS[t.i], status, note, hint;
     keyed(rows, WALLS.map(function (w) { return { key: w.id, wall: w }; }), function (row, item, i) {
       var visible = i >= t.top && i < t.top + WALL_VISIBLE, w = item.wall, image;
       setContent(row, w.id + '|' + visible + '|' + inRotation(w) + '|' + isFav(w) + '|' + isHidden(w), '<span class="wallpaper-thumb">' + (visible ? '<img src="' + WP + w.id + '-thumb.jpg" alt="">' : '') + '</span><span class="setting-copy"><span class="setting-name">' + esc(w.name) + '</span>' + (isHidden(w) ? '<span class="setting-credit not-rotating">' + esc(T('Hidden')) + '</span>' : !inRotation(w) ? '<span class="setting-credit not-rotating">' + esc(T('Not in rotation')) + '</span>' : isFav(w) ? '<span class="setting-credit is-fav">' + esc(T('Favourite')) + (w.credit ? ' · ' + esc(w.credit) : '') + '</span>' : w.credit ? '<span class="setting-credit">' + esc(w.credit) + '</span>' : '') + '</span><span class="setting-tick" aria-hidden="true"></span>');
-      row.className = 'setting-choice wallpaper-choice' + (t.f.zone === 'photo' && t.i === i ? ' is-focus' : '') + (w.id === S.c.wall ? ' is-applied' : '');
+      row.className = 'setting-choice wallpaper-choice' + (t.f.zone === 'photo' && t.i === i ? ' is-focus' : '') + (w.id === (t.slot ? S.c.wallFor[t.slot] : S.c.wall) ? ' is-applied' : '');
       row.style.transform = 'translate3d(0,' + (i * WALL_ROW) + 'px,0)'; row.style.visibility = visible ? 'visible' : 'hidden';
       row.setAttribute('role', 'radio'); row.setAttribute('tabindex', '-1'); row.setAttribute('aria-label', w.name);
       row.setAttribute('aria-checked', String(w.id === S.c.wall)); row.setAttribute('aria-posinset', String(i + 1)); row.setAttribute('aria-setsize', String(WALLS.length));
@@ -3988,6 +4030,7 @@
   function resetRotation() { pauseRotation(); activeMs = 0; rotationKey = ''; }
   function syncRotation() {
     var key = S.c.wall + '|' + S.c.mode;
+    if (S.c.mode === 'tod') applyPart();
     pauseRotation();
     if (key !== rotationKey) { activeMs = 0; rotationKey = key; }
     if (!rotationActive()) return;
@@ -4062,6 +4105,7 @@
       if (calmNight() && wall(S.c.wall).tone !== 'dark' && !S.pending) { var dark = rotationPool().filter(function (w) { return w.tone === 'dark'; }); if (dark.length) setLook({ wall: dark[0].id }, { row: 'bg' }); }
     }
     if (S.c.idle !== 'off' && !idleTimer && !S.idleHidden) idleReset();
+    applyPart();
     if (WEATHER && S.c.cweather === 'on') WEATHER.refresh(false);
     if (top().id === 'home' || isSettingsDetail(top())) renderCaption(top(), homeState(top()));
     if (S.saver) renderSaver(); else if (!saverTimer) saverReset(); else syncAwake();

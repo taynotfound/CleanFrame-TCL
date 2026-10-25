@@ -1,5 +1,7 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("pl", {
+      "Choose a photo for this part of the day": "Wybierz zdjęcie na tę porę dnia", "Pick one automatically": "Wybierz automatycznie",
+      "By time of day": "Według pory dnia", "Parts of the day": "Pory dnia", "Morning": "Rano", "Day": "Dzień", "Evening": "Wieczór", "Choose a photo": "Wybierz zdjęcie", "A different photo from your rotation each day": "Każdego dnia inne zdjęcie z rotacji", "Automatic prefers darker photos.": "Automatycznie wybiera ciemniejsze zdjęcia.", "Automatic prefers brighter photos.": "Automatycznie wybiera jaśniejsze zdjęcia.", "Morning from 5, day from 11, evening from 17 and night from 21.": "Rano od 5, dzień od 11, wieczór od 17, noc od 21.", "Part of the day": "Pora dnia",
       "Use this name": "Użyj tej nazwy",
       "Rename": "Zmień nazwę", "Name": "Nazwa", "Input": "Wejście", "Name from the device": "Nazwa z urządzenia", "Your inputs": "Twoje wejścia", "Type any name in the phone companion, under Inputs.": "Dowolną nazwę wpiszesz w aplikacji towarzyszącej w telefonie, w sekcji Wejścia.", "Game console": "Konsola", "Set-top box": "Dekoder", "Blu-ray player": "Odtwarzacz Blu-ray", "Computer": "Komputer", "Soundbar": "Soundbar", "Camera": "Kamera", "Input name": "Nazwa wejścia", "Streaming stick": "Przystawka do streamingu", "Disc player": "Odtwarzacz płyt",
       "Each press: 30, 60, 90, 120 minutes, then off.": "Każde naciśnięcie: 30, 60, 90, 120 minut, potem wyłączone.",
