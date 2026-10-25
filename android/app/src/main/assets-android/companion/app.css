@@ -35,6 +35,11 @@ h2{margin:0 0 6px;font-size:19px;font-weight:600;letter-spacing:-.2px}
 .tile img,.tile video{width:100%;height:100%;object-fit:cover;display:block}
 .tile button{position:absolute;top:4px;right:4px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(10,14,18,.6);color:#fff;font-size:18px;line-height:30px;padding:0;cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .inline{display:flex;gap:8px}
+.ha-form{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.ha-form .backup-buttons{margin-top:6px}
+.ha-form .quiet-button{margin-top:0}
+input[type=password]{min-height:48px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:rgba(0,0,0,.22);color:var(--ink);font:500 16px Manrope,system-ui,sans-serif;outline:0}
+input[type=password]:focus{border-color:var(--focus)}
 input[type=text]{flex:1;min-width:0;min-height:48px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:rgba(0,0,0,.22);color:var(--ink);font:500 16px Manrope,system-ui,sans-serif;outline:0}
 input[type=text]:focus{border-color:var(--focus)}
 footer{text-align:center;color:var(--muted);font-size:13px;margin-top:22px}

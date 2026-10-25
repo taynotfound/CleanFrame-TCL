@@ -313,6 +313,19 @@ final class Companion {
                 send(out, 200, "application/json", apiInfo());
                 return;
             }
+            // Home Assistant add-on: the address and token come in the body (never the URL) and are never sent back.
+            if (method.equals("POST") && api.equals("ha")) {
+                if (length <= 0 || length > 8192) { send(out, 413, "application/json", "{\"error\":\"size\"}"); return; }
+                byte[] body = new byte[(int) length];
+                for (int got = 0, n; got < body.length; got += n) if ((n = in.read(body, got, body.length - got)) < 0) throw new IOException("Body cut short");
+                JSONObject b;
+                try { b = new JSONObject(new String(body, StandardCharsets.UTF_8)); } catch (Exception e) { b = new JSONObject(); }
+                String failed = HomeAssistant.get(context).save(b.optString("url"), b.optString("token"));
+                if (!failed.isEmpty()) { send(out, 400, "application/json", new JSONObject().put("error", failed).toString()); return; }
+                send(out, 200, "application/json", apiInfo());
+                return;
+            }
+            if (method.equals("POST") && api.equals("ha/clear")) { HomeAssistant.get(context).forget(); send(out, 200, "application/json", apiInfo()); return; }
             send(out, 404, "text/plain", "Not found");
         } catch (Exception ignored) { }
     }
@@ -330,7 +343,8 @@ final class Companion {
         JSONArray photos = new JSONArray();
         File[] all = files();
         for (int i = all.length - 1; i >= 0; i--) photos.put(all[i].getName());
-        return new JSONObject().put("name", "Shore").put("install", PAIR_URL).put("count", all.length).put("max", MAX_FILES).put("place", place()).put("feed", feed()).put("calendar", calendar()).put("photos", photos).toString();
+        return new JSONObject().put("name", "Shore").put("install", PAIR_URL).put("count", all.length).put("max", MAX_FILES).put("place", place()).put("feed", feed()).put("calendar", calendar()).put("photos", photos)
+                .put("ha", HomeAssistant.get(context).summary()).toString();
     }
 
     private void asset(OutputStream out, String name) throws IOException {

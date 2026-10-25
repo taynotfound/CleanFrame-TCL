@@ -52,6 +52,42 @@ final class DeviceBridge {
     @JavascriptInterface
     public void newsRefresh(String feed, boolean force) { News.get(context).refresh(feed, force); }
 
+    /** Home Assistant add-on: {configured, enabled, url, status, error, at, areas, selected, states}. Never the token. Only the activity uses it. */
+    @JavascriptInterface
+    public String haInfo() { return activity == null ? "{}" : HomeAssistant.get(context).info(); }
+
+    /** The add-on switch in Settings › Add-ons. */
+    @JavascriptInterface
+    public void haEnable(boolean on) { if (activity != null) HomeAssistant.get(context).setEnabled(on); }
+
+    /** Rooms to show, as a JSON array of area names; empty shows every room. */
+    @JavascriptInterface
+    public void haAreas(String json) { if (activity != null) HomeAssistant.get(context).setAreas(json); }
+
+    @JavascriptInterface
+    public void haRefresh() { if (activity != null) HomeAssistant.get(context).refresh(); }
+
+    @JavascriptInterface
+    public void haToggle(String entity) { if (activity != null) HomeAssistant.get(context).toggle(entity); }
+
+    /** Brightness, colour, thermostat target or mode; HomeAssistant.call checks the service and every field. */
+    @JavascriptInterface
+    public void haCall(String entity, String service, String json) { if (activity != null) HomeAssistant.get(context).call(entity, service, json); }
+
+    /** Forgets the server and its token. */
+    @JavascriptInterface
+    public void haForget() { if (activity != null) HomeAssistant.get(context).forget(); }
+
+    /** Camera signalling session (0 when it can't start); events arrive through window.CleanFrameHACamera. */
+    @JavascriptInterface
+    public int haCameraStart(String entity) { return activity == null ? 0 : HomeAssistant.get(context).cameraStart(entity); }
+
+    @JavascriptInterface
+    public void haCameraOffer(int session, String sdp) { if (activity != null) HomeAssistant.get(context).cameraOffer(session, sdp); }
+
+    @JavascriptInterface
+    public void haCameraHangup(int session) { if (activity != null) HomeAssistant.get(context).hangup(session); }
+
     /** Keeps (or releases) a favourite online photo across refreshes. */
     @JavascriptInterface
     public void onlineKeep(String id, boolean on) { if (online != null && id != null && id.matches("[A-Za-z0-9._-]{1,160}")) online.keep(id, on); }

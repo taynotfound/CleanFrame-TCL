@@ -254,6 +254,33 @@
     auto: function (on) { try { bridge.updateAuto(!!on); } catch (e) { } },
     onChange: function (fn) { updateListeners.push(fn); }
   } : null;
+  /* Home Assistant add-on (HomeAssistant.java): states read natively, the token never reaches the page. */
+  var haListeners = [], haCamListeners = [];
+  window.CleanFrameHAChanged = function () { haListeners.forEach(function (fn) { try { fn(); } catch (e) { } }); };
+  window.CleanFrameHACamera = function (event) { if (event && typeof event.session === 'number') haCamListeners.forEach(function (fn) { try { fn(event); } catch (e) { } }); };
+  var homeAssistant = bridge.haInfo ? {
+    /* {configured, enabled, url, status: off|setup|loading|ok|error, error, at, areas:[{name, ids}], selected, states:{id: {s, n, u, c, t}}} */
+    info: function () {
+      var r;
+      try { r = JSON.parse(bridge.haInfo()) || {}; } catch (e) { r = {}; }
+      return { configured: !!r.configured, enabled: !!r.enabled, url: typeof r.url === 'string' ? r.url : '', status: /^(off|setup|loading|ok|error)$/.test(r.status) ? r.status : 'off',
+        error: String(r.error || ''), at: +r.at || 0, areas: (r.areas instanceof Array ? r.areas : []).filter(function (a) { return a && typeof a.name === 'string' && a.ids instanceof Array; }),
+        selected: (r.selected instanceof Array ? r.selected : []).filter(function (n) { return typeof n === 'string'; }), states: r.states && typeof r.states === 'object' ? r.states : {} };
+    },
+    enable: function (on) { try { bridge.haEnable(!!on); } catch (e) { } },
+    areas: function (names) { try { bridge.haAreas(JSON.stringify(names || [])); } catch (e) { } },
+    refresh: function () { try { bridge.haRefresh(); } catch (e) { } },
+    toggle: function (id) { try { bridge.haToggle(String(id)); } catch (e) { } },
+    call: bridge.haCall ? function (id, service, data) { try { bridge.haCall(String(id), String(service), JSON.stringify(data || {})); } catch (e) { } } : null,
+    forget: function () { try { bridge.haForget(); } catch (e) { } },
+    camera: {
+      start: function (id) { try { return +bridge.haCameraStart(String(id)) || 0; } catch (e) { return 0; } },
+      offer: function (session, sdp) { try { bridge.haCameraOffer(session | 0, String(sdp)); } catch (e) { } },
+      hangup: function (session) { try { bridge.haCameraHangup(session | 0); } catch (e) { } },
+      onEvent: function (fn) { haCamListeners.push(fn); }
+    },
+    onChange: function (fn) { haListeners.push(fn); }
+  } : null;
   /* Shore's own screensaver: keeps the TV's screensaver away while enabled, and starts from a remote button. */
   var saver = {
     keepAwake: function (on) { try { bridge.keepAwake(!!on); } catch (e) { } },
@@ -274,7 +301,7 @@
     ready: function () { try { bridge.pageReady(); } catch (e) { } }
   };
   window.FrameDevice = {
-    platform: 'android', startup: startup, sleep: sleep, calendar: calendar, phone: phone, news: news, icons: icons, nowPlaying: nowPlaying, saver: saver, update: update,
+    platform: 'android', startup: startup, sleep: sleep, calendar: calendar, phone: phone, news: news, homeAssistant: homeAssistant, icons: icons, nowPlaying: nowPlaying, saver: saver, update: update,
     launch: launch, launchApp: launchApp, apps: apps, appInfo: appInfo,
     inputs: inputs, onInputs: function (fn) { inputListeners.push(fn); }, online: online, remote: remote, topShelf: topShelf, watchNext: watchNext,
     /* Android package behind a Home entry (for its TV banner); null for inputs and unknown IDs. */

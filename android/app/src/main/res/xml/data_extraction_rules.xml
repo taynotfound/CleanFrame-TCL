@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+ cloud backups and device transfers: everything except the Home Assistant token. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="sharedpref" path="." />
+        <include domain="file" path="." />
+        <include domain="database" path="." />
+        <exclude domain="sharedpref" path="homeassistant.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="sharedpref" path="." />
+        <include domain="file" path="." />
+        <include domain="database" path="." />
+        <exclude domain="sharedpref" path="homeassistant.xml" />
+    </device-transfer>
+</data-extraction-rules>

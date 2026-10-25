@@ -32,6 +32,7 @@
       <button type="button" role="tab" data-tab="photos" aria-selected="true" data-t="Photos">Photos</button>
       <button type="button" role="tab" data-tab="tv" aria-selected="false" data-t="TV settings">TV settings</button>
       <button type="button" role="tab" data-tab="apps" aria-selected="false" data-t="Apps">Apps</button>
+      <button type="button" role="tab" data-tab="addons" aria-selected="false" data-t="Add-ons" hidden>Add-ons</button>
     </nav>
     <div id="tab-tv" class="tab" hidden>
       <p id="tvOffline" class="card quiet" hidden data-t="Open Shore on the TV to change its settings from here.">Open Shore on the TV to change its settings from here.</p>
@@ -54,6 +55,19 @@
         <h2 id="othersTitle" data-t="Other installed apps">Other installed apps</h2>
         <ul id="otherList" class="applist"></ul>
       </section>
+    </div>
+    <!-- Add-ons switched on in Settings › Add-ons on the TV; the tab only shows while one is on. -->
+    <div id="tab-addons" class="tab" hidden>
+    <section id="haCard" class="card">
+      <h2 data-t="Home Assistant">Home Assistant</h2>
+      <p data-t="Your server’s address and a long-lived access token, made in your Home Assistant profile under Security. The token stays on the TV.">Your server’s address and a long-lived access token, made in your Home Assistant profile under Security. The token stays on the TV.</p>
+      <form id="haForm" class="ha-form">
+        <input id="haUrl" type="text" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off" placeholder="http://homeassistant.local:8123">
+        <input id="haToken" type="password" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off">
+        <div class="backup-buttons"><button class="button primary" type="submit" data-t="Connect">Connect</button><button id="haForget" class="button quiet-button" type="button" data-t="Disconnect" hidden>Disconnect</button></div>
+      </form>
+      <p id="haStatus" class="quiet"></p>
+    </section>
     </div>
     <div id="tab-photos" class="tab">
     <section class="card">

@@ -5,7 +5,7 @@
   "description": "A personal, uncluttered home interface for Samsung The Frame.",
   "scripts": {
     "dev": "python3 scripts/preview.py",
-    "check": "node --check app/main.js && node --check app/device.js && python3 scripts/check.py",
+    "check": "node --check app/main.js && node --check app/device.js && node --check app/device-android.js && node --check app/addons/homeassistant.js && python3 scripts/check.py",
     "package": "python3 scripts/package.py",
     "tv:info": "python3 scripts/tv.py info",
     "tv:install": "python3 scripts/tv.py install",

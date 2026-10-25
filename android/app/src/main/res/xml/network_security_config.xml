@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Home Assistant add-on: most servers on a home network answer plain http://, and Android
+     can't allow cleartext for "the LAN" by address range, so it is allowed app-wide. Everything
+     Shore fetches itself (wallpapers, news, lyrics, updates) still uses https. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

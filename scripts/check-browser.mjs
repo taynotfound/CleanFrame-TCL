@@ -17,6 +17,20 @@ const CATALOG = IDS.map((id, i) => ({ id, name: NAMES[i], show: true, iconPath: 
   { id: 'AbCdEf1234.worker', name: 'Background worker', show: true },
   { id: 'com.samsung.tv.cobalt-yt', name: 'YouTube', show: true }
 ]);
+// Made-up Home Assistant areas and states for the add-on (no server is contacted).
+const HA_FAKE = {
+  areas: [
+    { name: 'Living Room', ids: ['light.living_room_lamp', 'light.living_room_ceiling', 'switch.tv_backlight', 'climate.living_room', 'sensor.living_room_temperature', 'sensor.living_room_humidity', 'media_player.living_room'] },
+    { name: 'Kitchen', ids: ['light.kitchen_pendant', 'light.kitchen_strip', 'fan.kitchen', 'binary_sensor.kitchen_motion'] },
+    { name: 'Front Door', ids: ['camera.front_door', 'event.front_door_ding', 'lock.front_door'] }],
+  states: {
+    'light.living_room_lamp': { s: 'on', n: 'Living Room Lamp' }, 'light.living_room_ceiling': { s: 'off', n: 'Living Room Ceiling', cm: ['color_temp', 'hs'], kmin: 2200, kmax: 6500 }, 'switch.tv_backlight': { s: 'off', n: 'TV backlight' },
+    'climate.living_room': { s: 'cool', n: 'Living Room', t: 22.4, tt: 21, tmin: 7, tmax: 35, ts: 0.5, hm: ['off', 'heat', 'cool', 'auto'] }, 'sensor.living_room_temperature': { s: '21.6', n: 'Living Room Temperature', u: '°C', c: 'temperature' },
+    'sensor.living_room_humidity': { s: '48', n: 'Living Room Humidity', u: '%', c: 'humidity' }, 'media_player.living_room': { s: 'playing', n: 'Living Room' },
+    'light.kitchen_pendant': { s: 'on', n: 'Kitchen Pendant' }, 'light.kitchen_strip': { s: 'unavailable', n: 'Kitchen Strip' }, 'fan.kitchen': { s: 'off', n: 'Kitchen Fan' },
+    'binary_sensor.kitchen_motion': { s: 'on', n: 'Kitchen Motion', c: 'motion' }, 'camera.front_door': { s: 'idle', n: 'Front Door' },
+    'event.front_door_ding': { s: new Date(Date.now() - 300000).toISOString(), n: 'Front Door Ding' }, 'lock.front_door': { s: 'locked', n: 'Front Door Lock' } }
+};
 const walls = JSON.parse(readFileSync(root + 'app/assets/wallpapers/SOURCES.json', 'utf8'));
 const out = root + '.local/qa/';
 mkdirSync(out, { recursive: true });
@@ -1018,6 +1032,106 @@ try {
     await nav('ok');
     await nav('up', 'up', 'ok', 'up', 'up', 'up', 'ok', 'up', 'up', 'up', 'up', 'ok', 'up', 'up', 'up', 'up', 'up', 'ok');
     check('The arrows enter the right PIN and the app opens', (await state()).view !== 'pin', [(await state()).view, await current.locator('#sheetView').innerText()]);
+  });
+  await run('Home Assistant add-on stays out of sight until switched on', async () => {
+    await page();
+    const haCalls = () => current.evaluate(() => window.__haCalls || []);
+    const caption = () => current.evaluate(() => document.querySelector('#caption').textContent);
+    await scene('settings');
+    check('No Add-ons row without a Home Assistant bridge', !(await call('actions')).includes('settings.group.addons'));
+    check('Older preferences migrate with the add-on off', (await stored()).look.aha === 'off');
+    await current.evaluate(fake => ShoreQA.homeAssistant(fake), HA_FAKE);
+    await scene('settings');
+    check('Add-ons row appears when the add-on can run', (await call('actions')).includes('settings.group.addons'));
+    await scene('home');
+    check('Off: no Smart home control and no indoor reading', !(await call('actions')).includes('util.ha') && !/Inside/.test(await caption()));
+    await group('addons');
+    check('Add-ons page offers Home Assistant, switched off', await current.locator('[data-action="choice.aha.on"]:not(.is-applied)').count() === 1 && !(await call('actions')).includes('open.ha'));
+    await act('choice.aha.on'); await ready();
+    check('The switch persists', (await stored()).look.aha === 'on');
+    check('Switching on starts the add-on', (await haCalls()).some(c => c[0] === 'enable' && c[1] === true));
+    await current.waitForFunction(() => ShoreQA.actions().includes('open.ha'));
+    await act('open.ha');
+    check('Its page lists every room, all shown', await current.locator('[data-action^="ha.area."]').count() === 3 && await current.locator('[data-action^="ha.area."].is-applied').count() === 3);
+    await act('ha.area.1');
+    check('Hiding a room keeps the others', JSON.stringify((await haCalls()).filter(c => c[0] === 'areas').pop()[1]) === JSON.stringify(['Living Room', 'Front Door']));
+    await current.waitForFunction(() => document.querySelectorAll('[data-action^="ha.area."].is-applied').length === 2);
+    await act('ha.area.1');
+    check('Every room shown again is stored as all rooms', JSON.stringify((await haCalls()).filter(c => c[0] === 'areas').pop()[1]) === '[]');
+    await scene('home'); await current.waitForFunction(() => ShoreQA.actions().includes('util.ha'));
+    check('On: Smart home control on Home', (await call('actions')).includes('util.ha'));
+    check('On: indoor reading under the clock', /Inside \d+° · 48%/.test(await caption()), await caption());
+    await act('util.ha');
+    let where = await call('where');
+    check('Panel opens on the first chip with a single focus', where.view === 'ha' && where.focusCount === 1 && where.focusAction === 'ha.toggle.light.living_room_ceiling', where);
+    await nav('ok');
+    where = await call('where');
+    check('OK switches the chip at once and asks Home Assistant', /On$/.test(where.focus) && (await haCalls()).some(c => c[0] === 'toggle' && c[1] === 'light.living_room_ceiling'), where);
+    await current.screenshot({ path: out + 'ha-panel.jpg', quality: 90 });
+    check('The panel line names what is unavailable', /lights on · Kitchen Strip unavailable/.test(await current.locator('.view-ha .s-sub').innerText()), await current.locator('.view-ha .s-sub').innerText());
+    await current.keyboard.down('Enter'); await current.waitForTimeout(800); await current.keyboard.up('Enter');
+    where = await call('where');
+    check('Holding OK on a light opens its controls with a single focus', where.view === 'hactl' && where.focusCount === 1 && where.focusAction === 'hactl.power', where);
+    check('A held OK doesn’t also switch the light', (await haCalls()).filter(c => c[0] === 'toggle').length === 1);
+    await nav('down', 'right', 'right');
+    await current.waitForFunction(() => (window.__haCalls || []).some(c => c[0] === 'call' && c[2] === 'turn_on' && c[3].brightness_pct));
+    check('Right on Brightness sends one change once the remote rests', JSON.stringify((await haCalls()).filter(c => c[0] === 'call').map(c => c[3])) === JSON.stringify([{ brightness_pct: 20 }]), await haCalls());
+    await nav('down', 'right', 'ok');
+    where = await call('where');
+    check('Colour row: whites then colours, one focus', where.focusAction === 'hactl.color.1' && where.focusCount === 1 && await current.locator('.hc-sw').count() === 12, where);
+    await current.waitForFunction(() => (window.__haCalls || []).some(c => c[0] === 'call' && c[3].color_temp_kelvin));
+    await current.screenshot({ path: out + 'ha-light-controls.jpg', quality: 90 });
+    check('OK on a white sets its colour temperature', (await haCalls()).some(c => c[0] === 'call' && c[3].color_temp_kelvin === 3500));
+    await nav('back');
+    where = await call('where');
+    check('Back closes the controls onto the chip', where.view === 'ha' && where.focusAction === 'ha.toggle.light.living_room_ceiling', where);
+    await nav('right', 'right', 'right');
+    where = await call('where');
+    check('Focus reaches the thermostat', where.focusAction === 'ha.toggle.climate.living_room', where);
+    await nav('ok');
+    where = await call('where');
+    check('OK on a thermostat opens its controls', where.view === 'hactl' && where.focusAction === 'hactl.target' && /21°/.test(await current.locator('.hc-temp').innerText()), where);
+    await nav('right');
+    check('Right raises the target at once', /21\.5°/.test(await current.locator('.hc-temp').innerText()), await current.locator('.hc-temp').innerText());
+    await current.waitForFunction(() => (window.__haCalls || []).some(c => c[0] === 'call' && c[2] === 'set_temperature'));
+    check('The new target reaches Home Assistant', (await haCalls()).some(c => c[2] === 'set_temperature' && c[3].temperature === 21.5));
+    await nav('down', 'right', 'ok');
+    await current.waitForFunction(() => (window.__haCalls || []).some(c => c[0] === 'call' && c[2] === 'set_hvac_mode'));
+    await current.screenshot({ path: out + 'ha-thermostat-controls.jpg', quality: 90 });
+    check('OK on a mode sets it', (await haCalls()).some(c => c[2] === 'set_hvac_mode' && c[3].hvac_mode === 'auto') && (await call('where')).focusCount === 1);
+    await nav('back');
+    await nav('down', 'ok');
+    check('A device Shore can’t switch only shows its state', (await call('where')).focusCount === 1 && !(await haCalls()).some(c => c[0] === 'toggle' && c[1] !== 'light.living_room_ceiling'));
+    await nav('up', 'right', 'right', 'right', 'right');
+    check('Right from the end of a row reaches the cameras', (await call('where')).zone === 'cams', await call('where'));
+    await nav('ok');
+    where = await call('where');
+    check('A camera opens its live view with a single focus', where.view === 'hacam' && where.focusCount === 1, where);
+    check('Without a stream the live view says why', /unavailable/i.test(await current.locator('#stage').innerText()));
+    await nav('back');
+    check('Back closes the live view first', (await call('where')).view === 'ha');
+    await nav('back');
+    where = await call('where');
+    check('Back closes the panel onto its control', where.view === 'home' && where.focusAction === 'util.ha', where);
+    const everything = JSON.stringify(await state()) + JSON.stringify(await stored());
+    check('Saved preferences hold only the switch', !/token|homeassistant\.local|living_room/i.test(everything));
+    await group('addons'); await act('choice.aha.on'); await ready();
+    await scene('home');
+    check('Switching off stops it and removes the control', (await stored()).look.aha === 'off' && (await haCalls()).some(c => c[0] === 'enable' && c[1] === false) && !(await call('actions')).includes('util.ha'));
+    await group('addons'); await act('choice.aha.on'); await ready();
+    await current.evaluate(fake => ShoreQA.homeAssistant(fake), {
+      areas: [{ name: 'Bedroom', ids: ['light.bed'] }, { name: 'Office', ids: ['light.desk', 'switch.printer'] }, { name: 'Hall', ids: ['light.hall'] }, { name: 'Porch', ids: ['light.porch', 'light.step', 'light.gate'] }],
+      states: { 'light.bed': { s: 'on', n: 'Bedroom Lamp' }, 'light.desk': { s: 'off', n: 'Desk' }, 'switch.printer': { s: 'off', n: 'Printer' }, 'light.hall': { s: 'off', n: 'Hall' }, 'light.porch': { s: 'off', n: 'Porch' }, 'light.step': { s: 'off', n: 'Step' }, 'light.gate': { s: 'off', n: 'Gate' } } });
+    await scene('home'); await current.waitForFunction(() => ShoreQA.actions().includes('util.ha'));
+    await act('util.ha');
+    const heads = await current.evaluate(() => [...document.querySelectorAll('.ha-head')].map(h => h.style.transform));
+    check('Small rooms share a row on the chip grid', heads.filter(t => /^translate3d\([^,]+,\s*0px/.test(t)).length === 3 && heads.length === 4, heads);
+    await nav('right', 'right', 'right', 'down');
+    where = await call('where');
+    check('Down goes to the nearest chip below', where.focusAction === 'ha.toggle.light.step' && where.focusCount === 1, where);
+    await current.screenshot({ path: out + 'ha-panel-small-rooms.jpg', quality: 90 });
+    await nav('back');
+    await current.evaluate(() => ShoreQA.homeAssistant(null));
   });
   section = 'Run integrity';
   report.sourceAfter = hashes();

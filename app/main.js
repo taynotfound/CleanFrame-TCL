@@ -97,28 +97,29 @@
     cformat: ['12', '24'], cdate: ['off', 'on'], cweather: ['off', 'on'], wunit: ['c', 'f'], cplaying: ['off', 'on'], cart: ['off', 'on'], clook: ['off', 'on'], saver: ['off', '5', '10', '15'], csize: ['small', 'medium', 'large', 'huge'], cweight: ['auto', 'thin', 'light', 'regular', 'bold'],
     night: ['off', 'scheduled', 'always'], nhours: ['20-7', '21-7', '22-6', '23-7'], ndim: ['soft', 'medium', 'strong'], idle: ['off', '1', '5'], focus: ['type', 'glass'], material: ['soft', 'frost', 'tint'],
     svsrc: ['like', 'every', 'builtin'], svlay: ['mix', 'single', 'mosaic'], svtime: ['15', '30', '60'], svmotion: ['still', 'drift'], iask: ['off', 'on'], ncalm: ['off', 'on'], wfx: ['off', 'on'], cnews: ['off', 'on'], svphoto: ['off', 'on'], svclock: ['off', 'on'], svdate: ['off', 'on'], svmusic: ['off', 'on'], wicon: ['off', 'on'], cwave: ['off', 'on'],
-    cpos: ['left', 'center'], csec: ['off', 'on'], tint: ['none', 'warm', 'cool', 'rose', 'green'], dglass: ['clear', 'default', 'solid'], isize: ['small', 'default', 'large'], npdim: ['none', 'soft', 'strong'], svpos: ['move', 'fixed'], istyle: ['shore', 'original', 'mono'], cwatch: ['off', 'on'], plyric: ['off', 'on'], pword: ['off', 'on'], pbeat: ['off', 'on'], crecent: ['off', 'on'], ccal: ['off', 'on'], pqueue: ['off', 'on'], ptrans: ['off', 'on'],
+    cpos: ['left', 'center'], csec: ['off', 'on'], tint: ['none', 'warm', 'cool', 'rose', 'green'], dglass: ['clear', 'default', 'solid'], isize: ['small', 'default', 'large'], npdim: ['none', 'soft', 'strong'], svpos: ['move', 'fixed'], istyle: ['shore', 'original', 'mono'], cwatch: ['off', 'on'], plyric: ['off', 'on'], pword: ['off', 'on'], pbeat: ['off', 'on'], crecent: ['off', 'on'], ccal: ['off', 'on'], pqueue: ['off', 'on'], ptrans: ['off', 'on'], aha: ['off', 'on'],
     nsrc: ['google', 'phone'].concat(NEWS_OUTLETS.map(function (o) { return o.id; })) };
   /* Newer axes with their defaults: stored, migrated and validated like the others. */
-  var MORE_LOOK = { svphoto: 'off', ncalm: 'off', wfx: 'off', cnews: 'off', iask: 'on', svsrc: 'like', svlay: 'mix', svtime: '30', svmotion: 'drift', svclock: 'on', svdate: 'on', svmusic: 'on', wicon: 'on', cwave: 'on', cpos: 'left', csec: 'off', tint: 'none', dglass: 'default', isize: 'default', npdim: 'none', svpos: 'move', nsrc: 'google', istyle: 'shore', cwatch: 'on', plyric: 'on', pword: 'on', pbeat: 'off', crecent: 'on', ccal: 'off', pqueue: 'on', ptrans: 'off' };
+  var MORE_LOOK = { svphoto: 'off', ncalm: 'off', wfx: 'off', cnews: 'off', iask: 'on', svsrc: 'like', svlay: 'mix', svtime: '30', svmotion: 'drift', svclock: 'on', svdate: 'on', svmusic: 'on', wicon: 'on', cwave: 'on', cpos: 'left', csec: 'off', tint: 'none', dglass: 'default', isize: 'default', npdim: 'none', svpos: 'move', nsrc: 'google', istyle: 'shore', cwatch: 'on', plyric: 'on', pword: 'on', pbeat: 'off', crecent: 'on', ccal: 'off', pqueue: 'on', ptrans: 'off', aha: 'off' };
   /* On/off settings that OK flips. */
-  var TOGGLES = ['svphoto', 'ncalm', 'wfx', 'cnews', 'iask', 'cdate', 'cweather', 'cplaying', 'cart', 'clook', 'svclock', 'svdate', 'svmusic', 'wicon', 'cwave', 'csec', 'cwatch', 'plyric', 'pword', 'pbeat', 'crecent', 'ccal', 'pqueue', 'ptrans'];
+  var TOGGLES = ['svphoto', 'ncalm', 'wfx', 'cnews', 'iask', 'cdate', 'cweather', 'cplaying', 'cart', 'clook', 'svclock', 'svdate', 'svmusic', 'wicon', 'cwave', 'csec', 'cwatch', 'plyric', 'pword', 'pbeat', 'crecent', 'ccal', 'pqueue', 'ptrans', 'aha'];
   var LOOK_NAMES = { bg: 'Background', layout: 'Layout', apps: 'Apps', font: 'Font', controls: 'Home controls', inputs: 'Inputs', motion: 'Motion', tweight: 'Text weight', tsize: 'App name size', cformat: 'Format', cdate: 'Date', cweather: 'Weather', wunit: 'Temperature', cplaying: 'Now playing', cart: 'Album art', clook: 'Artist pictures', saver: 'Screensaver', csize: 'Clock size', cweight: 'Clock weight',
     night: 'Night mode', nhours: 'Night hours', ndim: 'Night dimming', idle: 'Hide controls when idle', focus: 'Focus', material: 'Material',
     svphoto: 'Photo title', ncalm: 'Calmer photos at night', wfx: 'Weather effects', cnews: 'Headlines', iask: 'Ask to switch', svsrc: 'Screensaver photos', svlay: 'Arrangement', svtime: 'Each slide', svmotion: 'Photo motion', svclock: 'Clock', svdate: 'Date and weather', svmusic: 'Music', wicon: 'Weather icon', cwave: 'Level meter',
-    cpos: 'Clock position', csec: 'Seconds', tint: 'Accent', dglass: 'App row glass', isize: 'Icon size', npdim: 'Album art dimming', svpos: 'Clock on the screensaver', nsrc: 'Source', istyle: 'Icon style', cwatch: 'Continue watching', plyric: 'Lyrics', pword: 'Word by word', pbeat: 'Beat pulse', crecent: 'Recently used', ccal: 'Calendar', pqueue: 'Up next', ptrans: 'Translate lyrics' };
+    cpos: 'Clock position', csec: 'Seconds', tint: 'Accent', dglass: 'App row glass', isize: 'Icon size', npdim: 'Album art dimming', svpos: 'Clock on the screensaver', nsrc: 'Source', istyle: 'Icon style', cwatch: 'Continue watching', plyric: 'Lyrics', pword: 'Word by word', pbeat: 'Beat pulse', crecent: 'Recently used', ccal: 'Calendar', pqueue: 'Up next', ptrans: 'Translate lyrics', aha: 'Home Assistant' };
   var VALUE_NAMES = { dark: 'Dark', light: 'Light', photo: 'Photo', list: 'List', dock: 'Dock', type: 'Type', glass: 'Glass', soft: 'Soft', frost: 'Frost', tint: 'Clear tint', icons: 'Icons', both: 'Icons and text', text: 'Text', front: 'First in Home', row: 'Own row', still: 'Still', drift: 'Drift', auto: 'Auto', thin: 'Thin', regular: 'Regular', bold: 'Bold', small: 'Small', 'default': 'Default', large: 'Large',
     medium: 'Medium', huge: 'Huge', '12': '12-hour', '24': '24-hour', on: 'Show', scheduled: 'Timed', always: 'Always', soft: 'Soft', strong: 'Strong',
     '20-7': '20–07', '21-7': '21–07', '22-6': '22–06', '23-7': '23–07', '1': 'After 1 min', '5': 'After 5 min', '10': 'After 10 min', '15': 'After 15 min', c: '°C', f: '°F',
     like: 'Like Home', every: 'Everything', builtin: 'Built-in', mix: 'Mixed', single: 'One photo', mosaic: 'Mosaics',
     left: 'Left', center: 'Centred', none: 'None', warm: 'Warm', cool: 'Cool', rose: 'Rose', green: 'Green', clear: 'Clear', solid: 'Solid', move: 'Moving', fixed: 'Fixed', shore: 'Shore', original: 'Original', mono: 'Monochrome' };
   VALUE_NAMES.off = 'Off'; VALUE_NAMES.light = VALUE_NAMES.light || 'Light';
-  var UTIL = { music: ['Music', 'music'], art: [TV.art, 'art'], apps: ['All apps', 'apps'], arrange: ['Arrange', 'arrange'], settings: ['Settings', 'settings'] };
+  var UTIL = { music: ['Music', 'music'], art: [TV.art, 'art'], apps: ['All apps', 'apps'], arrange: ['Arrange', 'arrange'], settings: ['Settings', 'settings'], ha: ['Smart home', 'house'] };
   var MSG = {
     leave: { title: 'Leave Home?', line: 'Open ' + TV.home + '?', note: '', actions: [['stay', 'Stay'], ['samsung', TV.home]] },
     welcome: { title: 'Welcome to Shore', line: 'Set up the Home button, what’s playing, wallpapers and your phone.', note: '', actions: [['setup', 'Set up'], ['stay', 'Later']] },
     restored: { title: 'Settings restored', line: 'Photos on the TV haven’t changed; they aren’t part of a backup.', note: '', actions: [['stay', 'OK']] },
-    clearphotos: { title: 'Remove all my photos?', line: 'They are deleted from the TV. Your phone keeps its own copies.', note: '', actions: [['stay', 'Keep them'], ['clearphotos', 'Remove']] }
+    clearphotos: { title: 'Remove all my photos?', line: 'They are deleted from the TV. Your phone keeps its own copies.', note: '', actions: [['stay', 'Keep them'], ['clearphotos', 'Remove']] },
+    haforget: { title: 'Disconnect Home Assistant?', line: 'Shore forgets the server and its token. Connect again from your phone.', note: '', actions: [['stay', 'Keep it'], ['haforget', 'Disconnect']] }
   };
   var SVG = {
     calendar: '<rect x="4" y="5.5" width="16" height="14.5" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
@@ -128,6 +129,8 @@
     arrange: '<path d="M4 8.5h14M15 5.5l3 3-3 3M20 15.5H6M9 12.5l-3 3 3 3"/>',
     settings: '<path d="m9 3-.6 2.4-2 1.2L4 6l-2 3.5L3.8 11v2L2 14.5 4 18l2.4-.6 2 1.2L9 21h6l.6-2.4 2-1.2 2.4.6 2-3.5-1.8-1.5v-2L22 9.5 20 6l-2.4.6-2-1.2L15 3Z"/><circle cx="12" cy="12" r="3.2"/>',
     home: '<path d="M4 11 12 4.5l8 6.5v8a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1Z"/>',
+    house: '<path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10.2 15.6a2.6 2.6 0 1 1 3.6 0c-.5.5-.8 1-.8 1.6h-2c0-.6-.3-1.1-.8-1.6Z"/>',
+    camera: '<rect x="3" y="6.5" width="13" height="11" rx="2"/><path d="m16 10.5 5-3v9l-5-3"/>',
     /* Weather: same line style as the controls. */
     'w-sun': '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
     'w-moon': '<path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10Z"/>',
@@ -148,6 +151,7 @@
     lyrics: '<path d="M4.5 6h11M4.5 10.5h11M4.5 15h6"/><path d="M15.5 19v-6.5l4-1"/><circle cx="14" cy="19" r="1.6"/>',
     open: '<path d="M14 4.5h5.5V10"/><path d="m19.5 4.5-8 8"/><path d="M17 13.5v4.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 5 18V9a1.5 1.5 0 0 1 1.5-1.5H11"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
+    minus: '<path d="M5 12h14"/>',
     music: '<path d="M9 17.5V6l10-2v11.5"/><circle cx="6.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="15.5" r="2.5"/>',
     left: '<path d="m14.5 5-7 7 7 7"/>',
     right: '<path d="m9.5 5 7 7-7 7"/>',
@@ -179,7 +183,7 @@
   function lookOf(c) { return { bg: c.bg, wall: c.wall, layout: c.layout, apps: c.apps, font: c.font, controls: c.controls, inputs: c.inputs, lstyle: c.lstyle, motion: c.motion, tweight: c.tweight, tsize: c.tsize, cformat: c.cformat, cdate: c.cdate, cweather: c.cweather, wunit: c.wunit, cplaying: c.cplaying, cart: c.cart, clook: c.clook, saver: c.saver, csize: c.csize, cweight: c.cweight,
       night: c.night, nhours: c.nhours, ndim: c.ndim, idle: c.idle, focus: c.focus, material: c.material, svsrc: c.svsrc, svlay: c.svlay, svtime: c.svtime,
       svmotion: c.svmotion, iask: c.iask, ncalm: c.ncalm, wfx: c.wfx, cnews: c.cnews, svphoto: c.svphoto, svclock: c.svclock, svdate: c.svdate, svmusic: c.svmusic, wicon: c.wicon, cwave: c.cwave,
-      cpos: c.cpos, csec: c.csec, tint: c.tint, dglass: c.dglass, isize: c.isize, npdim: c.npdim, svpos: c.svpos, nsrc: c.nsrc, istyle: c.istyle, ipack: c.ipack, cwatch: c.cwatch, plyric: c.plyric, pword: c.pword, pbeat: c.pbeat, crecent: c.crecent, ccal: c.ccal, pqueue: c.pqueue, ptrans: c.ptrans }; }
+      cpos: c.cpos, csec: c.csec, tint: c.tint, dglass: c.dglass, isize: c.isize, npdim: c.npdim, svpos: c.svpos, nsrc: c.nsrc, istyle: c.istyle, ipack: c.ipack, cwatch: c.cwatch, plyric: c.plyric, pword: c.pword, pbeat: c.pbeat, crecent: c.crecent, ccal: c.ccal, pqueue: c.pqueue, ptrans: c.ptrans, aha: c.aha }; }
   function materialApplies(c) { c = c || S.c; return c.bg === 'photo' && (c.layout === 'dock' || c.focus === 'glass'); }
 
   /* ---------- Helpers ---------- */
@@ -727,7 +731,7 @@
   }
 
   /* ---------- Navigation targets ---------- */
-  function utils() { return ['art', 'apps', 'settings'].concat(musicAvailable() ? ['music'] : []); } // music last, so the other buttons keep their places
+  function utils() { return ['art', 'apps', 'settings'].concat(haShown() ? ['ha'] : []).concat(musicAvailable() ? ['music'] : []); } // music last, so the other buttons keep their places
   /* ---------- Music controls: a Home button while something plays (and for 10 minutes after a pause) ---------- */
   var musicPaused = null;
   function musicAvailable() { return !!(NOWPLAYING && NOWPLAYING.control && S.playing && S.playing.access && (S.playing.playing || (musicPaused && Date.now() < musicPaused.until))); }
@@ -881,6 +885,7 @@
     if (u === 'music') openMusic();
     else if (u === 'art') { if (ANDROID) startSaver(); else perform(TV.art, FrameDevice.art); }
     else if (u === 'apps') openApps();
+    else if (u === 'ha') openHa();
     else guarded(openSettings);
   }
   function addAppsRoute() { guarded(function () { openEditor('home'); }); }
@@ -891,6 +896,10 @@
     if (t.id !== 'home') return '';
     if (t.f.zone === 'input' && inputRow()) return LIVE[t.f.n] || '';
     return t.f.zone === 'apps' && S.sel && (S.c.home.indexOf(S.sel) >= 0 || LIVE.indexOf(S.sel) >= 0) ? S.sel : '';
+  }
+  function holdAction() {
+    var id = quickTarget(), item = haHeld();
+    return id ? function () { openQuick(id); } : item ? function () { openHaControl(item); } : null;
   }
   function openQuick(id) {
     var a = app(id);
@@ -1324,7 +1333,7 @@
   function closeEditor() { clearSession(); pop(); }
 
   /* ---------- Settings, Layout and messages ---------- */
-  var PARENT = { musicview: 'music', health: 'samsung', updates: 'samsung', saverlook: 'screensaver', rotation: 'background', online: 'background', unsplash: 'online', animated: 'online', fonts: 'typography', icons: 'layout', iconpack: 'icons', iconapps: 'icons', appicon: 'iconapps', lock: 'samsung', lockapps: 'lock', remote: 'samsung', remotepick: 'remote', remoteapp: 'remotepick' };
+  var PARENT = { ha: 'addons', musicview: 'music', health: 'samsung', updates: 'samsung', saverlook: 'screensaver', rotation: 'background', online: 'background', unsplash: 'online', animated: 'online', fonts: 'typography', icons: 'layout', iconpack: 'icons', iconapps: 'icons', appicon: 'iconapps', lock: 'samsung', lockapps: 'lock', remote: 'samsung', remotepick: 'remote', remoteapp: 'remotepick' };
   function groupName(group, t) { return group === 'remotepick' ? buttonName(t.key) : group === 'appicon' && t && app(t.app) ? app(t.app).name : DETAIL_NAMES[group]; }
   function parentName(t) { return t.group === 'appicon' && t.fromHome ? 'Home' : PARENT[t.group] ? groupName(PARENT[t.group], t) : 'Settings'; }
   /* ---------- Wallpaper sources: any mix of Shore's own, My photos and online sources ----------
@@ -1365,6 +1374,7 @@
         .concat(NOWPLAYING ? [{ id: 'music', label: 'Music', value: music.length ? music.map(T).join(', ') : 'Off' }] : [])
         .concat(NEWS || newsForced ? [{ id: 'news', label: 'News', value: off(S.c.cnews) || newsSourceName(S.c.nsrc) }] : []) },
       { head: 'Shore', rows: [{ id: 'inputs', label: 'Inputs', value: inputSummary() }].concat(PHONE ? [{ id: 'phone', label: 'Phone', value: !S.phone.enabled ? 'Off' : S.phone.count ? (S.phone.count === 1 ? '1 photo' : S.phone.count + ' photos') : 'On' }] : [])
+        .concat(addonsAvailable().length ? [{ id: 'addons', label: 'Add-ons', value: addonsSummary() }] : [])
         .concat([{ id: 'samsung', label: TV.brand, value: updateReady() ? 'Shore update available' : 'Home and TV settings' }]) }
     ]];
   }
@@ -1404,7 +1414,7 @@
     else if (id === 'phone') openPhone();
     else openAppearance(id);
   }
-  var DETAIL_NAMES = { musicview: 'Music view', health: 'Setup and health', updates: 'Shore updates', fonts: 'Font', clock: 'Clock', display: 'Night', online: 'Wallpaper sources', unsplash: 'Unsplash themes', animated: 'Animated wallpapers', background: 'Wallpaper', layout: 'Home screen', typography: 'Text', icons: 'App icons', iconpack: 'Icon pack', iconapps: 'Per-app icons', appicon: 'Icon', lock: 'Parental lock', lockapps: 'Locked apps', inputs: 'Inputs', focus: 'Style', rotation: 'Rotation', samsung: TV.brand, remote: 'Remote buttons', remoteapp: 'Choose an app', phone: 'Phone', weather: 'Weather', music: 'Music', news: 'News', screensaver: 'Screensaver', saverlook: 'Arrangement and clock' };
+  var DETAIL_NAMES = { addons: 'Add-ons', ha: 'Home Assistant', musicview: 'Music view', health: 'Setup and health', updates: 'Shore updates', fonts: 'Font', clock: 'Clock', display: 'Night', online: 'Wallpaper sources', unsplash: 'Unsplash themes', animated: 'Animated wallpapers', background: 'Wallpaper', layout: 'Home screen', typography: 'Text', icons: 'App icons', iconpack: 'Icon pack', iconapps: 'Per-app icons', appicon: 'Icon', lock: 'Parental lock', lockapps: 'Locked apps', inputs: 'Inputs', focus: 'Style', rotation: 'Rotation', samsung: TV.brand, remote: 'Remote buttons', remoteapp: 'Choose an app', phone: 'Phone', weather: 'Weather', music: 'Music', news: 'News', screensaver: 'Screensaver', saverlook: 'Arrangement and clock' };
   function choice(axis, value, disabled) {
     if (axis === 'source') return { action: 'online.' + value, axis: axis, value: value, disabled: !!disabled, label: sourceName(value), tick: true, applied: sourceOn(value) };
     return { action: axis === 'mode' ? 'rotation.' + value : 'choice.' + axis + '.' + value, axis: axis, value: value, disabled: !!disabled,
@@ -1592,8 +1602,8 @@
   }
   function weatherIcon() { var name = WEATHER && S.c.cweather === 'on' && S.c.wicon === 'on' && WEATHER.icon ? WEATHER.icon() : ''; return name && SVG['w-' + name] ? icon('w-' + name, 'wx') : ''; }
   function clockExtras() {
-    var html = '', p = S.playing, w = S.c.cweather === 'on' && WEATHER ? WEATHER.text(S.c.wunit) : '', date = S.c.cdate === 'on' ? T(dateText()) : '';
-    if (date || w) html += '<span class="cap-date">' + escRaw(date) + (date && w ? ' · ' : '') + weatherIcon() + escRaw(w) + '</span>';
+    var html = '', p = S.playing, w = S.c.cweather === 'on' && WEATHER ? WEATHER.text(S.c.wunit) : '', date = S.c.cdate === 'on' ? T(dateText()) : '', inside = haInside();
+    if (date || w || inside) html += '<span class="cap-date">' + escRaw(date) + (date && w ? ' · ' : '') + weatherIcon() + escRaw(w) + ((date || w) && inside ? ' · ' : '') + esc(inside) + '</span>';
     if (NOWPLAYING && S.c.cplaying === 'on' && p.playing) html += '<span class="cap-date cap-playing">' + wave() + escRaw(p.title + (p.artist ? ' · ' + p.artist : '') + (p.app ? ' — ' + p.app : '')) + '</span>';
     if (sleepLeft() > 0) html += '<span class="cap-date cap-sleep">' + icon('w-moon', 'wx') + esc(sleepText()) + '</span>';
     if (calendarLine()) html += '<span class="cap-date cap-cal">' + icon('calendar', 'wx') + escRaw(calendarLine()) + '</span>';
@@ -1760,6 +1770,293 @@
   var PHONE = ANDROID && FrameDevice.phone && ONLINE_INFO.phone ? FrameDevice.phone : null;
   var phoneWall = '';
   function openPhone() { S.phone = PHONE.info(); openAppearance('phone'); }
+  /* ---------- Add-ons: optional features that stay out of sight until switched on (addons/AGENTS.md) ----------
+     Each add-on is one on/off axis, off by default, with a row on Settings › Add-ons, its own settings page
+     and, while on, whatever it adds to Home. available() hides an add-on this TV can't run; nothing of it
+     loads, polls or shows until it is on, and it starts only after Home has painted. */
+  var HA = window.CleanFrameHA || null, addonsReady = false, addonsSynced = false, haTimer = 0;
+  var ADDONS = [
+    { id: 'ha', axis: 'aha', name: 'Home Assistant', line: 'Lights, switches and cameras', page: 'ha',
+      available: function () { return !!(HA && HA.available()); }, summary: function () { return haStatus(); } }];
+  function addonsAvailable() { return ADDONS.filter(function (a) { return a.available(); }); }
+  function addonOn(a) { return S.c[a.axis] === 'on' && a.available(); }
+  function addonsSummary() { var on = addonsAvailable().filter(addonOn); return on.length ? on.map(function (a) { return a.name; }).join(', ') : 'Off'; }
+  function addonSections() {
+    var all = addonsAvailable(), on = all.filter(addonOn);
+    return [{ id: 'addons', title: '', items: all.map(function (a) { return { action: 'choice.' + a.axis + '.on', axis: a.axis, value: 'on', label: a.name, description: a.line, tick: true, applied: S.c[a.axis] === 'on' }; }),
+      reason: 'Add-ons stay out of sight until you switch them on.' }]
+      .concat(on.length ? [{ id: 'addonpages', title: 'Settings', items: on.map(function (a) { return { action: 'open.' + a.page, label: a.name, description: a.summary(), pair: true }; }) }] : []);
+  }
+  /* Starts and stops each add-on with its switch; render() calls it, so a choice from the phone counts too. */
+  function syncAddons() {
+    if (!addonsReady || !HA || !HA.available()) return;
+    var want = S.c.aha === 'on' && !DREAM, first = !addonsSynced;
+    addonsSynced = true;
+    if (want === HA.running() && !(first && !want && !DREAM)) return;
+    if (want) HA.start();
+    else { HA.stop(first); while (top().id === 'ha' || top().id === 'hacam' || top().id === 'hactl') pop(); }
+  }
+
+  /* ---------- Home Assistant add-on: a Smart home control on Home opens rooms and cameras (addons/homeassistant.js) ---------- */
+  function haShown() { return !!(HA && S.c.aha === 'on' && HA.running() && HA.model().configured); }
+  function haStatus() {
+    var m = HA.model();
+    if (S.c.aha !== 'on') return 'Off';
+    if (!m.configured || m.status === 'setup') return 'Set up on your phone';
+    if (m.status === 'error') return m.error === 'auth' ? 'Home Assistant refused the token' : m.error === 'network' ? 'Couldn’t reach Home Assistant' : 'Home Assistant didn’t answer as expected';
+    if (m.status !== 'ok') return 'Connecting…';
+    return m.rooms.length === 1 ? '1 room' : m.rooms.length + ' rooms';
+  }
+  /* "Inside 21° · 48%" under the clock, in the weather's unit. */
+  function haInside() {
+    var m = haShown() ? HA.model() : null, ind = m && m.indoor, t, parts = [];
+    if (!ind) return '';
+    if (ind.temp !== null) { t = ind.temp; if (ind.tunit !== S.c.wunit) t = ind.tunit === 'f' ? (t - 32) * 5 / 9 : t * 9 / 5 + 32; parts.push(Math.round(t) + '°'); }
+    if (ind.humidity !== null) parts.push(Math.round(ind.humidity) + '%');
+    return 'Inside ' + parts.join(' · ');
+  }
+  function openHaSettings() { if (PHONE) S.phone = PHONE.info(); HA.refresh(); S.detailFocus.ha = 'ha.refresh'; openAppearance('ha'); } // always on Connection, never back on Disconnect
+  function haSections() {
+    var m = HA.model(), out = [{ id: 'hastatus', title: '', items: [{ action: 'ha.refresh', label: 'Connection', description: haStatus(), pair: true }],
+      reason: m.configured && m.url ? m.url.replace(/^https?:\/\//, '') : '' }];
+    if (!m.configured) out.push(PHONE && S.phone.enabled
+      ? { id: 'haphone', title: '', items: [], qr: (PHONE.qr ? PHONE.qr() : S.phone.qr) || ' ', url: S.phone.url,
+        qrNote: S.phone.url ? 'In Shore Companion, open Home Assistant and enter your server’s address and a long-lived access token.' : 'Connect the TV to your Wi-Fi to use the companion.' }
+      : { id: 'haphone', title: '', items: PHONE ? [{ action: 'health.phone', label: 'Phone companion', description: 'Turn it on to connect Home Assistant', pair: true }] : [],
+        reason: 'Home Assistant is set up from the phone companion, so the token never needs typing on the TV.' });
+    if (m.configured && m.areas.length) out.push({ id: 'harooms', title: 'Rooms', items: m.areas.map(function (name, i) {
+      return { action: 'ha.area.' + i, label: name, tick: true, applied: !m.selected.length || m.selected.indexOf(name) >= 0 };
+    }), reason: 'Rooms are Home Assistant’s areas. Devices hidden there stay hidden here.' });
+    if (m.configured) out.push({ id: 'haforget', title: '', items: [{ action: 'ha.forget', label: 'Disconnect Home Assistant' }] });
+    return out;
+  }
+  /* OK on a room shows or hides it; every room shown is stored as "all", so new rooms appear by themselves. */
+  function haArea(i) {
+    var m = HA.model(), name = m.areas[i], list = m.selected.length ? m.selected.slice() : m.areas.slice(), at;
+    if (name === undefined) return;
+    at = list.indexOf(name);
+    if (at >= 0) { if (list.length === 1) return; list.splice(at, 1); } else list.push(name);
+    HA.setAreas(list.length === m.areas.length ? [] : list);
+  }
+  /* The panel: rooms in rows of chips on the left, cameras in a column on the right. Positions are fixed on the
+     1920 x 1080 stage, so chips and cards slide with transforms only. Rooms with a line or less of devices share a
+     row, side by side on the chip grid, while they fit; a bigger room takes whole rows. Each chip keeps its column
+     (slot), so Up and Down go to the nearest chip above or below. */
+  var HA_HEAD = 64, HA_LINE = 128, HA_GAP = 28, HA_PITCH = 284, HA_VIEW = 720, HA_CAM = 376, HA_CAM_VIEW = 720;
+  function haLayout() {
+    var m = HA.model(), per = m.cameras.length ? 4 : 6, lines = [], heads = [], y = 0, open = null;
+    function close() { if (open) { y += HA_HEAD + HA_LINE + HA_GAP; open = null; } }
+    m.rooms.forEach(function (room) {
+      var n = room.items.length, i, j, line;
+      if (n <= per) {
+        if (open && open.used + n > per) close();
+        if (!open) { open = { used: 0, line: { first: true, y: y + HA_HEAD, items: [], slots: [], rooms: [] } }; lines.push(open.line); }
+        heads.push({ key: 'room:' + room.name, room: room, y: y, slot: open.used, width: n, lines: 1 });
+        for (j = 0; j < n; j++) { open.line.items.push(room.items[j]); open.line.slots.push(open.used + j); open.line.rooms.push(heads.length - 1); }
+        open.used += n;
+        return;
+      }
+      close();
+      heads.push({ key: 'room:' + room.name, room: room, y: y, slot: 0, width: per, lines: Math.ceil(n / per) }); y += HA_HEAD;
+      for (i = 0; i < n; i += per) {
+        line = { first: i === 0, y: y, items: room.items.slice(i, i + per), slots: [], rooms: [] };
+        for (j = 0; j < line.items.length; j++) { line.slots.push(j); line.rooms.push(heads.length - 1); }
+        lines.push(line); y += HA_LINE;
+      }
+      y += HA_GAP;
+    });
+    close();
+    return { m: m, lines: lines, heads: heads, height: Math.max(0, y - HA_GAP) };
+  }
+  /* The chip in a line nearest to a column. */
+  function haNearest(line, slot) {
+    var best = 0;
+    line.slots.forEach(function (s, i) { if (Math.abs(s - slot) < Math.abs(line.slots[best] - slot)) best = i; });
+    return best;
+  }
+  function openHa() { HA.refresh(); S.note = null; push({ id: 'ha', top: 0, ctop: 0, f: { zone: 'rooms', l: 0, i: 0, c: 0 } }); }
+  function haItem(t, L) { var line = L.lines[t.f.l]; return t.f.zone === 'rooms' && line ? line.items[t.f.i] || null : null; }
+  function haToggle(item) {
+    if (!item) return;
+    if (!item.toggle && item.control) { openHaControl(item); return; }
+    if (!item.toggle) { S.note = item.off ? 'Unavailable' : 'Shore switches lights, switches, fans and locks.'; return; }
+    S.note = null; HA.toggle(item.id);
+  }
+  function openHaCam(cam) { if (!cam) return; HA.camera.hangup(); push({ id: 'hacam', cam: cam, state: 'connecting', msg: '', f: { b: 0 } }); }
+  function closeHaCam() { HA.camera.hangup(); pop(); }
+  V.ha = {
+    sheet: true,
+    norm: function (t) {
+      var L = haLayout(), f = t.f, cams = L.m.cameras.length;
+      if (f.zone === 'rooms' && !L.lines.length) f.zone = cams ? 'cams' : 'head';
+      if (f.zone === 'cams' && !cams) f.zone = L.lines.length ? 'rooms' : 'head';
+      f.l = clamp(f.l, 0, Math.max(0, L.lines.length - 1));
+      f.i = clamp(f.i, 0, L.lines.length ? L.lines[f.l].items.length - 1 : 0);
+      f.c = clamp(f.c, 0, Math.max(0, cams - 1));
+    },
+    key: function (t, k) {
+      var L = haLayout(), f = t.f, cams = L.m.cameras, line = L.lines[f.l], best;
+      if (k === 'back') { pop(); return; }
+      if (k !== 'ok') S.note = null;
+      if (f.zone === 'head') {
+        if (k === 'down') f.zone = L.lines.length ? 'rooms' : cams.length ? 'cams' : 'head';
+        else if (k === 'ok') openHaSettings();
+        return;
+      }
+      if (f.zone === 'cams') {
+        if (k === 'up') { if (f.c > 0) f.c--; else f.zone = 'head'; }
+        else if (k === 'down' && f.c < cams.length - 1) f.c++;
+        else if (k === 'left' && L.lines.length) {
+          // Back to the line level with the card, at its last chip.
+          best = 0; L.lines.forEach(function (ln, i) { if (Math.abs(ln.y - t.top - (f.c * HA_CAM - t.ctop)) < Math.abs(L.lines[best].y - t.top - (f.c * HA_CAM - t.ctop))) best = i; });
+          f.zone = 'rooms'; f.l = best; f.i = L.lines[best].items.length - 1;
+        } else if (k === 'ok') { openHaCam(cams[f.c]); return; }
+        if (f.zone === 'cams' && cams[f.c]) HA.camera.snapshot(cams[f.c].id);
+        return;
+      }
+      if (k === 'left' && f.i > 0) f.i--;
+      else if (k === 'right') { if (f.i < line.items.length - 1) f.i++; else if (cams.length) { f.zone = 'cams'; HA.camera.snapshot(cams[f.c].id); } }
+      else if (k === 'up') { if (f.l > 0) { f.l--; f.i = haNearest(L.lines[f.l], line.slots[f.i]); } else f.zone = 'head'; }
+      else if (k === 'down' && f.l < L.lines.length - 1) { f.l++; f.i = haNearest(L.lines[f.l], line.slots[f.i]); }
+      else if (k === 'ok') haToggle(line.items[f.i]);
+    },
+    point: function (t, z, i, id) {
+      var L = haLayout();
+      if (z === 'head') { t.f.zone = 'head'; this.key(t, 'ok'); }
+      else if (z === 'hacam') { t.f.zone = 'cams'; t.f.c = i; this.key(t, 'ok'); }
+      else if (z === 'hachip') L.lines.forEach(function (ln, l) { ln.items.forEach(function (item, n) { if (item.id === id) { t.f.zone = 'rooms'; t.f.l = l; t.f.i = n; haToggle(item); } }); });
+    }
+  };
+  V.hacam = {
+    sheet: true,
+    key: function (t, k) { if (k === 'back' || k === 'ok') closeHaCam(); },
+    point: function (t, z) { if (z === 'hacam-close') closeHaCam(); }
+  };
+  /* ---------- Smart home controls: a long OK on a light, or OK on a thermostat ----------
+     A sheet of rows: a light's power, brightness and colour; a thermostat's target and mode. Left and Right
+     adjust brightness and the target at once (sent when the remote rests); colours and modes apply on OK. */
+  var HC_WHITES = [['Warm white', 2700, '#ffbf7a'], ['Soft white', 3500, '#ffd6a8'], ['Daylight', 5000, '#fff0dc'], ['Cool white', 6500, '#e4ecff']];
+  var HC_HUES = [['Red', 0], ['Orange', 28], ['Yellow', 50], ['Green', 125], ['Teal', 175], ['Blue', 225], ['Purple', 275], ['Pink', 325]];
+  var HC_MODES = { off: 'Off', heat: 'Heat', cool: 'Cool', heat_cool: 'Heat and cool', auto: 'Auto', dry: 'Dry', fan_only: 'Fan only' };
+  function TT(key) { var w = T(key); return w === key ? key.replace(/ \(.*\)$/, '') : w; }
+  function haHeld() {
+    var t = top(), item;
+    if (t.id !== 'ha') return null;
+    item = haItem(t, haLayout());
+    return item && item.control ? item : null;
+  }
+  function haFind(id) {
+    var found = null;
+    if (HA && HA.running()) HA.model().rooms.forEach(function (r) { r.items.forEach(function (it) { if (it.id === id) found = it; }); });
+    return found;
+  }
+  function openHaControl(item) {
+    if (!item || !item.control || top().id !== 'ha') return;
+    var t = { id: 'hactl', item: item.id, mode: item.control.kind, f: { zone: '', s: 0, m: 0 } }, c = item.control;
+    S.note = null;
+    t.f.s = Math.max(0, hcCurrent(c));
+    t.f.m = Math.max(0, c.kind === 'climate' ? c.modes.indexOf(c.mode) : 0);
+    push(t); norm(); render();
+  }
+  /* Swatches a light offers: whites within its range, then colours. [label, css, {hs_color|color_temp_kelvin}, guess] */
+  function hcSwatches(c) {
+    var out = [];
+    if (c.temp) HC_WHITES.forEach(function (w) {
+      var k = clamp(w[1], c.kmin, c.kmax);
+      if (!out.some(function (o) { return o[2].color_temp_kelvin === k; })) out.push([w[0], w[2], { color_temp_kelvin: k }, { mode: 'color_temp', k: k }]);
+    });
+    if (c.color) HC_HUES.forEach(function (h) { out.push([h[0], 'hsl(' + h[1] + ',92%,60%)', { hs_color: [h[1], 90] }, { mode: 'hs', hs: [h[1], 90] }]); });
+    return out;
+  }
+  /* The swatch nearest to the light's colour now, or -1. */
+  function hcCurrent(c) {
+    var list = c.kind === 'light' ? hcSwatches(c) : [], best = -1, gap = Infinity;
+    list.forEach(function (w, i) {
+      var d = w[2].color_temp_kelvin ? (c.mode === 'color_temp' && c.k ? Math.abs(c.k - w[2].color_temp_kelvin) / 40 : Infinity)
+        : c.hs && c.hs[1] > 25 && c.mode !== 'color_temp' ? Math.min(Math.abs(c.hs[0] - w[2].hs_color[0]), 360 - Math.abs(c.hs[0] - w[2].hs_color[0])) : Infinity;
+      if (d < gap) { gap = d; best = i; }
+    });
+    return best;
+  }
+  function hcRows(c) {
+    if (c.kind === 'light') return ['power', 'bright'].concat(c.color || c.temp ? ['color'] : []);
+    return (c.target !== null || c.lo !== null && c.hi !== null ? ['target'] : []).concat(c.modes.length ? ['modes'] : []);
+  }
+  function hcStep(item, dir) {
+    var c = item.control, v;
+    if (c.kind === 'light') {
+      v = c.on && c.b !== null ? c.b : 0;
+      v = dir > 0 ? Math.min(100, Math.floor(v / 10) * 10 + 10) : Math.max(1, Math.ceil(v / 10) * 10 - 10);
+      HA.set(item.id, 'turn_on', { brightness_pct: v }, { s: 'on', b: v });
+      return;
+    }
+    if (c.target === null) { S.note = 'Set the range in Home Assistant'; return; }
+    v = clamp(Math.round((c.target + dir * c.step) / c.step) * c.step, c.min, c.max);
+    v = Math.round(v * 10) / 10;
+    if (v !== c.target) HA.set(item.id, 'set_temperature', { temperature: v }, { tt: v });
+  }
+  var HC_ACTIONS = { heating: 'Heating', cooling: 'Cooling', drying: 'Drying', fan: 'Fan', preheating: 'Preheating', defrosting: 'Defrosting' };
+  function cap(s) { s = String(s).replace(/_/g, ' '); return s.charAt(0).toUpperCase() + s.slice(1); }
+  function haDegrees(v) { return v === null ? '–' : String(Math.abs(v) >= 100 || v % 1 === 0 ? Math.round(v) : v.toFixed(1)) + '°'; }
+  V.hactl = {
+    sheet: true,
+    norm: function (t) {
+      var item = haFind(t.item), rows;
+      if (!item || !item.control || item.control.kind !== t.mode) { t.gone = true; return; }
+      rows = hcRows(item.control);
+      if (rows.indexOf(t.f.zone) < 0) t.f.zone = rows[0] || '';
+      t.f.s = clamp(t.f.s, 0, Math.max(0, hcSwatches(item.control).length - 1));
+      t.f.m = clamp(t.f.m, 0, Math.max(0, item.control.modes ? item.control.modes.length - 1 : 0));
+    },
+    key: function (t, k) {
+      var item = haFind(t.item), c = item && item.control, f = t.f, rows, r, sw;
+      if (k === 'back' || !c || t.gone) { pop(); return; }
+      rows = hcRows(c); r = rows.indexOf(f.zone);
+      if (k !== 'ok') S.note = null;
+      if (k === 'up') { if (r > 0) f.zone = rows[r - 1]; return; }
+      if (k === 'down') { if (r < rows.length - 1) f.zone = rows[r + 1]; return; }
+      if (f.zone === 'bright' || f.zone === 'target') { if (k === 'left' || k === 'right') hcStep(item, k === 'right' ? 1 : -1); return; }
+      if (f.zone === 'power') { if (k === 'ok') HA.toggle(item.id); return; }
+      if (f.zone === 'color') {
+        sw = hcSwatches(c);
+        if (k === 'left' && f.s > 0) f.s--;
+        else if (k === 'right' && f.s < sw.length - 1) f.s++;
+        else if (k === 'ok' && sw[f.s]) { sw[f.s][3].s = 'on'; HA.set(item.id, 'turn_on', sw[f.s][2], sw[f.s][3]); }
+        return;
+      }
+      if (f.zone === 'modes') {
+        if (k === 'left' && f.m > 0) f.m--;
+        else if (k === 'right' && f.m < c.modes.length - 1) f.m++;
+        else if (k === 'ok' && c.modes[f.m]) HA.set(item.id, 'set_hvac_mode', { hvac_mode: c.modes[f.m] }, { s: c.modes[f.m] });
+      }
+    },
+    point: function (t, z, i) {
+      if (z === 'hcpower') { t.f.zone = 'power'; this.key(t, 'ok'); }
+      else if (z === 'hcbright') t.f.zone = 'bright';
+      else if (z === 'hctemp') t.f.zone = 'target';
+      else if (z === 'hcstep') { t.f.zone = top().mode === 'light' ? 'bright' : 'target'; this.key(t, i ? 'right' : 'left'); }
+      else if (z === 'hcsw') { t.f.zone = 'color'; t.f.s = i; this.key(t, 'ok'); }
+      else if (z === 'hcmode') { t.f.zone = 'modes'; t.f.m = i; this.key(t, 'ok'); }
+    }
+  };
+  /* " · Kitchen Strip unavailable" after the lights line: up to two names, then a count. */
+  function haGone(m) {
+    var g = m.unavailable || [];
+    if (!g.length) return '';
+    return ' · ' + (g.length > 2 ? esc(g.length + ' unavailable') : escRaw(g.join(', ')) + ' ' + esc('unavailable'));
+  }
+  function haCamError(msg) {
+    return msg === 'auth' ? 'Home Assistant refused the token' : msg === 'unsupported' ? 'This camera doesn’t offer live video here'
+      : msg === 'webrtc' ? 'This TV can’t play this camera' : msg === 'timeout' ? 'No live video' : msg === 'unavailable' ? 'The camera is unavailable' : 'The camera stopped';
+  }
+  if (HA) HA.onChange(function () {
+    // New states arrive while Home, the panel or Settings may show them. Later, never inside render().
+    clearTimeout(haTimer);
+    haTimer = setTimeout(function () {
+      var t = top(), it; haTimer = 0;
+      if (t.id === 'hactl') { it = haFind(t.item); if (!it || !it.control || it.control.kind !== t.mode) { pop(); t = top(); } } // gone or unavailable: back to the panel
+      if (t.id === 'home' || t.id === 'ha' || t.id === 'hacam' || t.id === 'hactl' || t.id === 'settings' || isSettingsDetail(t)) { norm(); render(); } }, 0);
+  });
   /* ---------- Updates: the native side checks the public releases and opens Android's installer ---------- */
   var UPDATE = ANDROID && FrameDevice.update ? FrameDevice.update : null;
   function updateReady() { return S.update && (S.update.status === 'available' || S.update.status === 'ready'); }
@@ -1843,6 +2140,7 @@
     ['Weather', ['cweather', 'wunit', 'wicon', 'wfx']],
     ['Music', ['cplaying', 'cwave', 'cart', 'npdim', 'clook', 'plyric', 'pword', 'pbeat', 'pqueue', 'ptrans']],
     ['News', ['cnews', 'nsrc']],
+    ['Add-ons', ['aha']],
     ['Night', ['night', 'nhours', 'ndim', 'idle']],
     ['Screensaver', ['saver', 'svsrc', 'svtime', 'svlay', 'svmotion', 'svclock', 'svpos', 'svdate', 'svmusic', 'svphoto']]];
   var companionTimer = 0, companionLast = '';
@@ -1859,6 +2157,7 @@
     if (axis === 'pbeat' && !(NOWPLAYING && NOWPLAYING.beat)) return null;
     if ((axis === 'cnews' || axis === 'nsrc') && !NEWS) return null;
     if (axis === 'cwatch' && !WATCH) return null;
+    if (axis === 'aha' && !(HA && HA.available())) return null;
     if (axis === 'nsrc') return { id: 'nsrc', name: T('News source'), kind: 'list', value: S.c.nsrc,
       options: ['google'].concat(newsOutlets().map(function (o) { return o.id; })).concat(['phone']).map(function (v) { return { value: v, label: T(newsSourceName(v)) }; }) };
     if (!LOOK_VALUES[axis]) return null;
@@ -2031,6 +2330,8 @@
       { id: 'dglass', title: 'App row glass', horizontal: true, items: options('dglass', ['clear', 'default', 'solid'], flat || S.c.layout !== 'dock') }
     ];
     if (t.group === 'phone') return phoneSections(flat);
+    if (t.group === 'addons') return addonSections();
+    if (t.group === 'ha') return haSections();
     if (t.group === 'updates') return updateSections();
     if (t.group === 'health') return healthSections();
     if (t.group === 'online' || t.group === 'unsplash' || t.group === 'animated') {
@@ -2204,6 +2505,10 @@
     else if (item.action === 'open.saverlook') openAppearance('saverlook');
     else if (item.action === 'open.musicview') openAppearance('musicview');
     else if (item.action === 'open.health') openHealth();
+    else if (item.action === 'open.ha') openHaSettings();
+    else if (item.action === 'ha.refresh') HA.refresh();
+    else if (item.action.indexOf('ha.area.') === 0) haArea(+item.action.slice(8));
+    else if (item.action === 'ha.forget') openMessage('haforget');
     else if (item.action === 'health.remote') perform('Accessibility settings', REMOTE.openSettings);
     else if (item.action === 'health.phone') openPhone();
     else if (item.action === 'open.updates') { S.update = UPDATE.info(); openAppearance('updates'); }
@@ -2299,7 +2604,7 @@
       if (k === 'left') t.f.b = Math.max(0, t.f.b - 1);
       else if (k === 'right') t.f.b = Math.min(A.length - 1, t.f.b + 1);
       else if (k === 'back') pop();
-      else if (k === 'ok') { a = A[t.f.b][0]; pop(); if (a.indexOf('np.') === 0) musicAction(a, t.f.b); else if (a.indexOf('quick.') === 0) quickAction(a); else if (a.indexOf('input:') === 0) { clearTimeout(askTimer); launch(a.slice(6)); } else if (a === 'setup') openHealth(); else if (a === 'samsung') perform(TV.home, FrameDevice.home); else if (a === 'clearphotos' && PHONE) { PHONE.clear(); S.phone.count = 0; render(); } }
+      else if (k === 'ok') { a = A[t.f.b][0]; pop(); if (a.indexOf('np.') === 0) musicAction(a, t.f.b); else if (a.indexOf('quick.') === 0) quickAction(a); else if (a.indexOf('input:') === 0) { clearTimeout(askTimer); launch(a.slice(6)); } else if (a === 'setup') openHealth(); else if (a === 'samsung') perform(TV.home, FrameDevice.home); else if (a === 'clearphotos' && PHONE) { PHONE.clear(); S.phone.count = 0; render(); } else if (a === 'haforget' && HA) HA.forget(); }
     },
     point: function (t, z, i) { if (z === 'act') { t.f.b = i; this.key(t, 'ok'); } }
   };
@@ -2468,6 +2773,7 @@
     syncNpArt();
     if (!S.saver && !saverTimer !== !saverDelay() && !document.hidden) saverReset(); // the delay was switched on or off
     publishCompanion();
+    syncAddons();
   }
 
   function applyHomeFont() {
@@ -3040,7 +3346,7 @@
         + command({ action: 'settings.retry', label: 'Try again' }, '<span>Try again</span>', 'setting-retry');
     }
     setHTML(appearanceStatus, status);
-    hint = selected.disabled ? '' : remoteHint(selected) || (selected.action === 'settings.back' ? 'Return to ' + (parentName(t)) : selected.action === 'settings.retry' ? 'Retry this change' : selected.axis === 'source' ? (selected.applied ? 'Remove from rotation' : 'Add to rotation') : selected.axis ? 'Apply selected setting' : selected.action === 'background.wallpaper' ? 'Choose a wallpaper' : selected.action === 'background.rotation' ? 'Choose a rotation interval' : selected.action === 'background.online' ? 'Choose a wallpaper source' : selected.action === 'phone.toggle' ? (S.phone.enabled ? 'Turn off' : 'Turn on') : selected.action === 'phone.forget' ? 'Phones scan a new code' : selected.action === 'phone.clear' ? 'Remove all my photos' : selected.action === 'nowplaying.access' ? 'Open Notification access' : /^open\./.test(selected.action) ? 'Open selected group' : selected.more ? 'Show these sources' : selected.action === 'typography.fonts' ? 'Choose a font' : selected.action === 'saver.start' ? 'Start the screensaver now' : selected.action === 'health.remote' ? 'Open Accessibility settings' : selected.action === 'health.phone' ? 'Open Phone settings' : selected.action === 'update.install' ? 'Download and install' : selected.action === 'update.check' ? 'Check now' : selected.action === 'update.auto' ? (S.update.auto ? 'Turn off' : 'Turn on') : selected.action === 'update.wait' ? 'Please wait' : selected.action.indexOf('iconapp.') === 0 ? 'Choose an icon' : selected.action.indexOf('iconset.') === 0 ? 'Use this icon' : 'Open on the TV');
+    hint = selected.disabled ? '' : remoteHint(selected) || (selected.action === 'settings.back' ? 'Return to ' + (parentName(t)) : selected.action === 'settings.retry' ? 'Retry this change' : selected.axis === 'source' ? (selected.applied ? 'Remove from rotation' : 'Add to rotation') : selected.axis ? 'Apply selected setting' : selected.action === 'background.wallpaper' ? 'Choose a wallpaper' : selected.action === 'background.rotation' ? 'Choose a rotation interval' : selected.action === 'background.online' ? 'Choose a wallpaper source' : selected.action === 'phone.toggle' ? (S.phone.enabled ? 'Turn off' : 'Turn on') : selected.action === 'phone.forget' ? 'Phones scan a new code' : selected.action === 'phone.clear' ? 'Remove all my photos' : selected.action === 'nowplaying.access' ? 'Open Notification access' : /^open\./.test(selected.action) ? 'Open selected group' : selected.more ? 'Show these sources' : selected.action === 'typography.fonts' ? 'Choose a font' : selected.action === 'saver.start' ? 'Start the screensaver now' : selected.action === 'health.remote' ? 'Open Accessibility settings' : selected.action === 'health.phone' ? 'Open Phone settings' : selected.action === 'update.install' ? 'Download and install' : selected.action === 'update.check' ? 'Check now' : selected.action === 'update.auto' ? (S.update.auto ? 'Turn off' : 'Turn on') : selected.action === 'update.wait' ? 'Please wait' : selected.action.indexOf('iconapp.') === 0 ? 'Choose an icon' : selected.action.indexOf('iconset.') === 0 ? 'Use this icon' : selected.action === 'ha.refresh' ? 'Check again' : selected.action.indexOf('ha.area.') === 0 ? (selected.applied ? 'Hide this room' : 'Show this room') : selected.action === 'ha.forget' ? 'Forget the server and its token' : 'Open on the TV');
     setHTML(appearanceDesc, hint ? '<span class="remote-key">OK</span><span>' + esc(hint) + '</span>' : '');
     fitRows();
   }
@@ -3161,6 +3467,35 @@
         + '<div class="pl-words" data-slot="lyrics"><div class="pl-lines" data-slot="lines"></div></div>'
         + '<p class="pl-credit" data-slot="credit"></p><p class="pl-hint" data-slot="hint"></p>';
     },
+    ha: function () {
+      return '<h2 class="s-title">' + esc('Smart home') + '</h2><p class="s-sub" data-slot="sub"></p><div class="s-head" data-slot="head"></div>'
+        + '<div class="ha-rooms" data-slot="view"><div class="ha-rooms-in" data-slot="rooms"><div class="ha-frame" data-slot="frame" aria-hidden="true"></div></div></div>'
+        + '<div class="ha-cams" data-slot="camview"><div class="ha-cams-in" data-slot="cams"></div></div><div class="ha-empty" data-slot="empty"></div>'
+        + '<div class="row-cue ha-before" data-slot="before" aria-hidden="true">' + icon('up') + '</div><div class="row-cue ha-after" data-slot="after" aria-hidden="true">' + icon('down') + '</div>'
+        + '<p class="settings-overview-hint ha-hint" data-slot="hint"></p>';
+    },
+    hactl: function (t) {
+      var light = t.mode === 'light';
+      return '<h2 class="s-title" data-slot="title"></h2><p class="s-sub" data-slot="sub"></p>'
+        + (light
+          ? '<div class="hc-row hc-power" data-slot="power"></div>'
+            + '<div class="hc-row hc-bright" data-slot="brow"><p class="hc-label"><span>' + esc('Brightness') + '</span><span class="hc-value" data-slot="bval"></span></p>'
+            + '<div class="hc-slider" data-slot="bar"><button type="button" tabindex="-1" class="hc-nudge" data-z="hcstep" data-i="0" aria-label="' + esc('Dimmer') + '">' + icon('left') + '</button>'
+            + '<div class="hc-track"><div class="hc-fill" data-slot="fill"></div><div class="hc-knob" data-slot="knob"></div></div>'
+            + '<button type="button" tabindex="-1" class="hc-nudge" data-z="hcstep" data-i="1" aria-label="' + esc('Brighter') + '">' + icon('right') + '</button></div></div>'
+            + '<div class="hc-row hc-colors" data-slot="crow"><p class="hc-label"><span>' + esc('Colour') + '</span><span class="hc-value" data-slot="cval"></span></p><div class="hc-swatches" data-slot="swatches"></div></div>'
+          : '<div class="hc-row hc-target" data-slot="trow"><p class="hc-label"><span>' + esc('Target temperature') + '</span></p>'
+            + '<div class="hc-dial"><button type="button" tabindex="-1" class="hc-nudge hc-round" data-z="hcstep" data-i="0" aria-label="' + esc('Cooler') + '">' + icon('minus') + '</button>'
+            + '<span class="hc-temp" data-slot="temp"></span><button type="button" tabindex="-1" class="hc-nudge hc-round" data-z="hcstep" data-i="1" aria-label="' + esc('Warmer') + '">' + icon('plus') + '</button></div>'
+            + '<p class="hc-now" data-slot="now"></p></div>'
+            + '<div class="hc-row hc-modes" data-slot="mrow"><p class="hc-label"><span>' + esc('Mode') + '</span></p><div class="hc-pills" data-slot="modes"></div></div>')
+        + '<p class="settings-overview-hint hc-hint" data-slot="hint"></p>';
+    },
+    hacam: function () {
+      return '<div class="ha-live"><img class="ha-live-still" data-slot="still" alt=""><video class="ha-live-video" data-slot="video" muted playsinline autoplay></video></div><div class="ha-live-shade" aria-hidden="true"></div>'
+        + '<p class="ha-live-badge" data-slot="badge"></p><h2 class="ha-live-title" data-slot="title"></h2><p class="ha-live-state" data-slot="state"></p>'
+        + '<div class="ha-live-close" data-slot="close"></div>';
+    },
     apps: function () {
       return '<h2 class="s-title" data-slot="title"></h2><p class="s-sub" data-slot="sub"></p><div class="s-head" data-slot="head"></div>'
         + '<div class="grid-view" data-slot="view"><div class="grid-in" data-slot="grid"></div></div>'
@@ -3231,6 +3566,126 @@
       el.lyrics.className = 'pl-words' + (wide ? ' is-on' : '') + (synced ? ' is-synced' : '') + (S.c.pword === 'on' ? '' : ' no-words');
       setHTML(el.credit, showLyrics ? esc(tr ? 'Lyrics from LRCLIB, translated by Google' : 'Lyrics from LRCLIB') : ly && ly.state === 'instrumental' ? esc('Instrumental') : ly && ly.state === 'none' ? esc('No lyrics for this song') : '');
       sheetView.className = 'view view-player' + (wide ? ' has-lyrics' : '');
+    },
+    ha: function (t, el) {
+      var L = haLayout(), m = L.m, f = t.f, item = haItem(t, L), cams = m.cameras, line = L.lines[f.l], y, lit = 0, entries = [], wide = !cams.length, hint;
+      // Scrolling stops at the start of a row (a room name or a line of chips), so no row is left half out of view and hidden.
+      function rowStart(at) { var best = 0; L.heads.concat(L.lines).forEach(function (r) { if (r.y >= at && (!best || r.y < best)) best = r.y; }); return at <= 0 ? 0 : best || at; }
+      m.rooms.forEach(function (r) { lit += r.on; });
+      setHTML(el.sub, S.note ? esc(S.note) : m.status === 'ok' ? esc(lit === 1 ? '1 light on' : lit ? lit + ' lights on' : 'All lights off') + haGone(m) : esc(haStatus()));
+      setHTML(el.head, headButtons([['settings', 'Settings', '', 'settings']], f.zone === 'head' ? 0 : -1, 'ha'));
+      el.head.className = 's-head' + (f.zone === 'head' ? ' is-awake' : '');
+      // The focused line stays in view, with its room's name when it is the room's first line.
+      if (f.zone === 'rooms' && line) {
+        y = line.first ? line.y - HA_HEAD : line.y;
+        if (y < t.top) t.top = y;
+        if (line.y + HA_LINE > t.top + HA_VIEW) t.top = rowStart(line.y + HA_LINE - HA_VIEW);
+      }
+      t.top = clamp(t.top, 0, rowStart(L.height - HA_VIEW));
+      L.heads.forEach(function (h) { entries.push({ key: h.key, head: h.room, y: h.y, x: h.slot * HA_PITCH, w: h.width * HA_PITCH - 16 }); });
+      L.lines.forEach(function (ln, l) { ln.items.forEach(function (it, i) { entries.push({ key: it.id, item: it, l: l, i: i, x: ln.slots[i] * HA_PITCH, y: ln.y }); }); });
+      keyed(el.rooms, entries, function (node, e) {
+        var focus, shown = e.y >= t.top && e.y + (e.head ? HA_HEAD : HA_LINE - 16) <= t.top + HA_VIEW; // whole rows only: the cues say there is more
+        node.style.visibility = shown ? 'visible' : 'hidden';
+        if (e.head) {
+          setContent(node, 'head|' + e.head.name + '|' + e.head.on, '<span class="ha-room">' + escRaw(e.head.name) + '</span>' + (e.head.on ? '<span class="ha-lit">' + esc(e.head.on + ' on') + '</span>' : ''));
+          node.className = 'ha-head'; node.style.width = e.w + 'px'; node.style.transform = 'translate3d(' + e.x + 'px,' + e.y + 'px,0)';
+          return;
+        }
+        focus = f.zone === 'rooms' && f.l === e.l && f.i === e.i;
+        setContent(node, e.item.name + '|' + e.item.state, '<span class="panel-content"><span class="ha-name">' + escRaw(e.item.name) + '</span><span class="ha-state">' + escRaw(e.item.state) + '</span></span>');
+        node.className = 'ha-chip' + (focus ? ' is-focus' : '') + (e.item.active ? ' is-active' : '') + (e.item.off ? ' is-off' : '') + (e.item.toggle ? ' can-toggle' : '');
+        node.style.transform = 'translate3d(' + e.x + 'px,' + e.y + 'px,0)';
+        node.setAttribute('role', 'button'); node.setAttribute('aria-label', e.item.name + ', ' + e.item.state); node.setAttribute('data-id', e.item.id);
+        attrs(node, 'hachip', e.i, 'ha.toggle.' + e.item.id);
+      });
+      el.rooms.style.transform = 'translate3d(0,' + (-t.top) + 'px,0)';
+      // A thin outline around the focused chip's room, so rooms sharing a row stay apart.
+      var room = f.zone === 'rooms' && line ? L.heads[line.rooms[f.i]] : null;
+      if (room) {
+        el.frame.style.width = (room.width * HA_PITCH + 4) + 'px';
+        el.frame.style.height = (HA_HEAD + room.lines * HA_LINE + 4) + 'px';
+        el.frame.style.transform = 'translate3d(' + (room.slot * HA_PITCH - 10) + 'px,' + (room.y - 6) + 'px,0)';
+      }
+      el.frame.className = 'ha-frame' + (room ? ' is-on' : '');
+      el.view.className = 'ha-rooms' + (wide ? ' is-wide' : '');
+      if (f.zone === 'cams') { if (f.c * HA_CAM < t.ctop) t.ctop = f.c * HA_CAM; if ((f.c + 1) * HA_CAM > t.ctop + HA_CAM_VIEW) t.ctop = (f.c + 1) * HA_CAM - HA_CAM_VIEW; }
+      t.ctop = clamp(t.ctop, 0, Math.max(0, cams.length * HA_CAM - HA_CAM_VIEW));
+      keyed(el.cams, cams.map(function (c) { return { key: c.id, cam: c }; }), function (node, e, i) {
+        var c = e.cam, still = HA.camera.still(c.id), focus = f.zone === 'cams' && f.c === i, sub = c.off ? 'Unavailable' : c.activity ? 'Activity ' + HA.ago(c.activity) : c.room;
+        setContent(node, c.id + '|' + c.name + '|' + sub + '|' + (still ? still.at : 0), '<span class="panel-content"><span class="ha-still">' + (still ? '<img alt="" src="' + still.src + '">' : icon('camera')) + '</span>'
+          + '<span class="ha-cam-name">' + escRaw(c.name) + '</span><span class="ha-cam-sub">' + esc(sub) + '</span></span>');
+        node.className = 'ha-cam' + (focus ? ' is-focus' : '') + (c.off ? ' is-off' : '');
+        node.style.transform = 'translate3d(0,' + (i * HA_CAM) + 'px,0)';
+        node.style.visibility = (i + 1) * HA_CAM > t.ctop && i * HA_CAM < t.ctop + HA_CAM_VIEW ? 'visible' : 'hidden';
+        node.setAttribute('role', 'button'); node.setAttribute('aria-label', c.name);
+        attrs(node, 'hacam', i, 'ha.camera.' + c.id);
+      });
+      el.cams.style.transform = 'translate3d(0,' + (-t.ctop) + 'px,0)';
+      el.camview.className = 'ha-cams' + (cams.length ? ' is-on' : '');
+      setHTML(el.empty, L.lines.length || cams.length ? '' : '<p>' + esc(!m.configured ? 'Connect Home Assistant from your phone: Settings › Add-ons › Home Assistant.' : m.status === 'ok' ? 'No devices in the rooms you chose. In Home Assistant, give your devices an area.' : haStatus()) + '</p>');
+      el.before.className = 'row-cue ha-before' + (t.top > 0 ? ' is-on' : '');
+      el.after.className = 'row-cue ha-after' + (L.height > t.top + HA_VIEW ? ' is-on' : '');
+      hint = f.zone === 'head' ? 'Open Home Assistant settings' : f.zone === 'cams' ? 'Watch live' : !item ? '' : !item.toggle ? (item.control ? 'Temperature and mode' : '') : /^lock\./.test(item.id) ? (item.active ? 'Unlock' : 'Lock') : item.active ? 'Switch off' : 'Switch on';
+      setHTML(el.hint, (hint ? '<span class="remote-key">OK</span><span>' + esc(hint) + '</span>' : '')
+        + (item && item.toggle && item.control ? '<span class="remote-key hc-hold">' + esc('Hold OK') + '</span><span>' + esc(item.control.color || item.control.temp ? 'Brightness and colour' : 'Brightness') + '</span>' : ''));
+    },
+    hactl: function (t, el) {
+      var item = haFind(t.item), c = item && item.control, f = t.f, hint = '', sw, cur, b, on;
+      if (!c || c.kind !== t.mode) return;
+      setHTML(el.title, escRaw(item.name));
+      setHTML(el.sub, S.note ? esc(S.note) : escRaw(item.room) + ' · ' + esc(item.state));
+      if (c.kind === 'light') {
+        on = c.on; b = on ? (c.b === null ? 100 : c.b) : 0;
+        setHTML(el.power, '<p class="hc-label"><span>' + esc('Power') + '</span></p><button type="button" tabindex="-1" class="hc-switch' + (on ? ' is-on' : '') + (f.zone === 'power' ? ' is-focus' : '')
+          + '" data-z="hcpower" data-i="0" data-action="hactl.power" aria-label="' + esc(on ? 'Switch off' : 'Switch on') + '"><span class="hc-switch-knob"></span><span class="hc-switch-word">' + esc(TT(on ? 'On (light)' : 'Off (light)')) + '</span></button>');
+        el.power.className = 'hc-row hc-power' + (f.zone === 'power' ? ' is-on' : '');
+        setHTML(el.bval, on ? b + '%' : esc(TT('Off (light)')));
+        el.fill.style.transform = 'scaleX(' + (b / 100).toFixed(3) + ')';
+        el.knob.style.transform = 'translate3d(' + Math.round(b / 100 * 1180) + 'px,0,0)';
+        el.bar.className = 'hc-slider' + (f.zone === 'bright' ? ' is-focus' : '') + (on ? '' : ' is-dark');
+        attrs(el.bar, 'hcbright', 0, 'hactl.brightness'); el.bar.setAttribute('aria-label', T('Brightness') + ', ' + b + '%');
+        el.brow.className = 'hc-row hc-bright' + (f.zone === 'bright' ? ' is-on' : '');
+        sw = hcSwatches(c); cur = on ? hcCurrent(c) : -1;
+        el.crow.style.display = sw.length ? '' : 'none';
+        el.crow.className = 'hc-row hc-colors' + (f.zone === 'color' ? ' is-on' : '');
+        setHTML(el.cval, sw[f.s] && f.zone === 'color' ? esc(sw[f.s][0]) : cur >= 0 ? esc(sw[cur][0]) : '');
+        setHTML(el.swatches, sw.map(function (w, i) {
+          return '<button type="button" tabindex="-1" class="hc-sw' + (i === cur ? ' is-current' : '') + (f.zone === 'color' && f.s === i ? ' is-focus' : '') + '" data-z="hcsw" data-i="' + i + '" data-action="hactl.color.' + i + '" aria-label="' + esc(w[0]) + '">'
+            + '<span class="hc-dot" style="background:' + w[1] + '"></span>' + (i === cur ? icon('check', 'hc-tick') : '') + '</button>';
+        }).join(''));
+        hint = f.zone === 'power' ? (on ? 'Switch off' : 'Switch on') : f.zone === 'bright' ? 'Left and right change the brightness' : 'Set this colour';
+        setHTML(el.hint, f.zone === 'bright' ? '<span>' + esc(hint) + '</span>' : '<span class="remote-key">OK</span><span>' + esc(hint) + '</span>');
+        return;
+      }
+      setHTML(el.temp, c.target !== null ? esc(haDegrees(c.target)) : c.lo !== null && c.hi !== null ? esc(haDegrees(c.lo) + ' – ' + haDegrees(c.hi)) : '–');
+      el.temp.className = 'hc-temp' + (f.zone === 'target' ? ' is-focus' : '') + (c.target === null ? ' is-range' : '');
+      attrs(el.temp, 'hctemp', 0, 'hactl.target'); el.temp.setAttribute('aria-label', T('Target temperature') + ', ' + (c.target === null ? '' : haDegrees(c.target)));
+      el.trow.style.display = hcRows(c).indexOf('target') >= 0 ? '' : 'none';
+      el.trow.className = 'hc-row hc-target' + (f.zone === 'target' ? ' is-on' : '');
+      setHTML(el.now, c.now !== null ? esc('Now ' + haDegrees(c.now)) + (c.action && c.action !== 'off' && c.action !== 'idle' ? ' · ' + esc(TT(HC_ACTIONS[c.action] || cap(c.action))) : '') : '');
+      el.mrow.style.display = c.modes.length ? '' : 'none';
+      el.mrow.className = 'hc-row hc-modes' + (f.zone === 'modes' ? ' is-on' : '');
+      setHTML(el.modes, c.modes.map(function (m, i) {
+        return '<button type="button" tabindex="-1" class="hc-pill' + (m === c.mode ? ' is-current' : '') + (f.zone === 'modes' && f.m === i ? ' is-focus' : '') + '" data-z="hcmode" data-i="' + i + '" data-action="hactl.mode.' + escRaw(m) + '">'
+          + (m === c.mode ? icon('check') : '') + '<span>' + esc(HC_MODES[m] || cap(m)) + '</span></button>';
+      }).join(''));
+      hint = f.zone === 'target' ? (c.target === null ? 'Set the range in Home Assistant' : 'Left and right change the temperature') : '';
+      setHTML(el.hint, f.zone === 'modes' ? '<span class="remote-key">OK</span><span>' + esc('Use this mode') + '</span>' : hint ? '<span>' + esc(hint) + '</span>' : '');
+    },
+    hacam: function (t, el) {
+      var c = t.cam, still = HA.camera.still(c.id);
+      if (!t.started) {
+        t.started = true;
+        HA.camera.live(c.id, el.video, function (state, msg) { t.state = state; t.msg = msg; if (top() === t) render(); });
+      }
+      if (still && el.still.getAttribute('src') !== still.src) el.still.src = still.src;
+      el.still.className = 'ha-live-still' + (still ? ' is-on' : '');
+      el.video.className = 'ha-live-video' + (t.state === 'live' ? ' is-on' : '');
+      setHTML(el.badge, t.state === 'live' ? '<span class="ha-dot"></span>' + esc('Live') : '');
+      setHTML(el.title, escRaw(c.name));
+      setHTML(el.state, t.state === 'live' ? '' : esc(t.state === 'error' ? haCamError(t.msg) : 'Connecting…'));
+      setHTML(el.close, '<button type="button" tabindex="-1" class="btn is-focus" data-z="hacam-close" data-i="0" data-action="hacam.close">' + icon('left') + '<span>' + esc('Smart home') + '</span></button>');
     },
     apps: function (t, el) {
       var f = t.f, items = appsItems(), n = items.length, rows = Math.ceil(n / COLS), vis = 3, row = Math.floor(f.i / COLS);
@@ -3501,6 +3956,7 @@
       if (!(QA.ready() && photo) && Date.now() - since < 8000) { setTimeout(wait, 60); return; }
       requestAnimationFrame(function () { requestAnimationFrame(function () {
         if (STARTUP) STARTUP.ready();
+        addonsReady = true; // add-ons start only now, so they never delay the first paint
         S.intro = reducedMotion() || DREAM ? '' : 'intro'; render();
         setTimeout(function () { S.intro = ''; render(); }, 1300);
         if (STARTUP) setTimeout(saveBackdrop, 3000);
@@ -3524,7 +3980,7 @@
   }
   function saveBackdrop() {
     if (!STARTUP || S.saver || document.hidden || top().id !== 'home' || S.pending || !S.shown || S.intro) return;
-    var key = [S.shown.bg, S.shown.wall, S.c.layout, S.c.lstyle, S.c.apps, S.c.controls, S.c.home.length, S.c.cpos, S.c.csize].join('|'), saved = '', canvas, ctx, im = IMG.photo, w, h, k;
+    var key = [S.shown.bg, S.shown.wall, S.c.layout, S.c.lstyle, S.c.apps, S.c.controls, S.c.home.length, S.c.cpos, S.c.csize, utils().length].join('|'), saved = '', canvas, ctx, im = IMG.photo, w, h, k;
     try { saved = localStorage.getItem(BACKDROP_KEY) || ''; } catch (e) { }
     if (key === saved) return;
     try {
@@ -3561,6 +4017,7 @@
   function after() { norm(); render(); syncRotation(); }
   function goScene(name) {
     if (top().id === 'wallpaper') cancelWallpaperTimer(top());
+    if (HA) HA.camera.hangup();
     S.stack = [S.stack[0]]; S.stack[0].f.zone = 'apps'; clearSession(); restoreLook();
     if (name === 'apps') openApps();
     else if (name === 'settings') openSettings();
@@ -3632,8 +4089,9 @@
     if (S.idleHidden) { idleReset(); return; } // the first press only brings the controls back
     idleReset();
     if (k === 'ok' || k === 'back') { if (ev.repeat || heldKeys[code]) return; heldKeys[code] = true; }
-    // On a Home app tile, OK acts on release: held for LONG_OK it opens the tile's quick actions instead.
-    if (k === 'ok' && quickTarget()) { var id = quickTarget(); clearTimeout(longOk.timer); longOk = { code: code, timer: setTimeout(function () { longOk.timer = 0; openQuick(id); }, LONG_OK) }; return; }
+    // On a Home app tile or an adjustable Smart home chip, OK acts on release: held for LONG_OK it opens the tile's quick actions or the chip's controls instead.
+    var held = k === 'ok' && holdAction();
+    if (held) { clearTimeout(longOk.timer); longOk = { code: code, timer: setTimeout(function () { longOk.timer = 0; held(); }, LONG_OK) }; return; }
     press(k);
   });
   document.addEventListener('keyup', function (ev) {
@@ -3644,7 +4102,7 @@
   window.addEventListener('focus', function () { release(); focusStage(); after(); updateClock(); });
   document.addEventListener('visibilitychange', function () {
     heldKeys = {};
-    if (document.hidden) { pauseRotation(); clearTimeout(clockTimer); VIDEO.pause(); if (S.saver && !DREAM) stopSaver(); clearTimeout(saverTimer); saverTimer = 0; syncAwake(); }
+    if (document.hidden) { pauseRotation(); clearTimeout(clockTimer); VIDEO.pause(); if (S.saver && !DREAM) stopSaver(); clearTimeout(saverTimer); saverTimer = 0; syncAwake(); if (HA) { HA.camera.hangup(); if (top().id === 'hacam') pop(); } }
     else { shelfAsked = ''; release(); after(); updateClock(); focusStage(); saverReset(); pollPlaying(); }
   });
   window.addEventListener('resize', fit);
@@ -3678,6 +4136,8 @@
   QA.scene = function (name) { if (['home', 'apps', 'settings', 'appearance', 'editor'].indexOf(name) < 0) throw new Error('Unknown view'); goScene(name); return QA.state(); };
   QA.activate = function (action) { return activate(action) ? QA.state() : null; };
   QA.news = function (items) { newsForced = items || null; newsIdx = 0; newsTick(false); return capNews.textContent; };
+  /* Made-up Home Assistant areas and states, so the add-on can be checked without a server; null restores the real source. */
+  QA.homeAssistant = function (fake) { if (HA) HA.qa(fake || null); render(); return !!(HA && HA.available()); };
   QA.weatherFx = function (kind) { fxForced = kind || ''; render(); return stage.className.indexOf(' wx-') >= 0; };
   QA.saver = function (on) { if (on === true) startSaver(); else if (on === false) stopSaver(); else if (on === 'next' && S.saver) nextSaverPhoto(); return { on: S.saver, scheduled: !!saverTimer, awake: awakeOn, photo: saverSrc }; };
   QA.actions = function () { var view = isSettingsDetail(top()) ? appearanceEl : sheetEl.hidden ? homeEl : sheetEl; return Array.prototype.filter.call(view.querySelectorAll('[data-action]'), renderedAction).map(function (el) { return el.getAttribute('data-action'); }); };

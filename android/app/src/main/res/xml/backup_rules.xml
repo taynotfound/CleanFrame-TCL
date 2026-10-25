@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android backups (up to Android 11): everything except the Home Assistant token. -->
+<full-backup-content>
+    <include domain="sharedpref" path="." />
+    <include domain="file" path="." />
+    <include domain="database" path="." />
+    <exclude domain="sharedpref" path="homeassistant.xml" />
+</full-backup-content>
