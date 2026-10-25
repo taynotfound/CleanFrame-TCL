@@ -14,36 +14,51 @@ What Shore costs a slow TV, what each feature and add-on adds, and how to measur
 
 Each feature is measured on its own, on top of the default look (Photo, Dock, Glass, Soft; Performance Full).
 
-## Before and after (0.6.1 → this change)
+## Before and after (0.8.88 → this change)
 
-The baseline is the original commit (`c44b863`): 2 runs per feature, median. The new code is 1 run per feature, so differences of a few milliseconds are noise.
+The baseline is v0.8.88 (`c44b863`). Both versions were measured with the same script (`node scripts/bench.mjs --root <old checkout>`), 3 runs per row (5 for the default look), median. The same row varies by about ±10 ms from one run to the next on this machine, so a difference under about 10 ms is noise. Rows with a "~" were measured twice and the two results differ by more than that.
 
 | Look | Main thread per key (ms) | Key p95 (ms) | Idle per 10 s (ms) |
 | --- | --- | --- | --- |
-| Default look (Photo, Dock, Glass, Soft) | 141.2 → **70.9** | 66.4 → **41.3** | 6 → 8.5 |
-| Default look with **Performance › Potato** | 132.1 → **28.2** | 63.8 → **35.4** | 21.4 → 7.3 |
-| Dark background | 129.3 → 64.0 | 59.5 → 40.2 | 5 → 6.4 |
-| List layout | 89.9 → 78.2 | 64.9 → 50.3 | 19.1 → 9.4 |
-| Shelf layout | 188.8 → 161.5 | 67.2 → 41.9 | 6.9 → 33.1 |
-| Type focus | 142.7 → 68.1 | 67.3 → 40.7 | 8.8 → 10.3 |
-| Icons-only apps | 73.3 → 68.0 | 49.3 → 40.7 | 27.4 → 6.4 |
-| Drift | 159.3 → 102.9 | 83.5 → 54.5 | 60.6 → 83.1 |
-| Night mode | 118.7 → 60.4 | 64.0 → 39.1 | 20.1 → 10.0 |
-| Clock with seconds | 128.8 → 78.2 | 54.8 → 57.3 | 138.6 → 173.6 |
+| Default look (Photo, Dock, Glass, Soft) | 82 → **71** | 41 → **40** | 2 → 3 |
+| Default look with **Performance › Potato** | 82 → **~30** | 41 → **~32** | 2 → 3 |
+| Dark background | 81 → 60 | 40 → 37 | 2 → 4 |
+| List layout | 62 → ~68 (no change) | 54 → 42 | 4 → 3 |
+| Shelf layout | 141 → 120 | 44 → 31 | 2 → 2 |
+| Type focus | 95 → 76 | 42 → 37 | 5 → 1 |
+| Icons-only apps | 52 → ~55 (no change) | 36 → 35 | 3 → 3 |
+| Drift | 128 → 115 | 67 → 66 | 52 → 38 |
+| Night mode | ~73 → 46 | 39–72 → 27 | 2 → 3 |
+| Clock with seconds | 76 → 57 | 40 → 29 | 99 → 94 |
 
-(Before, the "Potato" row is the same look, because that version had no Performance setting.)
+(Before, the "Potato" row is the same look as the default row, because that version had no Performance setting.) In short: a Dock key costs roughly 10 to 25 % less on most looks, List and Icons-only are unchanged, idle cost is unchanged, and Potato takes a key to about a third of the Full cost.
 
 | Startup, default look | Before | After |
 | --- | --- | --- |
-| JavaScript fetched and parsed | 433 KB | **362 KB** |
+| JavaScript fetched and parsed | 433 KB | **366 KB** |
 | CSS | 104 KB | **82 KB** |
-| Main-thread work until Home is ready | 1709 ms | 1420 ms |
-| of which script / style | 368 / 265 ms | 257 / 184 ms |
-| Ready | 1797 ms | 1537 ms |
+| Main-thread work until Home is ready | 1390 ms | 1363 ms |
+| of which script / style | 343 / 226 ms | 316 / 221 ms |
+| Ready | 1483 ms | 1477 ms |
+
+The saving at startup is in bytes. Parse time on this machine hardly moves; a TV with a slower disk and parser gains more.
+
+## Measured on a TV
+
+The maintainer's Google TV: 4 cores, 1.8 GB of memory (about 600 MB free with Spotify in the background), a 1080p interface on a 4K panel, Android 12. These are readings from the Performance page, not a benchmark:
+
+| What | Result |
+| --- | --- |
+| Auto's choice | Balanced |
+| Median slowest frame per key press | 23 to 24 ms (under the 34 ms High end limit) |
+| Why not High end | `navigator.deviceMemory` reports 2 GB, which caps Auto at Balanced |
+| Potato, applied by hand | Applies at once; Home, Settings and the music view look unchanged |
+
+So this TV is fast enough for High end by the clock and is held at Balanced by its memory. The page says so ("That is quick enough for High end, but this TV has about 2 GB of memory. You can still choose High end."), and choosing High end by hand is one press.
 
 ### Where the time went
 
-The profile showed one Dock key costing about 105 ms at 6×, and most of it was forced layout rather than Shore's own logic:
+The profile showed forced layout (the browser re-measuring the page mid-frame) rather than Shore's own logic behind much of a Dock key's cost, about 80 ms at 6×:
 
 - **Dock edges.** For 220 ms after every key, `trackDockEdges()` called `getBoundingClientRect()` on every tile on every animation frame. This forced a full style and layout each frame. Tiles sit on a fixed pitch, so the check is now arithmetic: each tile's icon box is measured once per tile content, a tile hides when the slide ends, and it shows as the slide starts.
 - **Focus status.** `renderFocusStatus()` queried and measured the focused element (`getClientRects`, `getComputedStyle`) on every render, though it only shows text after a failed save. It now returns before touching the DOM when there is nothing to say.
@@ -83,7 +98,7 @@ CPU throttling slows the main thread but not the compositor or GPU, and after th
 
 ## What each feature and add-on costs
 
-Measured on top of the default look (Full) with the new code, 1 run each. Negative numbers are within noise. Bytes are what the add-on fetches when it is switched on; nothing is fetched while it is off.
+Measured on top of the default look (Full) with the new code, 1 run each; the same ±10 ms of noise applies, so small positive or negative numbers mean nothing. Negative numbers are within noise. Bytes are what the add-on fetches when it is switched on; nothing is fetched while it is off.
 
 | Feature | Key (ms) | Idle per 10 s (ms) | Animations | Extra DOM nodes | Download when on | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -109,7 +124,7 @@ Measured on top of the default look (Full) with the new code, 1 run each. Negati
 
 ### Rules of thumb for a slow TV
 
-1. Leave **Auto**, or choose **Potato** yourself. Potato halves Dock key cost again and removes every idle animation; Balanced removes the idle animations and keeps the slides.
+1. Leave **Auto**, or choose **Potato** yourself. Potato cuts a Dock key to about a third and removes every idle animation; Balanced removes the idle animations and keeps the slides.
 2. Leave **Seconds**, **Drift**, **Weather effects** and the **Shelf layout** off. These are the four biggest costs.
 3. The **Dark** or **Light** background saves the most memory.
 4. Add-ons that only add a line under the clock (Headlines, Pi-hole, Widgets) are cheap. Home Assistant is the largest download; its cost while idle is small.
