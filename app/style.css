@@ -1028,3 +1028,22 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
 /* Setup needs a look: a small dot on Settings (Setup and health says what). */
 .u-dot{position:absolute;left:24px;top:-2px;width:12px;height:12px;border-radius:50%;background:#ffb27a;box-shadow:0 0 0 2px rgba(14,10,6,.28);pointer-events:none}
 .l-list .u-dot{left:auto;right:-6px}
+/* Search: query, letter keyboard on the left, results on the right */
+.sq{position:absolute;left:140px;top:168px;width:1640px;margin:0;font-size:52px;line-height:72px;font-weight:500;letter-spacing:-1px;white-space:nowrap;overflow:hidden;color:var(--ink)}
+.sq-hint{color:var(--mute)}
+.sq-caret{display:inline-block;width:4px;height:56px;margin-left:6px;vertical-align:-8px;border-radius:2px;background:var(--ink);animation:sq-blink 1.1s steps(1) infinite}
+@keyframes sq-blink{50%{opacity:0}}
+.skeys{position:absolute;left:140px;top:290px;width:636px;display:flex;flex-wrap:wrap;gap:12px}
+.sk{width:96px;height:80px;display:flex;align-items:center;justify-content:center;padding:0;border-radius:22px;font-size:36px;font-weight:500;color:var(--ink);background:rgba(255,255,255,.1);transition:background-color 120ms linear,color 120ms linear}
+.sk.is-wide{width:312px;font-size:30px}
+.sk.is-focus{background:var(--solid);color:var(--solid-ink)}
+.bg-light .sk:not(.is-focus){background:rgba(0,0,0,.08)}
+.sr-label{position:absolute;left:900px;top:290px;margin:0}
+.sres{position:absolute;left:880px;top:340px;width:920px}
+.sr{height:84px;padding:0 28px 0 20px;border-radius:28px;display:flex;align-items:center;gap:20px;font-size:32px;font-weight:500;color:var(--ink);transition:background-color 120ms linear,color 120ms linear}
+.sr.is-focus{background:var(--solid);color:var(--solid-ink)}
+.sr-name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sr-kind{font-size:26px;color:var(--mute)}
+.sr.is-focus .sr-kind{color:inherit;opacity:.7}
+.sr-ico{width:56px;height:44px;display:flex;align-items:center;justify-content:center}
+.sr-ico .ico{width:36px;height:36px}

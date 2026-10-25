@@ -144,6 +144,7 @@
     'w-storm': '<path d="M7 14.5h10.5a3.6 3.6 0 0 0 .3-7.2 5.2 5.2 0 0 0-10-.5A3.9 3.9 0 0 0 7 14.5Z"/><path d="m12.8 15.5-2.3 3.5h3l-2.2 3.5"/>',
     undo: '<path d="M9 6 5 10l4 4"/><path d="M5 10h9.5a4.5 4.5 0 0 1 0 9H11"/>',
     check: '<path d="m5.5 12.5 4 4 9-9"/>',
+    search: '<circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/>',
     play: '<path d="M8 5.2v13.6a.8.8 0 0 0 1.2.7l10.6-6.8a.8.8 0 0 0 0-1.4L9.2 4.5A.8.8 0 0 0 8 5.2Z"/>',
     pause: '<rect x="6.5" y="5" width="3.8" height="14" rx="1"/><rect x="13.7" y="5" width="3.8" height="14" rx="1"/>',
     prev: '<path d="M18.5 6.2v11.6a.7.7 0 0 1-1.1.6L9.5 12.6a.7.7 0 0 1 0-1.2l7.9-5.8a.7.7 0 0 1 1.1.6Z"/><rect x="5.5" y="5.5" width="2.6" height="13" rx=".9"/>',
@@ -1281,7 +1282,7 @@
 
   /* ---------- Installed apps ---------- */
   function appsItems() { return catalog.error ? [] : ALPHA; }
-  function appsHead() { return catalog.error ? [['retry', 'Try again', '', '']] : [['editor', 'Apps on Home', '', 'home']]; }
+  function appsHead() { return catalog.error ? [['retry', 'Try again', '', '']] : [['search', 'Search', '', 'search'], ['editor', 'Apps on Home', '', 'home']]; }
   V.apps = {
     sheet: true,
     norm: function (t) {
@@ -1294,7 +1295,8 @@
       if (k === 'back') { pop(); return; }
       if (f.zone === 'head') {
         if (k === 'down' && n) f.zone = 'grid';
-        else if (k === 'ok') { if (catalog.error) refreshCatalog(); else guarded(function () { openEditor('apps'); }); }
+        else if (k === 'left' || k === 'right') f.h = clamp(f.h + (k === 'left' ? -1 : 1), 0, appsHead().length - 1);
+        else if (k === 'ok') { if (catalog.error) refreshCatalog(); else if (appsHead()[f.h][0] === 'search') openSearch(''); else guarded(function () { openEditor('apps'); }); }
         return;
       }
       if (k === 'left' && col > 0) f.i--;
@@ -1304,7 +1306,80 @@
       else if (k === 'ok' && n) launch(items[f.i]);
       S.appsFocus = items[f.i] || null;
     },
-    point: function (t, z, i) { if (z === 'grid') { t.f.zone = 'grid'; t.f.i = i; } else if (z === 'head') t.f.zone = 'head'; else return; this.key(t, 'ok'); }
+    point: function (t, z, i) { if (z === 'grid') { t.f.zone = 'grid'; t.f.i = i; } else if (z === 'head') { t.f.zone = 'head'; t.f.h = clamp(i, 0, appsHead().length - 1); } else return; this.key(t, 'ok'); }
+  };
+
+  /* ---------- Search: apps, inputs and Settings pages, typed with the arrows and OK, or a keyboard ---------- */
+  var SEARCH_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789', SEARCH_MAX = 8;
+  /* Other words people may type for a Settings page (English; translated page names match too). */
+  var SEARCH_WORDS = { lock: 'pin child children kids', screentime: 'limit kids', background: 'photo picture', screensaver: 'saver', remote: 'button keys', clock: 'time date', display: 'dark dim', weather: 'temperature', updates: 'version', health: 'setup problem', typography: 'font', layout: 'shelf', phone: 'companion upload', editor: 'add remove order' };
+  var SEARCH_SKIP = ['appicon', 'input', 'inputname', 'todpart', 'screenapp', 'remoteapp', 'remotepick', 'hadoor', 'hadoorcam', 'unsplash'];
+  function fold(s) { s = String(s || '').toLowerCase(); return s.normalize ? s.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : s; }
+  /* 3: the name starts with it; 2: a word does; 1: it is somewhere inside. */
+  function matchScore(text, q) { var n = fold(text); return n.indexOf(q) === 0 ? 3 : (' ' + n).indexOf(' ' + q) >= 0 ? 2 : n.indexOf(q) >= 0 ? 1 : 0; }
+  function pageShown(g) {
+    var root = g;
+    if (g === 'ha') return !!HA && S.c.aha === 'on';
+    if (g === 'adblock') return !!AD && S.c.aad === 'on';
+    if (g === 'lockapps') return !!S.c.lock.pin;
+    if (g === 'screentime') return !!SCREEN && !!S.c.lock.pin;
+    while (PARENT[root]) root = PARENT[root];
+    return settingsIds().indexOf(root) >= 0;
+  }
+  function searchPages() {
+    var rows = settingsRows(), ids = rows.map(function (r) { return r.id; }), out = rows.map(function (r) { return { id: r.id, name: r.label }; });
+    Object.keys(DETAIL_NAMES).forEach(function (g) { if (SEARCH_SKIP.indexOf(g) < 0 && ids.indexOf(g) < 0 && pageShown(g)) out.push({ id: g, name: DETAIL_NAMES[g] }); });
+    return out;
+  }
+  /* Up to eight results; with nothing typed, recent apps. Apps come before Settings pages that match as well. */
+  function searchResults(text) {
+    var q = fold(text).replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' '), out = [], seen = {};
+    if (!q) return S.c.recent.concat(S.c.home).filter(function (id) { if (seen[id] || !app(id)) return false; seen[id] = true; return true; })
+      .slice(0, SEARCH_MAX).map(function (id) { return { kind: 'app', id: id, name: app(id).name }; });
+    S.c.home.concat(ALPHA, INPUTS.map(function (i) { return i.id; })).forEach(function (id) {
+      var a = app(id), s = a && !seen[id] ? matchScore(a.name, q) : 0;
+      if (s) { seen[id] = true; out.push({ kind: 'app', id: id, name: a.name, s: s * 2 + 1 }); }
+    });
+    searchPages().forEach(function (p) {
+      var s = Math.max(matchScore(T(p.name), q), matchScore(p.name, q), SEARCH_WORDS[p.id] ? Math.min(2, matchScore(SEARCH_WORDS[p.id], q)) : 0);
+      if (s) out.push({ kind: 'page', id: p.id, name: p.name, s: s * 2 });
+    });
+    out.sort(function (a, b) { return b.s - a.s || fold(T(a.name)).localeCompare(fold(T(b.name))); });
+    return out.slice(0, SEARCH_MAX);
+  }
+  function openSearch(q) { refreshCatalog(); push({ id: 'search', q: q || '', f: { zone: 'keys', r: 0, c: 0, j: 0 } }); render(); }
+  /* The keyboard: six rows of six letters and digits, then Space and Delete, three columns wide each. */
+  function searchKey(f) { return f.r < 6 ? f.r * 6 + f.c : f.c < 3 ? 36 : 37; }
+  function searchOpen(r) { if (r.kind === 'page') guarded(function () { settingsOk(r.id); }); else launch(r.id); }
+  V.search = {
+    sheet: true,
+    norm: function (t) { var n = searchResults(t.q).length; t.f.j = clamp(t.f.j, 0, Math.max(0, n - 1)); if (!n && t.f.zone === 'res') t.f.zone = 'keys'; },
+    key: function (t, k) {
+      var f = t.f, list, key;
+      if (k.indexOf('c:') === 0) { if (t.q.length < 40) t.q += k.slice(2); f.j = 0; return; }
+      if (k === 'del') { t.q = t.q.slice(0, -1); f.j = 0; return; }
+      if (k === 'back') { pop(); return; }
+      if (f.zone === 'res') {
+        list = searchResults(t.q);
+        if (k === 'up' && f.j > 0) f.j--;
+        else if (k === 'down' && f.j < list.length - 1) f.j++;
+        else if (k === 'left') f.zone = 'keys';
+        else if (k === 'ok' && list[f.j]) searchOpen(list[f.j]);
+        return;
+      }
+      if (k === 'up' && f.r > 0) f.r--;
+      else if (k === 'down' && f.r < 6) f.r++;
+      else if (k === 'left' && f.r < 6 && f.c > 0) f.c--;
+      else if (k === 'left' && f.r === 6 && f.c >= 3) f.c = 2;
+      else if (k === 'right' && f.r < 6 && f.c < 5) f.c++;
+      else if (k === 'right' && f.r === 6 && f.c < 3) f.c = 3;
+      else if (k === 'right' && searchResults(t.q).length) { f.zone = 'res'; f.j = 0; }
+      else if (k === 'ok') { key = searchKey(f); this.key(t, key === 37 ? 'del' : 'c:' + (key === 36 ? ' ' : SEARCH_CHARS.charAt(key))); }
+    },
+    point: function (t, z, i) {
+      if (z === 'key') { t.f.zone = 'keys'; t.f.r = i < 36 ? Math.floor(i / 6) : 6; t.f.c = i < 36 ? i % 6 : i === 36 ? 0 : 3; this.key(t, 'ok'); }
+      else if (z === 'res') { t.f.zone = 'res'; t.f.j = i; this.key(t, 'ok'); }
+    }
   };
 
   /* ---------- B: two-zone Home editor ---------- */
@@ -2869,6 +2944,7 @@
   /* ---------- Dispatch ---------- */
   function norm() { var t = top(), v = V[t.id]; if (v.norm) v.norm(t); }
   function press(k) {
+    if (k.indexOf('open-search:') === 0) { openSearch(k.slice(12)); return; }
     norm();
     var t = top();
     V[t.id].key(t, k);
@@ -3769,6 +3845,11 @@
         + '<div class="row-cue editor-before" data-slot="otherBefore" aria-hidden="true">' + icon('up') + '</div><div class="row-cue editor-after" data-slot="otherAfter" aria-hidden="true">' + icon('down') + '</div>';
     },
     settings: function () { return '<h2 class="s-title">' + esc('Settings') + '</h2><div class="settings-overview" data-slot="list"></div><p class="settings-overview-hint"><span class="remote-key">OK</span><span>' + esc('Open selected group') + '</span></p>'; },
+    search: function () {
+      return '<h2 class="s-title">' + esc('Search') + '</h2><p class="sq" data-slot="q"></p><div class="skeys" data-slot="keys"></div>'
+        + '<p class="s-label sr-label" data-slot="label"></p><div class="sres" data-slot="res"></div>'
+        + '<p class="pin-hint"><span class="remote-key">OK</span><span>' + esc('Type the letter') + '</span><span class="remote-key">▶</span><span>' + esc('Results') + '</span></p>';
+    },
     pin: function () {
       return '<h2 class="msg-title" data-slot="title"></h2><p class="msg-line" data-slot="line"></p><div class="pin-boxes" data-slot="boxes"></div><p class="pin-err" data-slot="err"></p>'
         + '<p class="pin-hint"><span class="remote-key">▲▼</span><span>' + esc('Change the digit') + '</span><span class="remote-key">OK</span><span>' + esc('Next') + '</span><span class="remote-key">0–9</span><span>' + esc('Type') + '</span></p>';
@@ -4050,6 +4131,19 @@
       setHTML(el.boxes, html);
       el.boxes.className = 'pin-boxes' + (t.shake ? ' is-shake' + (t.shake % 2) : '');
       setHTML(el.err, esc(t.err || ''));
+    },
+    search: function (t, el) {
+      var f = t.f, list = searchResults(t.q), at = f.zone === 'keys' ? searchKey(f) : -1, html = '', i;
+      setHTML(el.q, t.q ? esc(t.q).replace(/ /g, '&nbsp;') + '<span class="sq-caret"></span>' : '<span class="sq-hint">' + esc('Type a name') + '</span><span class="sq-caret"></span>');
+      for (i = 0; i < 38; i++) html += '<button type="button" tabindex="-1" class="sk' + (i >= 36 ? ' is-wide' : '') + (i === at ? ' is-focus' : '') + '" data-z="key" data-i="' + i + '" data-action="search.key.' + i + '">' + (i < 36 ? SEARCH_CHARS.charAt(i).toUpperCase() : esc(i === 36 ? 'Space' : 'Delete')) + '</button>';
+      setHTML(el.keys, html);
+      setHTML(el.label, esc(!t.q ? (list.length ? 'Recent' : '') : list.length ? 'Results' : 'Nothing found'));
+      setHTML(el.res, list.map(function (r, i) {
+        var a = r.kind === 'page' ? null : app(r.id);
+        return '<div class="sr' + (f.zone === 'res' && i === f.j ? ' is-focus' : '') + '" role="button" data-z="res" data-i="' + i + '" data-action="search.' + r.kind + '.' + r.id + '">'
+          + (a ? smallMark(a) : '<span class="sr-ico">' + icon('settings') + '</span>') + '<span class="sr-name">' + esc(r.name) + '</span>'
+          + '<span class="sr-kind">' + esc(r.kind === 'page' ? 'Settings' : a.input ? 'Input' : onHome(r.id) ? 'On Home' : '') + '</span></div>';
+      }).join(''));
     },
     message: function (t, el) {
       setHTML(el.acts, messageContent(t).actions.map(function (a, i) {
@@ -4341,9 +4435,17 @@
     if (!el || el === stage) return;
     pointAt(el);
   });
+  /* A letter typed on a keyboard: types in Search, and on Home or All apps opens Search with it. */
+  function typedKey(ev) {
+    var id = top().id, code = ev.keyCode, ch = ev.key && ev.key.length === 1 ? fold(ev.key) : code >= 65 && code <= 90 ? String.fromCharCode(code + 32) : code >= 48 && code <= 57 ? String(code - 48) : code === 32 ? ' ' : '';
+    if (!ch || !/^[a-z0-9 ]$/.test(ch)) return '';
+    if (id === 'search') return 'c:' + ch;
+    return (id === 'home' || id === 'apps') && /[a-z]/.test(ch) ? 'open-search:' + ch : '';
+  }
   var heldKeys = {};
   document.addEventListener('keydown', function (ev) {
-    var code = ev.keyCode, k = KEYS[code] || (top().id === 'pin' && (code >= 48 && code <= 57 || code >= 96 && code <= 105) ? 'd' + (code >= 96 ? code - 96 : code - 48) : '');
+    var code = ev.keyCode, k = KEYS[code] || (top().id === 'pin' && (code >= 48 && code <= 57 || code >= 96 && code <= 105) ? 'd' + (code >= 96 ? code - 96 : code - 48) : '') || typedKey(ev);
+    if (k === 'back' && code === 8 && top().id === 'search' && top().q) k = 'del';
     if (code === 9) { ev.preventDefault(); return; }
     if (!k || ev.metaKey || ev.ctrlKey || ev.altKey) return;
     ev.preventDefault();
@@ -4376,6 +4478,7 @@
     var out = serialise(S.c), t = top(), item = t.id === 'appearance' ? detailLocation(t).item : null;
     out.committed = S.c; out.shown = S.shown; out.pending = S.pending; out.view = t.id; out.selected = S.sel;
     out.focusAction = focusedAction(); out.writes = S.writes; out.failedWrites = S.failed; out.error = S.err;
+    if (t.id === 'search') out.search = { q: t.q, results: searchResults(t.q).map(function (r) { return r.kind + ':' + r.id; }) };
     out.catalog = { loading: catalog.loading, loaded: catalog.loaded, error: catalog.error, ids: ALPHA.slice() };
     out.fonts = { available: LOOK_VALUES.font.slice(), loaded: Object.keys(fontMetrics).filter(function (id) { return !fontMetrics[id].fallback; }), baselineFallback: !!(fontMetrics.manrope && fontMetrics.manrope.fallback), error: S.lookError && S.lookError.type === 'font' ? S.lookError : null };
     out.rotation = { activeMs: activeMs + (activeSince ? Date.now() - activeSince : 0), active: !!activeSince };

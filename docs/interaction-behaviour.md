@@ -39,7 +39,11 @@ The nine default apps keep their known native IDs. Other installed consumer apps
 
 The panel reads `tizen.application.getAppsInfo` on entry and shows the filtered consumer apps alphabetically. Samsung's visibility flag alone also exposes system utilities, so EP packages, background services, ad players, account utilities, placeholders and duplicates are omitted. Known brands use bundled marks. Other apps use their local installed icon, with initials as a fallback.
 
-The five-column grid scrolls with remote focus. OK launches an app; its On Home badge shows membership. Up from the first row reaches Apps on Home, which opens the editor. An API failure shows a retry and keeps saved Home choices. Browser previews report that installed-app discovery and launching require the TV.
+The five-column grid scrolls with remote focus. OK launches an app; its On Home badge shows membership. Up from the first row reaches Search and Apps on Home, which opens the editor. An API failure shows a retry and keeps saved Home choices. Browser previews report that installed-app discovery and launching require the TV.
+
+## Search
+
+Search opens from All apps, or by typing a letter on a keyboard while Home or All apps is showing. The left side is a six-column keyboard of letters and digits with Space and Delete below; OK types the focused key and Right from the last column moves to the results. A keyboard types directly, and Backspace deletes a letter instead of leaving. Up to eight results match installed apps, HDMI inputs and Settings pages by name, ignoring case and accents; apps rank first, then pages. A few English words also find pages (for example "pin" finds Parental lock). With nothing typed it shows recent apps. OK on an app launches it through the usual lock and screen-time checks; OK on a page opens it (after the Settings PIN when Settings are locked), and Back returns to Search.
 
 ## Apps on Home
 

@@ -1121,6 +1121,35 @@ try {
     await nav('up', 'up', 'ok', 'up', 'up', 'up', 'ok', 'up', 'up', 'up', 'up', 'ok', 'up', 'up', 'up', 'up', 'up', 'ok');
     check('The arrows enter the right PIN and the app opens', (await state()).view !== 'pin', [(await state()).view, await current.locator('#sheetView').innerText()]);
   });
+  await run('Search', async () => {
+    await closePage(); await page();
+    await current.keyboard.press('s');
+    let st = await state();
+    check('A letter on Home opens Search with it', st.view === 'search' && st.search.q === 's', st.search);
+    check('Apps come before Settings pages', st.search.results[0].startsWith('app:') && st.search.results.some(r => r.startsWith('page:')), st.search.results);
+    await current.keyboard.press('c'); await current.keyboard.press('r');
+    check('Typing narrows the results', (await state()).search.results[0] === 'page:screensaver', (await state()).search.results);
+    await current.keyboard.press('Backspace');
+    check('Backspace deletes a letter, not the page', (await state()).view === 'search' && (await state()).search.q === 'sc');
+    await current.keyboard.press('Backspace'); await current.keyboard.press('Backspace');
+    check('With nothing typed it shows recent apps', (await state()).search.results.every(r => r.startsWith('app:')) && (await state()).search.results.length > 0);
+    await nav('down', 'down', 'down', 'right', 'right', 'right', 'ok');
+    check('The arrows and OK type a letter', (await state()).search.q === 'v', (await state()).search);
+    await nav('down', 'down', 'down', 'ok');
+    check('Delete on the keyboard removes it', (await state()).search.q === '');
+    for (const k of 'pin') await current.keyboard.press(k);
+    check('Other words find a Settings page', (await state()).search.results.includes('page:lock'), (await state()).search.results);
+    await nav('right');
+    check('Right moves to the results', /^search\.page\./.test((await state()).focusAction), (await state()).focusAction);
+    await nav('ok');
+    check('OK opens the Settings page', (await state()).view === 'appearance');
+    await nav('back');
+    check('Back returns to Search', (await state()).view === 'search');
+    await nav('back');
+    check('Back again leaves Search', (await state()).view === 'home');
+    await scene('apps');
+    check('All apps offers Search', (await call('actions')).includes('apps.search'));
+  });
   await run('Screen time', async () => {
     const pinHash = pin => { let h = 0x811c9dc5; for (const ch of 'shore:' + pin) { h ^= ch.charCodeAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
     const id = 'stremio';
