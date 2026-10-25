@@ -122,6 +122,7 @@ final class Diagnostics {
         return b.toString();
     }
 
+    @android.annotation.TargetApi(30)
     private static void exits(Context c, ActivityManager am, StringBuilder b) {
         long after = c.getSharedPreferences("diagnostics", Context.MODE_PRIVATE).getLong("exitsAfter", 0);
         List<ApplicationExitInfo> list = am.getHistoricalProcessExitReasons(c.getPackageName(), 0, 10);
