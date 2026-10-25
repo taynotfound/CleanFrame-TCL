@@ -1,6 +1,6 @@
 /* Android TV / Google TV adapter (e.g. TCL Google TV sets).
    Active only inside the CleanFrame Android shell, which exposes window.CleanFrameAndroid.
-   On Tizen and in the browser preview this file does nothing, so device.js stays in charge. */
+   In the browser preview this file does nothing, so device.js stays in charge. */
 (function () {
   'use strict';
   var bridge = window.CleanFrameAndroid;
@@ -18,7 +18,7 @@
   };
   /* Tried when the brand's preferred package is missing (TizenTube -> official YouTube). */
   var FALLBACK = { youtube: 'com.google.android.youtube.tv' };
-  /* Saved preferences and the default Home list still carry Tizen IDs. */
+  /* The default Home list and older saved preferences use these legacy app IDs; map them to Android packages. */
   var TIZEN = {
     'IkWsFHtOY9.Stremio': 'stremio', 'org.tizen.netflix-app': 'netflix',
     'MCmYXNxgcu.DisneyPlus': 'disneyplus', '9Ur5IzDKqV.TizenYouTube': 'youtube',

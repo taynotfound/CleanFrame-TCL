@@ -4,25 +4,23 @@ Using Shore? See the [wiki](https://github.com/taynotfound/shore/wiki). This pag
 
 The Android app is called **Shore**. Its package ID stays `app.cleanframe.tv` so existing installs update in place.
 
-CleanFrame was built for Tizen, but the UI is plain HTML/CSS/ES5 and every TV call lives in
-`window.FrameDevice`. The Android port keeps `app/` unchanged and adds:
+The interface is plain HTML/CSS/ES5 and every TV call lives in `window.FrameDevice`. The Android shell adds:
 
-- `app/device-android.js`: replaces `FrameDevice` only when the Android shell is present.
-  On Tizen and in the browser preview it does nothing.
+- `app/device-android.js`: replaces the browser-preview `FrameDevice` (`app/device.js`) when the Android shell is present.
 - `android/`: a small Java app that shows `app/` full screen in a WebView and exposes
   `window.CleanFrameAndroid` (launch apps, list installed apps, TV settings, original Home,
   screensaver). App icons are served at `/appicon/<package>.png`.
 
-| CleanFrame | Tizen | Android TV |
-| --- | --- | --- |
-| App launch | `tizen.application.launch` | Leanback launch intent per package |
-| Installed apps | `getAppsInfo` | `LEANBACK_LAUNCHER` / `LAUNCHER` query |
-| Art Mode | Samsung Art app | System screensaver (Ambient mode) |
-| Samsung Home | `com.samsung.tv.csfs` | The TV's original launcher |
-| TV settings | Samsung settings app | `Settings.ACTION_SETTINGS` |
-| Back | key 10009 | Back button forwarded as Escape (27) |
+| Interface call | Android implementation |
+| --- | --- |
+| App launch | Leanback launch intent per package |
+| Installed apps | `LEANBACK_LAUNCHER` / `LAUNCHER` query |
+| Screensaver | Shore's own, plus `ShoreDream` as an optional system screensaver |
+| Google TV Home | The TV's original launcher |
+| TV settings | `Settings.ACTION_SETTINGS` |
+| Back | Back button forwarded as Escape (27) |
 
-Reference TV: TCL 55C6KS, Google TV (Android TV 12). Other sets are listed on the wiki's [Tested TVs](https://github.com/taynotfound/shore/wiki/Tested-TVs).
+Reference TV: TCL 55C6KS, Google TV (Android TV 12). Other sets are listed on the wiki's [Verified devices](https://github.com/taynotfound/shore/wiki/Verified-devices).
 
 ## Build, install and Home
 
@@ -52,4 +50,4 @@ These are user steps and live on the wiki: [Build from source](https://github.co
 ## Known gaps
 
 - Hardware-protected HDMI video is black in `adb screencap`; that is expected.
-- The default Home list still contains Tizen-only apps; unavailable ones report "isn't installed". Edit Home in Settings.
+- Apps in the default Home list that are not installed report "isn't installed". Edit Home in Settings.

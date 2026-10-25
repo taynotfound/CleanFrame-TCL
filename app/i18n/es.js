@@ -39,7 +39,7 @@ CleanFrameI18n.load("es", {
       "Back cancels this change.": "Atrás cancela este cambio.", "Then scroll": "Luego desplázate",
       "Open Shore on the TV to use this control.": "Abre Shore en el televisor para usar este control.",
       "The web preview cannot control the TV.": "La vista previa web no puede controlar el televisor.",
-      "Open Samsung’s Home screen": "Abrir la pantalla de inicio de Samsung", "Not on Home": "No está en Inicio", "Open selected group": "Abrir el grupo seleccionado",
+      "Not on Home": "No está en Inicio", "Open selected group": "Abrir el grupo seleccionado",
       "Always dimmed": "Siempre atenuado", "1 app": "1 app", "of": "de", "Add app": "Añadir app", "Arrange": "Ordenar", "Done": "Listo",
       "Undo": "Deshacer", "Nothing to undo": "Nada que deshacer", "Loading installed apps…": "Cargando apps instaladas…",
       "Could not read installed apps.": "No se pudieron leer las apps instaladas.", "No installed apps found.": "No se encontraron apps instaladas.",

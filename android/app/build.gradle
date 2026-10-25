@@ -43,9 +43,9 @@ android {
     }
     buildFeatures { buildConfig true }
 
-    // The web UI is shared with the Tizen widget: package app/ as-is.
+    // The web UI in app/ is packaged as-is.
     sourceSets {
-        // assets-android/ holds Android-only files (bundled animated loops) kept out of the Tizen widget.
+        // assets-android/ holds Android-only files (bundled animated loops) not part of the shared interface.
         main { assets.srcDirs = ['../../app', 'src/main/assets-android'] }
     }
 

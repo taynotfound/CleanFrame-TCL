@@ -1,22 +1,11 @@
-"""Check that the widget manifest and its referenced files are present."""
+"""Check that the app and the resources it references are present."""
 from pathlib import Path
 import json
-import xml.etree.ElementTree as XML
 import re
 import subprocess
 
 root = Path(__file__).resolve().parents[1]
 app = root / 'app'
-manifest = XML.parse(app / 'config.xml').getroot()
-ns = {'w': 'http://www.w3.org/ns/widgets', 't': 'http://tizen.org/ns/widgets'}
-identity = manifest.find('t:application', ns)
-assert identity is not None, 'Missing application identity'
-assert identity.get('package') == 'nClrkHome1', 'Keep the installed package identity stable'
-assert identity.get('id') == 'nClrkHome1.FrameHome', 'Keep the installed application ID stable'
-assert manifest.get('version') == json.loads((root / 'package.json').read_text())['version'], 'Manifest/package versions differ'
-for tag in ['content', 'icon']:
-    node = manifest.find('w:' + tag, ns)
-    assert node is not None and (app / node.get('src', '')).is_file(), 'Missing ' + tag + ' file'
 assert all((app / name).is_file() for name in ['main.js', 'style.css'])
 for reference in ['assets/wallpapers/catalog.js', 'assets/adaptive-ink.js', 'assets/font-catalog.js']:
     assert (app / reference).is_file(), 'Missing runtime catalogue: ' + reference
@@ -58,4 +47,4 @@ player_ids = re.search(r"var PB = \[([^\]]*)\]", (app / 'addons/player.js').read
 for button in re.findall(r"'(\w+)'", player_ids):
     for selector in re.findall(r"(?<![\w-])\.pl-" + button + r"(?![\w-])", (app / 'addons/player.css').read_text()):
         raise AssertionError('player.css has a bare .pl-' + button + ' rule that also matches the ' + button + ' button; name the class differently')
-print('Widget identity, version, bundled resources and ' + str(len(addon_files)) + ' add-on files are valid.')
+print('Bundled resources and ' + str(len(addon_files)) + ' add-on files are valid.')

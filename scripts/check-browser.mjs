@@ -34,7 +34,7 @@ const HA_FAKE = {
 const walls = JSON.parse(readFileSync(root + 'app/assets/wallpapers/SOURCES.json', 'utf8'));
 const out = root + '.local/qa/';
 mkdirSync(out, { recursive: true });
-const sourceFiles = ['app/main.js', 'app/device.js', 'app/index.html', 'app/style.css', 'app/config.xml', 'app/assets/wallpapers/SOURCES.json', 'app/assets/wallpapers/catalog.js', 'app/assets/adaptive-ink.js', 'app/assets/icons/metrics.js'];
+const sourceFiles = ['app/main.js', 'app/device.js', 'app/index.html', 'app/style.css', 'app/assets/wallpapers/SOURCES.json', 'app/assets/wallpapers/catalog.js', 'app/assets/adaptive-ink.js', 'app/assets/icons/metrics.js'];
 const hashes = () => Object.fromEntries(sourceFiles.map(f => [f, createHash('sha256').update(readFileSync(root + f)).digest('hex')]));
 const report = { scope: 'Production UI in Chromium; mock public Tizen API only; no TV contacted.', sourceBefore: hashes(), checks: [], failures: [], pageErrors: [], expectedNetworkFailures: [] };
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
@@ -272,10 +272,10 @@ try {
     await act('util.art'); await current.waitForFunction(() => __tv.calls.length === 3);
     const art = await current.evaluate(() => __tv.calls.at(-1));
     check('Art Mode uses app-control with fullscreen request', art.method === 'launchAppControl' && art.id === 'org.tizen.art-app' && art.control.data.some(d => d.key === 'mode' && d.value[0] === 'fullscreen'), art);
-    await current.evaluate(() => window.dispatchEvent(new Event('focus'))); await group('samsung'); await act('samsung.home');
+    await current.evaluate(() => window.dispatchEvent(new Event('focus'))); await group('tv'); await act('tv.home');
     await current.waitForFunction(() => __tv.calls.length === 4);
     check('Samsung escape keeps CSFS target', (await current.evaluate(() => __tv.calls.at(-1))).id === 'com.samsung.tv.csfs');
-    await current.evaluate(() => window.dispatchEvent(new Event('focus'))); await group('samsung'); await act('samsung.settings');
+    await current.evaluate(() => window.dispatchEvent(new Event('focus'))); await group('tv'); await act('tv.settings');
     await current.waitForFunction(() => __tv.calls.length === 5);
     check('TV settings keeps installed target', (await current.evaluate(() => __tv.calls.at(-1))).id === 'com.samsung.tv.coba.setting');
     await current.evaluate(() => { window.dispatchEvent(new Event('focus')); __tv.launchFailure = true; });
@@ -385,13 +385,13 @@ try {
   await run('Settings overview and visible choices', async () => {
     await page(); await scene('settings');
     const expected = ['settings.group.background', 'settings.group.layout', 'settings.editor', 'settings.group.focus', 'settings.group.typography', 'settings.group.display', 'settings.group.screensaver',
-      'settings.group.clock', 'settings.group.weather', 'settings.group.inputs', 'settings.group.performance', 'settings.group.addons', 'settings.group.samsung'];
+      'settings.group.clock', 'settings.group.weather', 'settings.group.inputs', 'settings.group.performance', 'settings.group.addons', 'settings.group.tv'];
     check('Overview has every settings group', same((await call('actions')).filter(a => a.startsWith('settings.')).sort(), expected.slice().sort()), await call('actions'));
     check('Overview starts on Wallpaper', (await state()).focusAction === 'settings.group.background');
     await nav('down', 'down', 'down', 'down', 'down');
     check('Down moves through the Look column into When you’re away', (await state()).focusAction === 'settings.group.display', await state());
     await nav('right');
-    check('Right crosses to the nearest row of the other column', (await state()).focusAction === 'settings.group.samsung', await state());
+    check('Right crosses to the nearest row of the other column', (await state()).focusAction === 'settings.group.tv', await state());
     await nav('left');
     check('Left returns to the nearest row of the Look column', (await state()).focusAction === 'settings.group.display', await state());
     await nav('back'); await scene('settings');
@@ -422,13 +422,13 @@ try {
     check('All rotation modes are visible together', same(rotationRows.map(r => r.action).sort(), ['fixed', 'open', '5', '15', '30', '60', 'day', 'tod'].map(v => 'rotation.' + v).sort()), rotationRows);
     await nav('back');
     check('Rotation Back restores its Background row', (await state()).settingsGroup === 'background' && (await state()).focusAction === 'background.rotation', await call('where'));
-    await group('samsung');
+    await group('tv');
     const samsungActions = await call('actions');
-    check('Samsung group shows both native actions', samsungActions.includes('samsung.home') && samsungActions.includes('samsung.settings'));
+    check('Samsung group shows both native actions', samsungActions.includes('tv.home') && samsungActions.includes('tv.settings'));
   });
   await run('Settings focus never changes the applied Home', async () => {
     await page();
-    for (const name of ['background', 'layout', 'typography', 'focus', 'samsung']) {
+    for (const name of ['background', 'layout', 'typography', 'focus', 'tv']) {
       await group(name); const before = await settingsSnapshot();
       const visited = new Set();
       for (const direction of ['right', 'right', 'down', 'left', 'left', 'down', 'right', 'right', 'down', 'left', 'up', 'up', 'up', 'right']) {
@@ -618,7 +618,7 @@ try {
     for (const width of [1920, 1280]) {
       await current.setViewportSize({ width, height: width * 9 / 16 });
       await current.waitForFunction(w => Math.abs(document.getElementById('stage').getBoundingClientRect().width - w) < 1, width);
-      for (const name of ['background', 'layout', 'typography', 'focus', 'samsung', 'rotation']) {
+      for (const name of ['background', 'layout', 'typography', 'focus', 'tv', 'rotation']) {
         await group(name === 'rotation' ? 'background' : name);
         if (name === 'rotation') await act('background.rotation');
         const geometry = await current.evaluate(() => {
@@ -1297,7 +1297,7 @@ try {
     check('The PIN gives more time and opens the app', (await state()).view !== 'pin' && (await state()).view !== 'message', (await state()).view);
     await closePage(); await page({ seed: { ...baseline(), lock: { pin: pinHash('1234'), settings: false, apps: [], limits: { [id]: 30 } } } });
     await current.evaluate(() => ShoreQA.screenTime({}));
-    await group('samsung'); await act('open.lock');
+    await group('tv'); await act('open.lock');
     for (const k of '1234') await current.keyboard.press(k);
     check('Parental lock shows Screen time', (await call('actions')).includes('open.screentime'));
     await act('open.screentime');

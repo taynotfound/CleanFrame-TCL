@@ -17,7 +17,7 @@ const report = {
   sourceBefore: hashes(), checks: [], warnings: [], failures: [], scenarios: [], errors: [],
   budgets: { keyP95Ms: 50, keyMaximumMs: 120, frameMaximumMs: 250, appearanceMaximumMs: 4000 },
   notes: [
-    'A 4× Chromium slowdown is a reproducible regression screen, not an emulation of the Samsung processor, GPU, decoder, memory limit or browser engine.',
+    'A 4× Chromium slowdown is a reproducible regression screen, not an emulation of a real TV processor, GPU, decoder, memory limit or browser engine.',
     'Key work measures the complete production navigation handler, including render calls. Frame gaps include paint/compositing scheduling.',
     'DOM and post-GC JavaScript heap checks detect retained growth, not GPU texture allocation or total TV process memory.',
     'The localhost preview sends no-store; repeated asset transfers are reported separately from decoded-image or DOM retention.'

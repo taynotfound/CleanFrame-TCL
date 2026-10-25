@@ -1,15 +1,13 @@
-# CleanFrame
+# Shore
 
-`app/` is the current packaged UI. Read `docs/development.md` and `docs/interaction-behaviour.md` before app changes. For a new contributor or a separate TV installation, also read `docs/for-agents.md`.
+Shore is a launcher for Android TV and Google TV. `app/` is the interface (HTML, CSS and ES5-compatible JavaScript, shown full screen in a WebView); `android/` is the Java shell. Start with `docs/README.md`, then `docs/development.md`, `docs/interaction-behaviour.md` and `docs/android-tv.md`.
 
-Use simple HTML, CSS and ES5-compatible JavaScript for the TV. Node tooling can use modern JavaScript. Preserve remote focus/navigation, preference migrations and cached rendering. Read `docs/assets.md` before changing images, glass geometry or icon sizing; keep live blur and pixel analysis off the TV animation path.
+Use simple HTML, CSS and ES5-compatible JavaScript for the TV. Node tooling can use modern JavaScript. Preserve remote focus/navigation, preference migrations and cached rendering. Read `docs/assets.md` before changing images, glass geometry or icon sizing; keep live blur and pixel analysis off the TV animation path. New interface text needs an entry in each file in `app/i18n/`.
 
-Run `npm run check` for app changes. For interaction changes, run the browser preview and `CLEANFRAME_PUBLIC_FONTS=1 npm run check:browser`; public contributors must not need proprietary fonts. Run `npm run check:public` and `npm run export:public` before preparing a public download. Follow `CONTRIBUTING.md` and retain third-party notices.
+Run `npm run check` for app changes. For interaction changes, run the browser preview and `CLEANFRAME_PUBLIC_FONTS=1 npm run check:browser`; public contributors must not need proprietary fonts. Run `npm run check:public` before a public release. Follow `CONTRIBUTING.md` and retain third-party notices. The wiki sources are in `docs/wiki/`; update them when behaviour changes, and the verified-devices list when a device is confirmed.
 
-Browser/repository tasks do not authorise device access. Read `docs/tv-status.md` before compatibility claims and `docs/agent-tv-setup-guide.md` before a new TV setup. An explicit device task is required even for queries that stage a helper. Announce any installation, app launch or restart; confirm visible results with the owner. Treat native Home/startup writes as a separate task with explicit authority and an exact-value recovery baseline.
+Browser/repository tasks do not authorise device access. Run `adb` against a TV only when the task says to; announce any installation, app launch or restart, and confirm visible results with the owner. Do not change a TV's Home or screensaver settings without explicit authority and a recorded original value.
 
-On the maintainer's TV, preserve the stable package/application identity, author certificate and existing native Home assignment. For an independent user's installation, generate their own identity and certificates, and update manifest checks, launch/self-filter IDs and helper targets consistently. `scripts/package.py`, `scripts/tv.py` and `scripts/native-home/` contain reference-machine assumptions; they are not an unattended installer.
+Keep API keys, signing keys, passwords, device identifiers, addresses and generated packages out of Git: `android/local.properties`, `.local/` and `dist/` are ignored. Never commit paid font binaries. Release APKs are built without API keys (`SHORE_PUBLIC_BUILD=1`). Public-code licensing does not replace the terms in `THIRD_PARTY_NOTICES.md`.
 
-Keep proprietary fonts, signing keys, passwords, device identifiers, addresses, SDKs, recovery values and generated packages in ignored `.local/` or `dist/`. Never commit paid font binaries or publish a private-font widget. Public-code licensing does not replace the terms in `THIRD_PARTY_NOTICES.md`.
-
-On Nathan's Mac, use `/Users/nathan/.local/bin/gh-for-repo` for GitHub CLI work. On another machine, use the contributor's own authenticated GitHub account. Preserve shared or uncommitted work. Use reversible deletion; never reset, force-push or rewrite history without explicit authority. Publication/visibility changes require a separate instruction.
+Preserve shared or uncommitted work. Use reversible deletion; never reset, force-push or rewrite history without explicit authority. Publication/visibility changes and releases need a separate instruction.

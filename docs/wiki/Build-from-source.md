@@ -48,7 +48,7 @@ Then open [localhost:4795/home/](http://localhost:4795/home/). Run `npm run chec
 
 | Path | What it is |
 | --- | --- |
-| `app/` | The Shore interface, shared with the Samsung version |
+| `app/` | The Shore interface (HTML, CSS, JavaScript) |
 | `app/device-android.js` | Android adapter: apps, inputs, wallpapers, remote buttons |
 | `app/addons/` | Add-ons, fetched only when switched on |
 | `app/i18n.js`, `app/i18n/` | Translations |

@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/** Implements what device.js does with Tizen APIs, using public Android intents. */
+/** Implements the interface's device calls (see device-android.js) with public Android intents. */
 final class DeviceBridge {
     private final Context context;
     private final Activity activity; // null for the remote-button service and the screensaver

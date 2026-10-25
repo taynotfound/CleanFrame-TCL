@@ -117,7 +117,7 @@ CleanFrameI18n.load("it", {
       "All apps": "Tutte le app", "Apps on Home": "App sulla Home", "Other installed apps": "Altre app installate", "Recently removed": "Rimosse di recente",
       "Add to Home": "Aggiungi alla Home", "Remove from Home": "Rimuovi dalla Home", "Home is full": "La Home è piena", "Home holds nine apps. Remove one first.": "La Home contiene nove app. Prima rimuovine una.",
       "Home needs one app": "La Home ha bisogno di un’app", "On Home": "Sulla Home", "Back cancels this change.": "Indietro annulla questa modifica.", "Then scroll": "Poi scorri",
-      "Open Shore on the TV to use this control.": "Apri Shore sulla TV per usare questo comando.", "The web preview cannot control the TV.": "L’anteprima web non può controllare la TV.", "Open Samsung’s Home screen": "Apri la schermata Home di Samsung", "Not on Home": "Non sulla Home",
+      "Open Shore on the TV to use this control.": "Apri Shore sulla TV per usare questo comando.", "The web preview cannot control the TV.": "L’anteprima web non può controllare la TV.", "Not on Home": "Non sulla Home",
       "Open selected group": "Apri il gruppo selezionato", "Always dimmed": "Sempre attenuato", "1 app": "1 app", "of": "di",
       "Add app": "Aggiungi app", "Arrange": "Riordina", "Done": "Fine", "Undo": "Annulla",
       "Nothing to undo": "Niente da annullare", "Loading installed apps…": "Caricamento delle app installate…", "Could not read installed apps.": "Impossibile leggere le app installate.", "No installed apps found.": "Nessuna app installata trovata.",

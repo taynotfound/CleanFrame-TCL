@@ -117,7 +117,7 @@ CleanFrameI18n.load("tr", {
       "All apps": "Tüm uygulamalar", "Apps on Home": "Home’daki uygulamalar", "Other installed apps": "Diğer yüklü uygulamalar", "Recently removed": "Son kaldırılanlar",
       "Add to Home": "Home’a ekle", "Remove from Home": "Home’dan kaldır", "Home is full": "Home dolu", "Home holds nine apps. Remove one first.": "Home dokuz uygulama alır. Önce birini kaldır.",
       "Home needs one app": "Home’da en az bir uygulama olmalı", "On Home": "Home’da", "Back cancels this change.": "Geri bu değişikliği iptal eder.", "Then scroll": "Sonra kaydır",
-      "Open Shore on the TV to use this control.": "Bu kontrolü kullanmak için TV’de Shore’u aç.", "The web preview cannot control the TV.": "Web önizlemesi TV’yi kontrol edemez.", "Open Samsung’s Home screen": "Samsung ana ekranını aç", "Not on Home": "Home’da değil",
+      "Open Shore on the TV to use this control.": "Bu kontrolü kullanmak için TV’de Shore’u aç.", "The web preview cannot control the TV.": "Web önizlemesi TV’yi kontrol edemez.", "Not on Home": "Home’da değil",
       "Open selected group": "Seçili grubu aç", "Always dimmed": "Hep karartılmış", "1 app": "1 uygulama", "of": "/",
       "Add app": "Uygulama ekle", "Arrange": "Düzenle", "Done": "Bitti", "Undo": "Geri al",
       "Nothing to undo": "Geri alınacak bir şey yok", "Loading installed apps…": "Yüklü uygulamalar yükleniyor…", "Could not read installed apps.": "Yüklü uygulamalar okunamadı.", "No installed apps found.": "Yüklü uygulama bulunamadı.",

@@ -1,6 +1,6 @@
 # Contributing to Shore
 
-Shore is a launcher for Android TV and Google TV, forked from [CleanFrame](https://github.com/nthnclrk/CleanFrame) (made for Samsung The Frame). Contributions should keep the remote experience simple and say what has actually been tested. Forks and adaptations are welcome.
+Shore is a launcher for Android TV and Google TV, forked from [CleanFrame](https://github.com/nthnclrk/CleanFrame). Contributions should keep the remote experience simple and say what has actually been tested. Forks and adaptations are welcome.
 
 Using Shore rather than changing it? The [wiki](https://github.com/taynotfound/shore/wiki) is the place, and [Discord](https://discord.gg/z6C4Mj9VPK) is the fastest way to ask.
 
@@ -31,7 +31,7 @@ A pull request should explain the resulting behaviour, the checks run and any un
 
 ## Device work and privacy
 
-Use your own TV and your own accounts. Each TV owner decides whether and when to permit interruptions or settings changes. Native Home/startup experiments on Samsung TVs are separate from UI work; see [`docs/for-agents.md`](docs/for-agents.md).
+Use your own TV and your own accounts. Each TV owner decides whether and when to permit interruptions or settings changes.
 
 Keep passwords, tokens, API keys, signing keys, serial numbers, addresses and original device settings out of issues, screenshots and PRs. Never share an APK built with your own API keys. Report security issues through GitHub's private vulnerability reporting if enabled, or an established private channel with the maintainer; do not attach credentials to a public issue.
 

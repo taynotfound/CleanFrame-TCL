@@ -10,7 +10,7 @@ The root MIT licence covers CleanFrame's original code and documentation. Third-
 | Geist, Newsreader, Inter, Outfit, Space Grotesk, Sora and Playfair Display | SIL Open Font License 1.1; licences beside the files in `app/assets/fonts/`, with exact sources and hashes in `app/assets/fonts/SOURCES.json` |
 | Optional PP Neue Montreal, PP Mori and PP Pangram Sans | Proprietary. Binaries stay in ignored `.local/` storage and are excluded from Git and public exports. The optional local overlay requires the user's own permission to use and embed those files. |
 
-The public app uses Manrope, Geist, Newsreader, Inter, Outfit, Space Grotesk, Sora and Playfair Display. A personal widget containing proprietary fonts must stay private. See [Pangram's licensing information](https://pangrampangram.com/pages/eula).
+The public app uses Manrope, Geist, Newsreader, Inter, Outfit, Space Grotesk, Sora and Playfair Display. A personal build containing proprietary fonts must stay private. See [Pangram's licensing information](https://pangrampangram.com/pages/eula).
 
 ## Icons and trademarks
 
@@ -32,7 +32,7 @@ Photographers retain their rights. Wallpapers, thumbnails, panel backgrounds and
 
 Development dependencies retain the licences in their npm packages. They are not copied into the TV JavaScript runtime.
 
-`npm run export:public` excludes private fonts and includes this notice and the root MIT licence. Preserve the included font and icon licence texts. Review [public release preparation](docs/public-release.md) before publishing a repository or download.
+Release APKs are built without private fonts or API keys. Preserve the included font and icon licence texts, and run `npm run check:public` before publishing a repository or download.
 
 ## Shore additions
 

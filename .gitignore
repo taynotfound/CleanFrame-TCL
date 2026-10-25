@@ -21,7 +21,6 @@ PP*.ttf
 PP*.otf
 PP*.woff
 PP*.woff2
-*.wgt
 
 # Personal studies, research and draft writing stay local.
 /explorations/

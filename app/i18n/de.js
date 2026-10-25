@@ -39,7 +39,7 @@ CleanFrameI18n.load("de", {
       'Home holds nine apps. Remove one first.': 'Home fasst neun Apps. Entferne zuerst eine.', 'Home needs one app': 'Home braucht mindestens eine App',
       'On Home': 'Auf Home', 'Back cancels this change.': 'Zurück bricht diese Änderung ab.', 'Then scroll': 'Dann blättern',
       'Open Shore on the TV to use this control.': 'Öffne Shore auf dem Fernseher, um das zu nutzen.',
-      'The web preview cannot control the TV.': 'Die Web-Vorschau kann den Fernseher nicht steuern.', 'Open Samsung’s Home screen': 'Samsungs Home-Bildschirm öffnen', 'Not on Home': 'Nicht auf Home', 'Open selected group': 'Ausgewählte Gruppe öffnen', 'Always dimmed': 'Immer gedimmt', '1 app': '1 App', 'of': 'von', 'Add app': 'App hinzufügen', 'Arrange': 'Anordnen', 'Done': 'Fertig', 'Undo': 'Rückgängig', 'Nothing to undo': 'Nichts rückgängig zu machen',
+      'The web preview cannot control the TV.': 'Die Web-Vorschau kann den Fernseher nicht steuern.', 'Not on Home': 'Nicht auf Home', 'Open selected group': 'Ausgewählte Gruppe öffnen', 'Always dimmed': 'Immer gedimmt', '1 app': '1 App', 'of': 'von', 'Add app': 'App hinzufügen', 'Arrange': 'Anordnen', 'Done': 'Fertig', 'Undo': 'Rückgängig', 'Nothing to undo': 'Nichts rückgängig zu machen',
       'Loading installed apps…': 'Installierte Apps werden geladen…', 'Could not read installed apps.': 'Installierte Apps konnten nicht gelesen werden.',
       'No installed apps found.': 'Keine installierten Apps gefunden.', 'These are the apps on your Home screen.': 'Das sind die Apps auf deinem Home-Bildschirm.',
       'No apps on Home': 'Keine Apps auf Home', 'Last app': 'Letzte App', 'Showing your first 8 Home apps.': 'Deine ersten 8 Home-Apps werden angezeigt.',

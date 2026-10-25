@@ -4,7 +4,7 @@
 - [Installation](Installation)
 - [Home button](Home-button)
 - [Updates](Updates)
-- [Tested TVs](Tested-TVs)
+- [Verified devices](Verified-devices)
 - [Troubleshooting](Troubleshooting)
 
 **Using Shore**

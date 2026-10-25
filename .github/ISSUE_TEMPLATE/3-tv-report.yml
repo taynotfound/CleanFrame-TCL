@@ -1,5 +1,5 @@
 name: My TV works (or doesn't)
-description: Tell me how Shore runs on your TV, so the website can list it.
+description: Tell me how Shore runs on your TV, so the website and the wiki can list it.
 labels: [tv-report]
 body:
   - type: input

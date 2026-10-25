@@ -16,10 +16,10 @@
 
 Shore is a free, open-source launcher for **Android TV and Google TV**. It shows your apps, the devices plugged into HDMI and a photo you chose, with the clock, the weather and a headline on top. While music plays it opens the song full screen, with synced lyrics. Hold Home and you are back in Google TV.
 
-It is a fork of [Nathan Clark's CleanFrame](https://github.com/nthnclrk/CleanFrame), which was made for Samsung's The Frame. The interface is the original HTML/CSS app; a small Java shell runs it full screen and connects it to the TV. Shore is built and tested on a **TCL 55C6KS**, and people run it on [other TVs](https://github.com/taynotfound/shore/wiki/Tested-TVs) too.
+It is a fork of [Nathan Clark's CleanFrame](https://github.com/nthnclrk/CleanFrame). The interface is the original HTML/CSS app; a small Java shell runs it full screen and connects it to the TV. Shore is built and tested on a **TCL 55C6KS**, and people run it on [other TVs](https://github.com/taynotfound/shore/wiki/Verified-devices) too.
 
 > [!NOTE]
-> **Unofficial.** Not affiliated with TCL, Google, Samsung or any streaming service. Everything is reversible, and each step says how.
+> **Unofficial.** Not affiliated with TCL, Google or any streaming service. Everything is reversible, and each step says how.
 
 ## Install
 
@@ -63,9 +63,18 @@ The [Installation](https://github.com/taynotfound/shore/wiki/Installation) page 
 <tr><td colspan="4"><sub><b>The phone companion</b>: photos, TV settings and apps from your phone, over your home Wi-Fi. Pictures of the real page with invented data.</sub></td></tr>
 </table>
 
-## Tested TVs
+## Verified devices
 
-TCL 55C6KS (the reference TV), TCL 65C7K, CHiQ L32QM8G and a Hisense A6N series set. Most Google TV and Android TV sets should work. See [Tested TVs](https://github.com/taynotfound/shore/wiki/Tested-TVs), and a [TV report](https://github.com/taynotfound/shore/issues/new?template=3-tv-report.yml) adds yours.
+Most Google TV and Android TV sets should work. These have been run:
+
+| Device | System | Status |
+| --- | --- | --- |
+| TCL 55C6KS | Android TV 12 (Google TV) | Reference TV: everything is built and checked here |
+| TCL 65C7K | Google TV | Reported working |
+| CHiQ L32QM8G | Android 14 | Reported working |
+| Hisense A6N series | Android TV 12, 2 GB RAM | Reported working, Home Assistant add-on tested |
+
+The wiki's [Verified devices](https://github.com/taynotfound/shore/wiki/Verified-devices) page has the details, and a [TV report](https://github.com/taynotfound/shore/issues/new?template=3-tv-report.yml) adds yours.
 
 ## Documentation
 

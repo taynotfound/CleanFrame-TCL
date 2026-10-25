@@ -13,7 +13,7 @@ New here? Start with [Installation](Installation). Something not working? See [T
 | [Installation](Installation) | Install Shore with `adb`, once. |
 | [Home button](Home-button) | Make the Home key open Shore; the TCL auto start fix. |
 | [Updates](Updates) | How Shore updates itself, and what release APKs leave out. |
-| [Tested TVs](Tested-TVs) | Sets confirmed to work. |
+| [Verified devices](Verified-devices) | The TVs and devices Shore has been run on. |
 | [Troubleshooting](Troubleshooting) | Common problems and their fixes. |
 
 ## Using Shore
@@ -45,4 +45,4 @@ New here? Start with [Installation](Installation). Something not working? See [T
 
 [Discord](https://discord.gg/z6C4Mj9VPK) is usually the fastest way to reach the maintainer. Bugs and TV reports go to [GitHub issues](https://github.com/taynotfound/shore/issues/new/choose). Shore is free; if you would like to support it: [Ko-fi](https://ko-fi.com/taygotkofi) · [GitHub Sponsors](https://github.com/sponsors/taynotfound).
 
-> **Unofficial.** Not affiliated with TCL, Google, Samsung or any streaming service. Everything here is reversible, and each step says how.
+> **Unofficial.** Not affiliated with TCL, Google or any streaming service. Everything here is reversible, and each step says how.

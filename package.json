@@ -2,17 +2,12 @@
   "name": "cleanframe",
   "version": "0.6.1",
   "private": true,
-  "description": "Shore: a plainer home screen for Android TV and Google TV (a fork of CleanFrame for Samsung The Frame).",
+  "description": "Shore: a plainer home screen for Android TV and Google TV.",
   "scripts": {
     "dev": "python3 scripts/preview.py",
     "check": "node --check app/main.js && node --check app/device.js && node --check app/device-android.js && python3 scripts/check.py",
-    "package": "python3 scripts/package.py",
-    "tv:info": "python3 scripts/tv.py info",
-    "tv:install": "python3 scripts/tv.py install",
-    "tv:launch": "python3 scripts/tv.py launch",
     "check:browser": "node scripts/check-browser.mjs",
     "dev:public": "python3 scripts/preview.py --public-fonts",
-    "export:public": "python3 scripts/export-public.py",
     "check:public": "python3 scripts/check-public.py",
     "bench": "node scripts/bench.mjs"
   },

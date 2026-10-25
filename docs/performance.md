@@ -1,6 +1,6 @@
 # Performance
 
-What Shore costs a slow TV, what each feature and add-on adds, and how to measure it. Numbers come from `npm run bench` (`scripts/bench.mjs`): local Chromium on the "potato" profile, a **6× CPU slowdown at 1280 × 720**, with the public fonts and a mocked app list. That makes a repeatable comparison between versions and features. It is **not** a measurement of a Samsung or Android TV. The TV's GPU, image decoder, memory and browser engine are different; confirm on the device before claiming a TV result (see [TV status](tv-status.md)).
+What Shore costs a slow TV, what each feature and add-on adds, and how to measure it. Numbers come from `npm run bench` (`scripts/bench.mjs`): local Chromium on the "potato" profile, a **6× CPU slowdown at 1280 × 720**, with the public fonts and a mocked app list. That makes a repeatable comparison between versions and features. It is **not** a measurement of a real TV. The TV's GPU, image decoder, memory and browser engine are different; confirm on the device before claiming a TV result.
 
 ## What is measured
 
