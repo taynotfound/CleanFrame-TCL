@@ -1023,6 +1023,16 @@ try {
     await current.reload(); await ready();
     check('A restart begins with the kept tier', await current.evaluate(() => { ShoreQA.tier = ''; return ShoreQA.tierSamples([]).tier; }) === 'balanced');
   });
+  await run('A tall Settings page scrolls to its last note', async () => {
+    await page({ seed: baseline({ bg: 'photo', motion: 'still', night: 'off' }) });
+    await current.addStyleTag({ content: '.appearance-rows .setting-section:first-child{margin-top:110px}' }); // a longer translation or one more row
+    await group('background');
+    for (let i = 0; i < 8; i++) await nav('down');
+    const f = await current.evaluate(() => { const r = [...document.querySelectorAll('.setting-reason')].pop().getBoundingClientRect(); return { focus: ShoreQA.state().focusAction, bottom: r.bottom, hint: document.querySelector('.appearance-hint, #appearanceDesc') ? document.querySelector('#appearanceDesc').getBoundingClientRect().top : 960 }; });
+    check('The last note is fully above the OK hint', f.focus === 'choice.motion.still' && f.bottom <= f.hint - 4, f);
+    for (let i = 0; i < 8; i++) await nav('up');
+    check('Going back up scrolls back', await current.evaluate(() => document.querySelector('#appearance .appearance-rows').scrollTop) === 0);
+  });
   await run('Auto performance says what held it back', async () => {
     await page({ seed: baseline({ bg: 'photo' }) });
     await current.evaluate(() => Object.defineProperty(navigator, 'deviceMemory', { get: () => 2, configurable: true }));
@@ -1087,6 +1097,8 @@ try {
     await current.keyboard.down('Enter'); await current.waitForTimeout(800); await current.keyboard.up('Enter');
     await act('message.quick.icon:' + id); await nav('ok');
     check('Quick actions open the icon page', (await state()).view === 'appearance' && (await state()).focusAction === 'iconset.auto');
+    const long = await current.evaluate(() => { const n = document.querySelector('[data-action^="iconset.mark:"] .setting-name'); n.textContent = 'Власний значок застосунку'; return { whole: n.scrollWidth <= n.clientWidth, height: n.clientHeight }; });
+    check('A long choice name wraps to a second line instead of ending in an ellipsis', long.whole && long.height <= 96, long);
     await act('iconset.mark:hdmi'); await nav('ok');
     check('A Shore mark is stored for that app only', JSON.stringify((await state()).iconFor) === JSON.stringify({ [id]: 'mark:hdmi' }), (await state()).iconFor);
     await nav('back');

@@ -3434,7 +3434,7 @@
   /* A page taller than the room above the OK hint (long translations, an extra access row) scrolls
      to keep the focused row and its section title in view instead of running under the hint. */
   function fitRows() {
-    var rows = appearanceRows, room = 952 - rows.offsetTop, f, sec, y = 0, el, top, bottom;
+    var rows = appearanceRows, room = 952 - rows.offsetTop, f, sec, secs, i, end, y = 0, el, top, bottom;
     if (rows.scrollHeight <= room + 2) { if (rows.className.indexOf('is-clipped') >= 0) { rows.className = rows.className.replace(/ ?is-clipped| ?is-more/g, ''); rows.style.maxHeight = ''; rows.scrollTop = 0; } return; }
     rows.style.maxHeight = room + 'px';
     if (rows.className.indexOf('is-clipped') < 0) rows.className += ' is-clipped';
@@ -3445,7 +3445,12 @@
       top = sec && sec.offsetParent === rows ? Math.min(y, sec.offsetTop) : y; bottom = y + f.offsetHeight;
       if (top < rows.scrollTop) rows.scrollTop = top;
       else if (bottom > rows.scrollTop + room - 8) rows.scrollTop = bottom - room + 24;
-    }
+      // From the last row that can be selected, go all the way down: rows after it can be unavailable, and notes
+      // (such as "Needs Night mode") sit below the rows.
+      secs = rows.querySelectorAll('.setting-section');
+      for (i = 0, end = !!sec; sec && i < secs.length; i++) if (secs[i].offsetTop > sec.offsetTop && secs[i].querySelector('.setting-choice:not(.is-disabled)')) end = false;
+      if (end) rows.scrollTop = rows.scrollHeight - room;
+    } else rows.scrollTop = 0; // focus is on Back, above the list
     rows.className = rows.className.replace(/ ?is-clipped| ?is-more/g, '') + ' is-clipped' + (rows.scrollTop + room < rows.scrollHeight - 4 ? ' is-more' : '');
   }
   function remoteHint(item) {

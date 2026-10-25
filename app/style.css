@@ -865,3 +865,5 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
 .perf-potato *{will-change:auto!important}
 .perf-potato .shelf,.perf-potato .shelf.fade-l,.perf-potato .shelf.fade-r,.perf-potato .shelf.fade-l.fade-r,.perf-potato .ph-list,.perf-potato .ph-list.is-compact{-webkit-mask-image:none;mask-image:none}
 .perf-potato .wx-layer,.perf-potato .photo-video{display:none}
+/* Choice rows in a list may use two lines, so a long translation stays readable (value rows keep one line and an ellipsis) */
+.setting-section:not(.is-horizontal) .setting-choice:not(.is-pair):not(.wallpaper-choice) .setting-name{white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-height:44px;overflow:hidden}
