@@ -64,6 +64,8 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run check:public
+      - name: Unit tests (Discord notifier)
+        run: npm test
 
   # The real interface in Chromium: navigation, focus, settings, add-ons, migrations (a mocked TV).
   ui:

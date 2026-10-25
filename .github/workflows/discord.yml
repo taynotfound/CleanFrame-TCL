@@ -1,0 +1,53 @@
+name: Discord
+
+# One tidy Discord message per event, instead of GitHub's built-in Discord feed:
+#   pushes, pull requests, reviews, issues, comments, stars, forks and releases each get one embed, and
+#   ONE digest per commit lists the result of every CI workflow (sent by whichever finishes last).
+#   Weekly scans and manual workflows only report when they fail.
+# Needs the repository secret DISCORD_WEBHOOK_URL (Settings › Secrets and variables › Actions). Without it
+# the job succeeds and sends nothing. Remove any GitHub-native Discord webhook (Settings › Webhooks) first.
+#
+# pull_request_target is deliberate: forks' pull requests get the secret too. This workflow never checks out
+# or runs pull request code; it runs scripts/discord-notify.mjs from the default branch and treats every
+# event field as untrusted text.
+on:
+  push:
+  pull_request_target:
+    types: [opened, reopened, ready_for_review, closed]
+  pull_request_review:
+    types: [submitted]
+  issues:
+    types: [opened, closed, reopened]
+  issue_comment:
+    types: [created]
+  watch:
+    types: [started]
+  fork:
+  release:
+    types: [published]
+  workflow_run:
+    workflows: [Check, Android build, CodeQL, Security, Website, Wiki, Links, Android TV APK]
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          sparse-checkout: scripts/discord-notify.mjs
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Send to Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/discord-notify.mjs

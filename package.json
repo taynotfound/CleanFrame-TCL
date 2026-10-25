@@ -10,6 +10,7 @@
     "check:site": "node scripts/check-site.mjs",
     "check:docs": "python3 scripts/check-docs.py",
     "check:performance": "node scripts/check-performance.mjs",
+    "test": "node --test tests/*.test.mjs",
     "check:browser": "node scripts/check-browser.mjs",
     "dev:public": "python3 scripts/preview.py --public-fonts",
     "check:public": "python3 scripts/check-public.py",
