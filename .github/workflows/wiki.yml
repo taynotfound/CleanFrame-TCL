@@ -27,7 +27,10 @@ jobs:
           TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          git clone "https://x-access-token:${TOKEN}@github.com/${REPO}.wiki.git" wiki
+          if ! git clone "https://x-access-token:${TOKEN}@github.com/${REPO}.wiki.git" wiki; then
+            echo "::notice::The wiki is not set up yet. Enable Wikis in the repository settings and create its first page, then run this workflow again."
+            exit 0
+          fi
           find wiki -maxdepth 1 -name '*.md' -delete
           cp docs/wiki/*.md wiki/
           cd wiki
