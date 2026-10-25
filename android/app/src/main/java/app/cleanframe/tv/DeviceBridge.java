@@ -88,6 +88,23 @@ final class DeviceBridge {
     @JavascriptInterface
     public void haCameraHangup(int session) { if (activity != null) HomeAssistant.get(context).hangup(session); }
 
+    /** Pi-hole / AdGuard Home add-on: {configured, enabled, kind, url, status, error, at, total, blocked, blocking, until}. Never the password. */
+    @JavascriptInterface
+    public String adInfo() { return activity == null ? "{}" : AdBlock.get(context).info(); }
+
+    @JavascriptInterface
+    public void adEnable(boolean on) { if (activity != null) AdBlock.get(context).setEnabled(on); }
+
+    @JavascriptInterface
+    public void adRefresh() { if (activity != null) AdBlock.get(context).refresh(); }
+
+    /** Pauses blocking for 1 to 60 minutes; 0 turns it back on. */
+    @JavascriptInterface
+    public void adPause(int minutes) { if (activity != null) AdBlock.get(context).pause(minutes); }
+
+    @JavascriptInterface
+    public void adForget() { if (activity != null) AdBlock.get(context).forget(); }
+
     /** Keeps (or releases) a favourite online photo across refreshes. */
     @JavascriptInterface
     public void onlineKeep(String id, boolean on) { if (online != null && id != null && id.matches("[A-Za-z0-9._-]{1,160}")) online.keep(id, on); }

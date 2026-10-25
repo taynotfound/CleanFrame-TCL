@@ -1,5 +1,6 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("nl", {
+      "Pi-hole and AdGuard": "Pi-hole en AdGuard", "Ads blocked today, and a pause button": "Vandaag geblokkeerde advertenties en een pauzeknop", "The server refused the password": "De server weigerde het wachtwoord", "Couldn’t reach the server": "Server niet bereikbaar", "The server didn’t answer as expected": "De server antwoordde onverwacht", "Blocking off": "Blokkeren uit", "Blocking": "Blokkeren", "Pause blocking": "Blokkeren pauzeren", "Turn blocking back on": "Blokkeren weer aanzetten", "Forget the server and its password": "Server en wachtwoord vergeten", "Pausing lets a blocked site or app work for a while; blocking comes back on its own.": "Pauzeren laat een geblokkeerde site of app even werken; daarna blokkeert het vanzelf weer.", "Type the server’s address and password in the phone companion, on the Add-ons tab. They stay on the TV.": "Typ het adres en wachtwoord van de server in de telefoon-companion, tab Uitbreidingen. Ze blijven op de tv.",
       "Choose a photo for this part of the day": "Kies een foto voor dit dagdeel", "Pick one automatically": "Automatisch kiezen",
       "By time of day": "Op tijd van de dag", "Parts of the day": "Dagdelen", "Morning": "Ochtend", "Day": "Dag", "Evening": "Avond", "Choose a photo": "Kies een foto", "A different photo from your rotation each day": "Elke dag een andere foto uit je rotatie", "Automatic prefers darker photos.": "Automatisch kiest liever donkere foto’s.", "Automatic prefers brighter photos.": "Automatisch kiest liever lichte foto’s.", "Morning from 5, day from 11, evening from 17 and night from 21.": "Ochtend vanaf 5, dag vanaf 11, avond vanaf 17 en nacht vanaf 21 uur.", "Part of the day": "Dagdeel",
       "Use this name": "Deze naam gebruiken",
@@ -106,6 +107,7 @@ CleanFrameI18n.load("nl", {
       "While music plays": "Terwijl er muziek speelt", "Album art as background": "Albumhoes als achtergrond", "Find artist pictures online": "Artiestfoto’s online zoeken", "Uses only the cover the music app provides.": "Gebruikt alleen de hoes van de muziekapp.", "Artist pictures": "Artiestfoto’s"
     },
 [
+      [/^([\d.]+)% blocked today$/, "Vandaag $1% geblokkeerd"], [/^Blocking paused · (\d+) min$/, "Blokkeren gepauzeerd · $1 min"], [/^Pause (\d+) min$/, "$1 min pauze"],
       [/^The device calls itself (.+)\.$/, "Het apparaat noemt zich $1."],
       [/^(\d+) min$/, "$1 min"], [/^Sleep in (\d+) min$/, "Uit over $1 min"], [/^Sleep in (\d+) hr (\d+) min$/, "Uit over $1 u $2 min"], [/^(.+) is locked\.$/, "$1 is vergrendeld."], [/^(\d+) apps locked$/, "$1 apps vergrendeld"],
       [/^(\d+) apps? chosen$/, '$1 gekozen'], 

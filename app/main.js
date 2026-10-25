@@ -97,16 +97,16 @@
     cformat: ['12', '24'], cdate: ['off', 'on'], cweather: ['off', 'on'], wunit: ['c', 'f'], cplaying: ['off', 'on'], cart: ['off', 'on'], clook: ['off', 'on'], saver: ['off', '5', '10', '15'], csize: ['small', 'medium', 'large', 'huge'], cweight: ['auto', 'thin', 'light', 'regular', 'bold'],
     night: ['off', 'scheduled', 'always'], nhours: ['20-7', '21-7', '22-6', '23-7'], ndim: ['soft', 'medium', 'strong'], idle: ['off', '1', '5'], focus: ['type', 'glass'], material: ['soft', 'frost', 'tint'],
     svsrc: ['like', 'every', 'builtin'], svlay: ['mix', 'single', 'mosaic'], svtime: ['15', '30', '60'], svmotion: ['still', 'drift'], iask: ['off', 'on'], ncalm: ['off', 'on'], wfx: ['off', 'on'], cnews: ['off', 'on'], svphoto: ['off', 'on'], svclock: ['off', 'on'], svdate: ['off', 'on'], svmusic: ['off', 'on'], wicon: ['off', 'on'], cwave: ['off', 'on'],
-    cpos: ['left', 'center'], csec: ['off', 'on'], tint: ['none', 'warm', 'cool', 'rose', 'green'], dglass: ['clear', 'default', 'solid'], isize: ['small', 'default', 'large'], npdim: ['none', 'soft', 'strong'], svpos: ['move', 'fixed'], istyle: ['shore', 'original', 'mono'], cwatch: ['off', 'on'], plyric: ['off', 'on'], pword: ['off', 'on'], pbeat: ['off', 'on'], crecent: ['off', 'on'], ccal: ['off', 'on'], pqueue: ['off', 'on'], ptrans: ['off', 'on'], aha: ['off', 'on'],
+    cpos: ['left', 'center'], csec: ['off', 'on'], tint: ['none', 'warm', 'cool', 'rose', 'green'], dglass: ['clear', 'default', 'solid'], isize: ['small', 'default', 'large'], npdim: ['none', 'soft', 'strong'], svpos: ['move', 'fixed'], istyle: ['shore', 'original', 'mono'], cwatch: ['off', 'on'], plyric: ['off', 'on'], pword: ['off', 'on'], pbeat: ['off', 'on'], crecent: ['off', 'on'], ccal: ['off', 'on'], pqueue: ['off', 'on'], ptrans: ['off', 'on'], aha: ['off', 'on'], aad: ['off', 'on'],
     nsrc: ['google', 'phone'].concat(NEWS_OUTLETS.map(function (o) { return o.id; })) };
   /* Newer axes with their defaults: stored, migrated and validated like the others. */
-  var MORE_LOOK = { svphoto: 'off', ncalm: 'off', wfx: 'off', cnews: 'off', iask: 'on', svsrc: 'like', svlay: 'mix', svtime: '30', svmotion: 'drift', svclock: 'on', svdate: 'on', svmusic: 'on', wicon: 'on', cwave: 'on', cpos: 'left', csec: 'off', tint: 'none', dglass: 'default', isize: 'default', npdim: 'none', svpos: 'move', nsrc: 'google', istyle: 'shore', cwatch: 'on', plyric: 'on', pword: 'on', pbeat: 'off', crecent: 'on', ccal: 'off', pqueue: 'on', ptrans: 'off', aha: 'off' };
+  var MORE_LOOK = { svphoto: 'off', ncalm: 'off', wfx: 'off', cnews: 'off', iask: 'on', svsrc: 'like', svlay: 'mix', svtime: '30', svmotion: 'drift', svclock: 'on', svdate: 'on', svmusic: 'on', wicon: 'on', cwave: 'on', cpos: 'left', csec: 'off', tint: 'none', dglass: 'default', isize: 'default', npdim: 'none', svpos: 'move', nsrc: 'google', istyle: 'shore', cwatch: 'on', plyric: 'on', pword: 'on', pbeat: 'off', crecent: 'on', ccal: 'off', pqueue: 'on', ptrans: 'off', aha: 'off', aad: 'off' };
   /* On/off settings that OK flips. */
-  var TOGGLES = ['svphoto', 'ncalm', 'wfx', 'cnews', 'iask', 'cdate', 'cweather', 'cplaying', 'cart', 'clook', 'svclock', 'svdate', 'svmusic', 'wicon', 'cwave', 'csec', 'cwatch', 'plyric', 'pword', 'pbeat', 'crecent', 'ccal', 'pqueue', 'ptrans', 'aha'];
+  var TOGGLES = ['svphoto', 'ncalm', 'wfx', 'cnews', 'iask', 'cdate', 'cweather', 'cplaying', 'cart', 'clook', 'svclock', 'svdate', 'svmusic', 'wicon', 'cwave', 'csec', 'cwatch', 'plyric', 'pword', 'pbeat', 'crecent', 'ccal', 'pqueue', 'ptrans', 'aha', 'aad'];
   var LOOK_NAMES = { bg: 'Background', layout: 'Layout', apps: 'Apps', font: 'Font', controls: 'Home controls', inputs: 'Inputs', motion: 'Motion', tweight: 'Text weight', tsize: 'App name size', cformat: 'Format', cdate: 'Date', cweather: 'Weather', wunit: 'Temperature', cplaying: 'Now playing', cart: 'Album art', clook: 'Artist pictures', saver: 'Screensaver', csize: 'Clock size', cweight: 'Clock weight',
     night: 'Night mode', nhours: 'Night hours', ndim: 'Night dimming', idle: 'Hide controls when idle', focus: 'Focus', material: 'Material',
     svphoto: 'Photo title', ncalm: 'Calmer photos at night', wfx: 'Weather effects', cnews: 'Headlines', iask: 'Ask to switch', svsrc: 'Screensaver photos', svlay: 'Arrangement', svtime: 'Each slide', svmotion: 'Photo motion', svclock: 'Clock', svdate: 'Date and weather', svmusic: 'Music', wicon: 'Weather icon', cwave: 'Level meter',
-    cpos: 'Clock position', csec: 'Seconds', tint: 'Accent', dglass: 'App row glass', isize: 'Icon size', npdim: 'Album art dimming', svpos: 'Clock on the screensaver', nsrc: 'Source', istyle: 'Icon style', cwatch: 'Continue watching', plyric: 'Lyrics', pword: 'Word by word', pbeat: 'Beat pulse', crecent: 'Recently used', ccal: 'Calendar', pqueue: 'Up next', ptrans: 'Translate lyrics', aha: 'Home Assistant' };
+    cpos: 'Clock position', csec: 'Seconds', tint: 'Accent', dglass: 'App row glass', isize: 'Icon size', npdim: 'Album art dimming', svpos: 'Clock on the screensaver', nsrc: 'Source', istyle: 'Icon style', cwatch: 'Continue watching', plyric: 'Lyrics', pword: 'Word by word', pbeat: 'Beat pulse', crecent: 'Recently used', ccal: 'Calendar', pqueue: 'Up next', ptrans: 'Translate lyrics', aha: 'Home Assistant', aad: 'Pi-hole and AdGuard' };
   var VALUE_NAMES = { dark: 'Dark', light: 'Light', photo: 'Photo', list: 'List', dock: 'Dock', type: 'Type', glass: 'Glass', soft: 'Soft', frost: 'Frost', tint: 'Clear tint', icons: 'Icons', both: 'Icons and text', text: 'Text', front: 'First in Home', row: 'Own row', still: 'Still', drift: 'Drift', auto: 'Auto', thin: 'Thin', regular: 'Regular', bold: 'Bold', small: 'Small', 'default': 'Default', large: 'Large',
     medium: 'Medium', huge: 'Huge', '12': '12-hour', '24': '24-hour', on: 'Show', scheduled: 'Timed', always: 'Always', soft: 'Soft', strong: 'Strong',
     '20-7': '20–07', '21-7': '21–07', '22-6': '22–06', '23-7': '23–07', '1': 'After 1 min', '5': 'After 5 min', '10': 'After 10 min', '15': 'After 15 min', c: '°C', f: '°F',
@@ -152,6 +152,7 @@
     open: '<path d="M14 4.5h5.5V10"/><path d="m19.5 4.5-8 8"/><path d="M17 13.5v4.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 5 18V9a1.5 1.5 0 0 1 1.5-1.5H11"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
     minus: '<path d="M5 12h14"/>',
+    shield: '<path d="M12 3.5 19 6v5.5c0 4.3-2.9 7.6-7 9-4.1-1.4-7-4.7-7-9V6Z"/><path d="m9 12 2.2 2.2L15.5 10"/>',
     music: '<path d="M9 17.5V6l10-2v11.5"/><circle cx="6.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="15.5" r="2.5"/>',
     left: '<path d="m14.5 5-7 7 7 7"/>',
     right: '<path d="m9.5 5 7 7-7 7"/>',
@@ -183,7 +184,7 @@
   function lookOf(c) { return { bg: c.bg, wall: c.wall, layout: c.layout, apps: c.apps, font: c.font, controls: c.controls, inputs: c.inputs, lstyle: c.lstyle, motion: c.motion, tweight: c.tweight, tsize: c.tsize, cformat: c.cformat, cdate: c.cdate, cweather: c.cweather, wunit: c.wunit, cplaying: c.cplaying, cart: c.cart, clook: c.clook, saver: c.saver, csize: c.csize, cweight: c.cweight,
       night: c.night, nhours: c.nhours, ndim: c.ndim, idle: c.idle, focus: c.focus, material: c.material, svsrc: c.svsrc, svlay: c.svlay, svtime: c.svtime,
       svmotion: c.svmotion, iask: c.iask, ncalm: c.ncalm, wfx: c.wfx, cnews: c.cnews, svphoto: c.svphoto, svclock: c.svclock, svdate: c.svdate, svmusic: c.svmusic, wicon: c.wicon, cwave: c.cwave,
-      cpos: c.cpos, csec: c.csec, tint: c.tint, dglass: c.dglass, isize: c.isize, npdim: c.npdim, svpos: c.svpos, nsrc: c.nsrc, istyle: c.istyle, ipack: c.ipack, cwatch: c.cwatch, plyric: c.plyric, pword: c.pword, pbeat: c.pbeat, crecent: c.crecent, ccal: c.ccal, pqueue: c.pqueue, ptrans: c.ptrans, aha: c.aha }; }
+      cpos: c.cpos, csec: c.csec, tint: c.tint, dglass: c.dglass, isize: c.isize, npdim: c.npdim, svpos: c.svpos, nsrc: c.nsrc, istyle: c.istyle, ipack: c.ipack, cwatch: c.cwatch, plyric: c.plyric, pword: c.pword, pbeat: c.pbeat, crecent: c.crecent, ccal: c.ccal, pqueue: c.pqueue, ptrans: c.ptrans, aha: c.aha, aad: c.aad }; }
   function materialApplies(c) { c = c || S.c; return c.bg === 'photo' && (c.layout === 'dock' || c.focus === 'glass'); }
 
   /* ---------- Helpers ---------- */
@@ -1372,7 +1373,7 @@
   function closeEditor() { clearSession(); pop(); }
 
   /* ---------- Settings, Layout and messages ---------- */
-  var PARENT = { ha: 'addons', musicview: 'music', health: 'samsung', updates: 'samsung', saverlook: 'screensaver', rotation: 'background', online: 'background', unsplash: 'online', animated: 'online', fonts: 'typography', icons: 'layout', iconpack: 'icons', iconapps: 'icons', appicon: 'iconapps', input: 'inputs', inputname: 'input', todpart: 'rotation', lock: 'samsung', lockapps: 'lock', remote: 'samsung', remotepick: 'remote', remoteapp: 'remotepick' };
+  var PARENT = { ha: 'addons', adblock: 'addons', musicview: 'music', health: 'samsung', updates: 'samsung', saverlook: 'screensaver', rotation: 'background', online: 'background', unsplash: 'online', animated: 'online', fonts: 'typography', icons: 'layout', iconpack: 'icons', iconapps: 'icons', appicon: 'iconapps', input: 'inputs', inputname: 'input', todpart: 'rotation', lock: 'samsung', lockapps: 'lock', remote: 'samsung', remotepick: 'remote', remoteapp: 'remotepick' };
   function groupName(group, t) { return group === 'remotepick' ? buttonName(t.key) : (group === 'appicon' || group === 'input') && t && app(t.app) ? app(t.app).name : group === 'todpart' && t && t.part ? partName(t.part) : DETAIL_NAMES[group]; }
   function parentName(t) { return (t.group === 'appicon' || t.group === 'inputname') && t.fromHome ? 'Home' : t.group === 'appicon' && app(t.app) && app(t.app).input ? app(t.app).name : PARENT[t.group] ? groupName(PARENT[t.group], t) : 'Settings'; }
   /* ---------- Wallpaper sources: any mix of Shore's own, My photos and online sources ----------
@@ -1453,7 +1454,7 @@
     else if (id === 'phone') openPhone();
     else openAppearance(id);
   }
-  var DETAIL_NAMES = { addons: 'Add-ons', ha: 'Home Assistant', musicview: 'Music view', health: 'Setup and health', updates: 'Shore updates', fonts: 'Font', clock: 'Clock', display: 'Night', online: 'Wallpaper sources', unsplash: 'Unsplash themes', animated: 'Animated wallpapers', background: 'Wallpaper', layout: 'Home screen', typography: 'Text', icons: 'App icons', iconpack: 'Icon pack', iconapps: 'Per-app icons', appicon: 'Icon', input: 'Input', inputname: 'Name', todpart: 'Part of the day', lock: 'Parental lock', lockapps: 'Locked apps', inputs: 'Inputs', focus: 'Style', rotation: 'Rotation', samsung: TV.brand, remote: 'Remote buttons', remoteapp: 'Choose an app', phone: 'Phone', weather: 'Weather', music: 'Music', news: 'News', screensaver: 'Screensaver', saverlook: 'Arrangement and clock' };
+  var DETAIL_NAMES = { addons: 'Add-ons', ha: 'Home Assistant', adblock: 'Pi-hole and AdGuard', musicview: 'Music view', health: 'Setup and health', updates: 'Shore updates', fonts: 'Font', clock: 'Clock', display: 'Night', online: 'Wallpaper sources', unsplash: 'Unsplash themes', animated: 'Animated wallpapers', background: 'Wallpaper', layout: 'Home screen', typography: 'Text', icons: 'App icons', iconpack: 'Icon pack', iconapps: 'Per-app icons', appicon: 'Icon', input: 'Input', inputname: 'Name', todpart: 'Part of the day', lock: 'Parental lock', lockapps: 'Locked apps', inputs: 'Inputs', focus: 'Style', rotation: 'Rotation', samsung: TV.brand, remote: 'Remote buttons', remoteapp: 'Choose an app', phone: 'Phone', weather: 'Weather', music: 'Music', news: 'News', screensaver: 'Screensaver', saverlook: 'Arrangement and clock' };
   function choice(axis, value, disabled) {
     if (axis === 'source') return { action: 'online.' + value, axis: axis, value: value, disabled: !!disabled, label: sourceName(value), tick: true, applied: sourceOn(value) };
     return { action: axis === 'mode' ? 'rotation.' + value : 'choice.' + axis + '.' + value, axis: axis, value: value, disabled: !!disabled,
@@ -1646,6 +1647,7 @@
     if (date || w || inside) html += '<span class="cap-date">' + escRaw(date) + (date && w ? ' · ' : '') + weatherIcon() + escRaw(w) + ((date || w) && inside ? ' · ' : '') + esc(inside) + '</span>';
     if (NOWPLAYING && S.c.cplaying === 'on' && p.playing) html += '<span class="cap-date cap-playing">' + wave() + escRaw(p.title + (p.artist ? ' · ' + p.artist : '') + (p.app ? ' — ' + p.app : '')) + '</span>';
     if (sleepLeft() > 0) html += '<span class="cap-date cap-sleep">' + icon('w-moon', 'wx') + esc(sleepText()) + '</span>';
+    if (adLine()) html += '<span class="cap-date cap-ad">' + icon('shield', 'wx') + esc(adLine()) + '</span>';
     if (calendarLine()) html += '<span class="cap-date cap-cal">' + icon('calendar', 'wx') + escRaw(calendarLine()) + '</span>';
     return html;
   }
@@ -1815,10 +1817,12 @@
      Each add-on is one on/off axis, off by default, with a row on Settings › Add-ons, its own settings page
      and, while on, whatever it adds to Home. available() hides an add-on this TV can't run; nothing of it
      loads, polls or shows until it is on, and it starts only after Home has painted. */
-  var HA = window.CleanFrameHA || null, addonsReady = false, addonsSynced = false, haTimer = 0;
+  var HA = window.CleanFrameHA || null, AD = window.CleanFrameAdBlock || null, addonsReady = false, addonsSynced = false, adSynced = false, haTimer = 0;
   var ADDONS = [
     { id: 'ha', axis: 'aha', name: 'Home Assistant', line: 'Lights, switches and cameras', page: 'ha',
-      available: function () { return !!(HA && HA.available()); }, summary: function () { return haStatus(); } }];
+      available: function () { return !!(HA && HA.available()); }, summary: function () { return haStatus(); } },
+    { id: 'ad', axis: 'aad', name: 'Pi-hole and AdGuard', line: 'Ads blocked today, and a pause button', page: 'adblock',
+      available: function () { return !!(AD && AD.available()); }, summary: function () { return adStatus(); } }];
   function addonsAvailable() { return ADDONS.filter(function (a) { return a.available(); }); }
   function addonOn(a) { return S.c[a.axis] === 'on' && a.available(); }
   function addonsSummary() { var on = addonsAvailable().filter(addonOn); return on.length ? on.map(function (a) { return a.name; }).join(', ') : 'Off'; }
@@ -1830,6 +1834,11 @@
   }
   /* Starts and stops each add-on with its switch; render() calls it, so a choice from the phone counts too. */
   function syncAddons() {
+    if (addonsReady && AD && AD.available()) {
+      var adWant = S.c.aad === 'on' && !DREAM, adFirst = !adSynced;
+      adSynced = true;
+      if (adWant !== AD.running() || adFirst && !adWant && !DREAM) { if (adWant) AD.start(); else { AD.stop(adFirst); while (top().id === 'appearance' && top().group === 'adblock') pop(); } }
+    }
     if (!addonsReady || !HA || !HA.available()) return;
     var want = S.c.aha === 'on' && !DREAM, first = !addonsSynced;
     addonsSynced = true;
@@ -1837,6 +1846,36 @@
     if (want) HA.start();
     else { HA.stop(first); while (top().id === 'ha' || top().id === 'hacam' || top().id === 'hactl') pop(); }
   }
+
+  /* ---------- Pi-hole and AdGuard add-on: a line under the clock and a pause (addons/adblock.js) ---------- */
+  function adShown() { return !!(AD && S.c.aad === 'on' && AD.running() && AD.model().configured); }
+  function adStatus() {
+    var m = AD.model();
+    if (S.c.aad !== 'on') return 'Off';
+    if (!m.configured || m.status === 'setup') return 'Set up on your phone';
+    if (m.status === 'error') return m.error === 'auth' ? 'The server refused the password' : m.error === 'network' ? 'Couldn’t reach the server' : 'The server didn’t answer as expected';
+    if (m.status !== 'ok') return 'Connecting…';
+    return adLine();
+  }
+  /* "12.4% blocked today" or "Blocking paused · 4 min" (English; the caption translates it). */
+  function adLine() {
+    var m = adShown() ? AD.model() : null, left;
+    if (!m || m.status !== 'ok') return '';
+    if (!m.blocking) { left = m.until ? Math.max(1, Math.ceil((m.until - Date.now()) / 60000)) : 0; return left ? 'Blocking paused · ' + left + ' min' : 'Blocking off'; }
+    return m.percent >= 0 ? m.percent + '% blocked today' : '';
+  }
+  function adSections() {
+    var m = AD.model(), ok = m.configured && m.status === 'ok';
+    var out = [{ id: 'adstatus', title: '', items: [{ action: 'ad.refresh', label: 'Connection', description: adStatus(), pair: true }],
+      reason: m.configured && m.url ? (m.kind === 'adguard' ? 'AdGuard Home' : 'Pi-hole') + ' · ' + m.url.replace(/^https?:\/\//, '') : '' }];
+    if (!m.configured) return out.concat([{ id: 'adsetup', title: '', items: [], reason: 'Type the server’s address and password in the phone companion, on the Add-ons tab. They stay on the TV.' }]);
+    out.push({ id: 'adpause', title: 'Blocking', items: [{ action: 'ad.pause.0', label: 'On', tick: true, applied: m.blocking, disabled: !ok }]
+      .concat([5, 30, 60].map(function (n) { return { action: 'ad.pause.' + n, label: 'Pause ' + n + ' min', tick: true, applied: !m.blocking && m.until > Date.now() && Math.abs(m.until - Date.now() - n * 60000) < 60000 * Math.max(1, n / 2), disabled: !ok }; })),
+      reason: m.blocking ? 'Pausing lets a blocked site or app work for a while; blocking comes back on its own.' : '' });
+    out.push({ id: 'adforget', title: '', items: [{ action: 'ad.forget', label: 'Disconnect', description: 'Forget the server and its password' }] });
+    return out;
+  }
+  if (AD) AD.onChange(function () { var t = top(); if (t.id === 'home' || t.id === 'settings' || isSettingsDetail(t)) render(); });
 
   /* ---------- Home Assistant add-on: a Smart home control on Home opens rooms and cameras (addons/homeassistant.js) ---------- */
   function haShown() { return !!(HA && S.c.aha === 'on' && HA.running() && HA.model().configured); }
@@ -2209,7 +2248,7 @@
     ['Weather', ['cweather', 'wunit', 'wicon', 'wfx']],
     ['Music', ['cplaying', 'cwave', 'cart', 'npdim', 'clook', 'plyric', 'pword', 'pbeat', 'pqueue', 'ptrans']],
     ['News', ['cnews', 'nsrc']],
-    ['Add-ons', ['aha']],
+    ['Add-ons', ['aha', 'aad']],
     ['Night', ['night', 'nhours', 'ndim', 'idle']],
     ['Screensaver', ['saver', 'svsrc', 'svtime', 'svlay', 'svmotion', 'svclock', 'svpos', 'svdate', 'svmusic', 'svphoto']]];
   var companionTimer = 0, companionLast = '';
@@ -2227,6 +2266,7 @@
     if ((axis === 'cnews' || axis === 'nsrc') && !NEWS) return null;
     if (axis === 'cwatch' && !WATCH) return null;
     if (axis === 'aha' && !(HA && HA.available())) return null;
+    if (axis === 'aad' && !(AD && AD.available())) return null;
     if (axis === 'nsrc') return { id: 'nsrc', name: T('News source'), kind: 'list', value: S.c.nsrc,
       options: ['google'].concat(newsOutlets().map(function (o) { return o.id; })).concat(['phone']).map(function (v) { return { value: v, label: T(newsSourceName(v)) }; }) };
     if (!LOOK_VALUES[axis]) return null;
@@ -2419,6 +2459,7 @@
     if (t.group === 'phone') return phoneSections(flat);
     if (t.group === 'addons') return addonSections();
     if (t.group === 'ha') return haSections();
+    if (t.group === 'adblock') return adSections();
     if (t.group === 'updates') return updateSections();
     if (t.group === 'health') return healthSections();
     if (t.group === 'online' || t.group === 'unsplash' || t.group === 'animated') {
@@ -2632,6 +2673,10 @@
     else if (item.action === 'open.musicview') openAppearance('musicview');
     else if (item.action === 'open.health') openHealth();
     else if (item.action === 'open.ha') openHaSettings();
+    else if (item.action === 'open.adblock') { AD.refresh(); openAppearance('adblock'); }
+    else if (item.action === 'ad.refresh') AD.refresh();
+    else if (/^ad\.pause\.\d+$/.test(item.action)) { AD.pause(+item.action.slice(9)); render(); }
+    else if (item.action === 'ad.forget') { AD.forget(); render(); }
     else if (item.action === 'ha.refresh') HA.refresh();
     else if (item.action.indexOf('ha.area.') === 0) haArea(+item.action.slice(8));
     else if (item.action === 'ha.forget') openMessage('haforget');
@@ -3476,7 +3521,7 @@
         + command({ action: 'settings.retry', label: 'Try again' }, '<span>Try again</span>', 'setting-retry');
     }
     setHTML(appearanceStatus, status);
-    hint = selected.disabled ? '' : remoteHint(selected) || (selected.action === 'settings.back' ? 'Return to ' + (parentName(t)) : selected.action === 'settings.retry' ? 'Retry this change' : selected.axis === 'source' ? (selected.applied ? 'Remove from rotation' : 'Add to rotation') : selected.axis ? 'Apply selected setting' : selected.action === 'background.wallpaper' ? 'Choose a wallpaper' : selected.action === 'background.rotation' ? 'Choose a rotation interval' : selected.action === 'background.online' ? 'Choose a wallpaper source' : selected.action === 'phone.toggle' ? (S.phone.enabled ? 'Turn off' : 'Turn on') : selected.action === 'phone.forget' ? 'Phones scan a new code' : selected.action === 'phone.clear' ? 'Remove all my photos' : selected.action === 'nowplaying.access' ? 'Open Notification access' : /^open\./.test(selected.action) ? 'Open selected group' : selected.more ? 'Show these sources' : selected.action === 'typography.fonts' ? 'Choose a font' : selected.action === 'saver.start' ? 'Start the screensaver now' : selected.action === 'health.remote' ? 'Open Accessibility settings' : selected.action === 'health.phone' ? 'Open Phone settings' : selected.action === 'update.install' ? 'Download and install' : selected.action === 'update.check' ? 'Check now' : selected.action === 'update.auto' ? (S.update.auto ? 'Turn off' : 'Turn on') : selected.action === 'update.wait' ? 'Please wait' : selected.action.indexOf('iconapp.') === 0 ? 'Choose an icon' : selected.action.indexOf('iconset.') === 0 ? 'Use this icon' : selected.action.indexOf('inname.') === 0 ? 'Use this name' : selected.action.indexOf('todpart.') === 0 ? 'Choose a photo for this part of the day' : selected.action.indexOf('todauto.') === 0 ? 'Pick one automatically' : selected.action.indexOf('todpick.') === 0 ? 'Choose a photo' : /^input(page|name)\./.test(selected.action) ? 'Open selected group' : selected.action.indexOf('input.toggle.') === 0 ? (selected.applied ? 'Hide from Home' : 'Show on Home') : selected.action === 'ha.refresh' ? 'Check again' : selected.action.indexOf('ha.area.') === 0 ? (selected.applied ? 'Hide this room' : 'Show this room') : selected.action === 'ha.forget' ? 'Forget the server and its token' : 'Open on the TV');
+    hint = selected.disabled ? '' : remoteHint(selected) || (selected.action === 'settings.back' ? 'Return to ' + (parentName(t)) : selected.action === 'settings.retry' ? 'Retry this change' : selected.axis === 'source' ? (selected.applied ? 'Remove from rotation' : 'Add to rotation') : selected.axis ? 'Apply selected setting' : selected.action === 'background.wallpaper' ? 'Choose a wallpaper' : selected.action === 'background.rotation' ? 'Choose a rotation interval' : selected.action === 'background.online' ? 'Choose a wallpaper source' : selected.action === 'phone.toggle' ? (S.phone.enabled ? 'Turn off' : 'Turn on') : selected.action === 'phone.forget' ? 'Phones scan a new code' : selected.action === 'phone.clear' ? 'Remove all my photos' : selected.action === 'nowplaying.access' ? 'Open Notification access' : /^open\./.test(selected.action) ? 'Open selected group' : selected.more ? 'Show these sources' : selected.action === 'typography.fonts' ? 'Choose a font' : selected.action === 'saver.start' ? 'Start the screensaver now' : selected.action === 'health.remote' ? 'Open Accessibility settings' : selected.action === 'health.phone' ? 'Open Phone settings' : selected.action === 'update.install' ? 'Download and install' : selected.action === 'update.check' ? 'Check now' : selected.action === 'update.auto' ? (S.update.auto ? 'Turn off' : 'Turn on') : selected.action === 'update.wait' ? 'Please wait' : selected.action.indexOf('iconapp.') === 0 ? 'Choose an icon' : selected.action.indexOf('iconset.') === 0 ? 'Use this icon' : selected.action.indexOf('inname.') === 0 ? 'Use this name' : selected.action.indexOf('todpart.') === 0 ? 'Choose a photo for this part of the day' : selected.action.indexOf('todauto.') === 0 ? 'Pick one automatically' : selected.action.indexOf('todpick.') === 0 ? 'Choose a photo' : /^input(page|name)\./.test(selected.action) ? 'Open selected group' : selected.action.indexOf('input.toggle.') === 0 ? (selected.applied ? 'Hide from Home' : 'Show on Home') : selected.action === 'ha.refresh' ? 'Check again' : selected.action === 'ad.refresh' ? 'Check again' : selected.action === 'ad.pause.0' ? 'Turn blocking back on' : selected.action.indexOf('ad.pause.') === 0 ? 'Pause blocking' : selected.action === 'ad.forget' ? 'Forget the server and its password' : selected.action.indexOf('ha.area.') === 0 ? (selected.applied ? 'Hide this room' : 'Show this room') : selected.action === 'ha.forget' ? 'Forget the server and its token' : 'Open on the TV');
     setHTML(appearanceDesc, hint ? '<span class="remote-key">OK</span><span>' + esc(hint) + '</span>' : '');
     fitRows();
   }
@@ -4271,6 +4316,7 @@
   QA.activate = function (action) { return activate(action) ? QA.state() : null; };
   QA.news = function (items) { newsForced = items || null; newsIdx = 0; newsTick(false); return capNews.textContent; };
   /* Made-up Home Assistant areas and states, so the add-on can be checked without a server; null restores the real source. */
+  QA.adBlock = function (fake) { if (AD) AD.qa(fake || null); render(); return !!(AD && AD.available()); };
   QA.homeAssistant = function (fake) { if (HA) HA.qa(fake || null); render(); return !!(HA && HA.available()); };
   QA.weatherFx = function (kind) { fxForced = kind || ''; render(); return stage.className.indexOf(' wx-') >= 0; };
   QA.health = function (n) { QA.alerts = n; render(); return healthAlerts(); };

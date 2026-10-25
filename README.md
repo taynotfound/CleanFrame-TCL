@@ -60,6 +60,7 @@ Shore (formerly CleanFrame-TCL) brings [Nathan Clark's CleanFrame](https://githu
 - Reassign remote buttons such as the app shortcut keys or the TV button.
 - Animations pause outside Home, so menus stay snappy.
 - Sleep timer (*Settings › Night*): 30, 60, 90 or 120 minutes, then the TV switches off, even while another app is open. It needs the Shore Home button in Accessibility.
+- Add-ons (*Settings › Add-ons*, off until you switch them on): **Home Assistant** (rooms, lights, thermostats and cameras on Home) and **Pi-hole and AdGuard** (today's blocked share under the clock, and a pause for 5, 30 or 60 minutes). Servers and passwords are typed on the phone and stay on the TV.
 - Parental lock (*Settings › Google TV › Parental lock*): a four-digit PIN before chosen apps open, and before Settings, Apps on Home and Quick actions. Enter it with the arrows and OK or with number keys.
 - An optional, reversible debloat list for TCL's preinstalled extras.
 

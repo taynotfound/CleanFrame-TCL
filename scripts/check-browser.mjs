@@ -1059,6 +1059,29 @@ try {
     await current.evaluate(() => ShoreQA.health(0));
     check('It goes away again', await current.locator('#utils .u.has-alert').count() === 0);
   });
+  await run('Pi-hole and AdGuard add-on', async () => {
+    await closePage(); await page();
+    const adCalls = () => current.evaluate(() => window.__adCalls || []);
+    const caption = () => current.evaluate(() => document.querySelector('#caption').textContent);
+    check('The add-on is off after migration', (await stored()).look.aad === 'off');
+    check('Nothing under the clock while off', !/blocked today/.test(await caption()));
+    await current.evaluate(() => ShoreQA.adBlock({ total: 1000, blocked: 124 }));
+    await group('addons'); await act('choice.aad.on'); await ready();
+    check('Switching it on starts it', (await stored()).look.aad === 'on' && (await adCalls()).some(c => c[0] === 'enable' && c[1] === true));
+    await scene('home');
+    check('Today’s share shows under the clock', /12\.4% blocked today/.test(await caption()), await caption());
+    await group('addons'); await act('open.adblock');
+    await act('ad.pause.5');
+    check('Pause asks the server for five minutes', (await adCalls()).some(c => c[0] === 'pause' && c[1] === 5));
+    await scene('home');
+    check('The clock line says it is paused', /Blocking paused · 5 min/.test(await caption()), await caption());
+    const everything = JSON.stringify(await state()) + JSON.stringify(await stored());
+    check('Saved preferences hold only the switch', !/pi\.hole|password/i.test(everything));
+    await group('addons'); await act('choice.aad.on'); await ready();
+    await scene('home');
+    check('Switching off stops it and clears the line', (await stored()).look.aad === 'off' && (await adCalls()).some(c => c[0] === 'enable' && c[1] === false) && !/blocked|paused/.test(await caption()));
+    await current.evaluate(() => ShoreQA.adBlock(null));
+  });
   await run('Parental lock', async () => {
     const pinHash = pin => { let h = 0x811c9dc5; for (const ch of 'shore:' + pin) { h ^= ch.charCodeAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
     await closePage(); await page();

@@ -1,5 +1,6 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("fr", {
+      "Pi-hole and AdGuard": "Pi-hole et AdGuard", "Ads blocked today, and a pause button": "Publicités bloquées aujourd’hui, et un bouton pause", "The server refused the password": "Le serveur a refusé le mot de passe", "Couldn’t reach the server": "Serveur injoignable", "The server didn’t answer as expected": "Le serveur a répondu de façon inattendue", "Blocking off": "Blocage désactivé", "Blocking": "Blocage", "Pause blocking": "Mettre le blocage en pause", "Turn blocking back on": "Réactiver le blocage", "Forget the server and its password": "Oublier le serveur et son mot de passe", "Pausing lets a blocked site or app work for a while; blocking comes back on its own.": "Une pause laisse fonctionner un site ou une app bloqués un moment ; le blocage revient tout seul.", "Type the server’s address and password in the phone companion, on the Add-ons tab. They stay on the TV.": "Saisissez l’adresse et le mot de passe du serveur dans le compagnon du téléphone, onglet Modules. Ils restent sur le téléviseur.",
       "Choose a photo for this part of the day": "Choisir une photo pour ce moment", "Pick one automatically": "Choisir automatiquement",
       "By time of day": "Selon l’heure", "Parts of the day": "Moments de la journée", "Morning": "Matin", "Day": "Journée", "Evening": "Soir", "Choose a photo": "Choisir une photo", "A different photo from your rotation each day": "Une photo différente de votre rotation chaque jour", "Automatic prefers darker photos.": "Automatique préfère les photos plus sombres.", "Automatic prefers brighter photos.": "Automatique préfère les photos plus claires.", "Morning from 5, day from 11, evening from 17 and night from 21.": "Matin dès 5 h, journée dès 11 h, soir dès 17 h et nuit dès 21 h.", "Part of the day": "Moment de la journée",
       "Use this name": "Utiliser ce nom",
@@ -110,6 +111,7 @@ CleanFrameI18n.load("fr", {
       "While music plays": "Pendant la musique", "Album art as background": "Pochette en fond", "Find artist pictures online": "Chercher des photos d’artistes en ligne", "Uses only the cover the music app provides.": "Utilise seulement la pochette fournie par l’app musicale.", "Artist pictures": "Photos d’artistes"
     },
 [
+      [/^([\d.]+)% blocked today$/, "$1 % bloqué aujourd’hui"], [/^Blocking paused · (\d+) min$/, "Blocage en pause · $1 min"], [/^Pause (\d+) min$/, "Pause $1 min"],
       [/^The device calls itself (.+)\.$/, "L’appareil s’appelle $1."],
       [/^(\d+) min$/, "$1 min"], [/^Sleep in (\d+) min$/, "Veille dans $1 min"], [/^Sleep in (\d+) hr (\d+) min$/, "Veille dans $1 h $2 min"], [/^(.+) is locked\.$/, "$1 est verrouillée."], [/^(\d+) apps locked$/, "$1 apps verrouillées"],
       [/^1 app chosen$/, '1 choisie'], [/^(\d+) apps chosen$/, '$1 choisies'], 

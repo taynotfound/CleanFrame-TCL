@@ -81,6 +81,8 @@ The native Home operation and startup configuration from 19 October remain separ
 
 ## Add-ons and Home Assistant
 
+Pi-hole and AdGuard (add-on, off by default): with it on and connected, the line under the clock gains today's share of blocked queries (“12.4% blocked today”), or “Blocking paused · 4 min” during a pause. Settings › Add-ons › Pi-hole and AdGuard shows the connection, Blocking (On, or a pause of 5, 30 or 60 minutes that the server ends by itself) and Disconnect. The address and password are typed in the phone companion's Add-ons tab.
+
 Settings › Add-ons appears only when this TV can run an add-on; today that means Home Assistant in the Android shell. Each add-on has one switch, off by default. While it is off it adds nothing to Home and does no work. It starts only after Home has painted.
 
 With Home Assistant on and connected, Home gains a Smart home control after Settings, and the line under the clock gains the indoor temperature and humidity (from the first chosen room with a reading, in the weather's unit). The server address and long-lived access token are entered in the phone companion's Home Assistant card; the TV never shows or stores the token in its preferences. Settings › Add-ons › Home Assistant shows the connection, the rooms to show (Home Assistant's areas; every room shown by default, and devices hidden in Home Assistant stay hidden) and Disconnect, which asks first.

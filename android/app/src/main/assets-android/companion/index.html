@@ -73,6 +73,17 @@
       </form>
       <p id="haStatus" class="quiet"></p>
     </section>
+    <section id="adCard" class="card" hidden>
+      <h2 data-t="Pi-hole and AdGuard">Pi-hole and AdGuard</h2>
+      <p data-t="Your Pi-hole or AdGuard Home address and password. AdGuard Home also needs the user name. The password stays on the TV.">Your Pi-hole or AdGuard Home address and password. AdGuard Home also needs the user name. The password stays on the TV.</p>
+      <form id="adForm" class="ha-form">
+        <input id="adUrl" type="text" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off" placeholder="http://pi.hole">
+        <input id="adUser" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off" placeholder="User name (AdGuard Home)" data-tp="User name (AdGuard Home)">
+        <input id="adPass" type="password" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="off">
+        <div class="backup-buttons"><button class="button primary" type="submit" data-t="Connect">Connect</button><button id="adForget" class="button quiet-button" type="button" data-t="Disconnect" hidden>Disconnect</button></div>
+      </form>
+      <p id="adStatus" class="quiet"></p>
+    </section>
     </div>
     <div id="tab-photos" class="tab">
     <section class="card">

@@ -66,4 +66,6 @@ Run `npm run check`, `CLEANFRAME_PUBLIC_FONTS=1 npm run check:browser` and `npm 
 | Cleartext http for LAN servers; token excluded from backups | `res/xml/network_security_config.xml`, `backup_rules.xml`, `data_extraction_rules.xml` |
 | Browser checks | `scripts/check-browser.mjs`, "Home Assistant add-on…" |
 
+Pi-hole and AdGuard (`adblock.js`, `AdBlock.java`) is the small example: one caption line, a settings page with a pause, a companion card and `ShoreQA.adBlock(fake)`.
+
 The room model and the camera handshake are ported from the TvLauncher prototype (`HomeSection.kt`, `HomeAssistant.kt`, `camera.html`). Entities hidden in Home Assistant stay hidden in Shore. Cameras open a live session only on request: once when a card is focused and its still is over a minute old, and while the live view is open, because doorbells such as Ring light up for every session.

@@ -281,6 +281,24 @@
     },
     onChange: function (fn) { haListeners.push(fn); }
   } : null;
+  /* Pi-hole / AdGuard Home add-on (AdBlock.java): today's counts; the password never reaches the page. */
+  var adListeners = [];
+  window.CleanFrameAdChanged = function () { adListeners.forEach(function (fn) { try { fn(); } catch (e) { } }); };
+  var adBlock = bridge.adInfo ? {
+    /* {configured, enabled, kind: pihole|adguard, url, status: off|setup|loading|ok|error, error, at, total, blocked, blocking, until} */
+    info: function () {
+      var r;
+      try { r = JSON.parse(bridge.adInfo()) || {}; } catch (e) { r = {}; }
+      return { configured: !!r.configured, enabled: !!r.enabled, kind: /^(pihole|adguard)$/.test(r.kind) ? r.kind : '', url: typeof r.url === 'string' ? r.url : '',
+        status: /^(off|setup|loading|ok|error)$/.test(r.status) ? r.status : 'off', error: String(r.error || ''), at: +r.at || 0,
+        total: +r.total >= 0 ? +r.total : -1, blocked: +r.blocked >= 0 ? +r.blocked : -1, blocking: r.blocking !== false, until: +r.until || 0 };
+    },
+    enable: function (on) { try { bridge.adEnable(!!on); } catch (e) { } },
+    refresh: function () { try { bridge.adRefresh(); } catch (e) { } },
+    pause: function (minutes) { try { bridge.adPause(minutes | 0); } catch (e) { } },
+    forget: function () { try { bridge.adForget(); } catch (e) { } },
+    onChange: function (fn) { adListeners.push(fn); }
+  } : null;
   /* Shore's own screensaver: keeps the TV's screensaver away while enabled, and starts from a remote button. */
   var saver = {
     keepAwake: function (on) { try { bridge.keepAwake(!!on); } catch (e) { } },
@@ -301,7 +319,7 @@
     ready: function () { try { bridge.pageReady(); } catch (e) { } }
   };
   window.FrameDevice = {
-    platform: 'android', startup: startup, sleep: sleep, calendar: calendar, phone: phone, news: news, homeAssistant: homeAssistant, icons: icons, nowPlaying: nowPlaying, saver: saver, update: update,
+    platform: 'android', startup: startup, sleep: sleep, calendar: calendar, phone: phone, news: news, homeAssistant: homeAssistant, adBlock: adBlock, icons: icons, nowPlaying: nowPlaying, saver: saver, update: update,
     launch: launch, launchApp: launchApp, apps: apps, appInfo: appInfo,
     inputs: inputs, onInputs: function (fn) { inputListeners.push(fn); }, online: online, remote: remote, topShelf: topShelf, watchNext: watchNext,
     /* Android package behind a Home entry (for its TV banner); null for inputs and unknown IDs. */

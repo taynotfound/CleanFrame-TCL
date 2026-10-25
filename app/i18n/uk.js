@@ -1,5 +1,6 @@
 /* Shore interface text in one language, loaded by i18n.js only when the TV uses it. */
 CleanFrameI18n.load("uk", {
+      "Pi-hole and AdGuard": "Pi-hole і AdGuard", "Ads blocked today, and a pause button": "Реклама, заблокована сьогодні, і кнопка паузи", "The server refused the password": "Сервер відхилив пароль", "Couldn’t reach the server": "Не вдалося під’єднатися до сервера", "The server didn’t answer as expected": "Сервер відповів неочікувано", "Blocking off": "Блокування вимкнено", "Blocking": "Блокування", "Pause blocking": "Призупинити блокування", "Turn blocking back on": "Знову ввімкнути блокування", "Forget the server and its password": "Забути сервер і пароль", "Pausing lets a blocked site or app work for a while; blocking comes back on its own.": "Пауза дає заблокованому сайту чи застосунку попрацювати; блокування повертається само.", "Type the server’s address and password in the phone companion, on the Add-ons tab. They stay on the TV.": "Введіть адресу й пароль сервера в компаньйоні на телефоні, на вкладці «Доповнення». Вони залишаються на телевізорі.",
       "Choose a photo for this part of the day": "Вибрати фото для цієї частини доби", "Pick one automatically": "Вибрати автоматично",
       "By time of day": "За часом доби", "Parts of the day": "Частини доби", "Morning": "Ранок", "Day": "День", "Evening": "Вечір", "Choose a photo": "Вибрати фото", "A different photo from your rotation each day": "Щодня інше фото з вашої ротації", "Automatic prefers darker photos.": "Автоматично вибирає темніші фото.", "Automatic prefers brighter photos.": "Автоматично вибирає світліші фото.", "Morning from 5, day from 11, evening from 17 and night from 21.": "Ранок з 5, день з 11, вечір з 17 і ніч з 21.", "Part of the day": "Частина доби",
       "Use this name": "Використати цю назву",
@@ -401,6 +402,7 @@ CleanFrameI18n.load("uk", {
       'Artist pictures': 'Фото виконавців'
     },
 [
+      [/^([\d.]+)% blocked today$/, "Сьогодні заблоковано $1%"], [/^Blocking paused · (\d+) min$/, "Блокування на паузі · $1 хв"], [/^Pause (\d+) min$/, "Пауза $1 хв"],
       [/^The device calls itself (.+)\.$/, "Пристрій називає себе $1."],
       [/^(\d+) min$/, "$1 хв"], [/^Sleep in (\d+) min$/, "Вимкнення через $1 хв"], [/^Sleep in (\d+) hr (\d+) min$/, "Вимкнення через $1 год $2 хв"], [/^(.+) is locked\.$/, "$1 заблоковано."], [/^(\d+) apps locked$/, "Заблоковано застосунків: $1"],
       [/^(\d+) apps? chosen$/, 'Вибрано: $1'], 

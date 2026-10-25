@@ -115,6 +115,7 @@ public class MainActivity extends Activity {
                 runOnUiThread(() -> { if (web != null) web.evaluateJavascript("window.CleanFrameHACamera&&window.CleanFrameHACamera(" + json + ")", null); });
             }
         });
+        AdBlock.get(this).setListener(() -> runOnUiThread(() -> { if (web != null) web.evaluateJavascript("window.CleanFrameAdChanged&&window.CleanFrameAdChanged()", null); }));
         final WebViewAssetLoader loader = new WebViewAssetLoader.Builder()
                 .addPathHandler("/assets/assets/", online.handler()) // online photos, then bundled files
                 .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
@@ -238,6 +239,7 @@ public class MainActivity extends Activity {
         if (online != null) online.refreshIfStale();
         if (phone != null) phone.resume();
         HomeAssistant.get(this).setActive(true);
+        AdBlock.get(this).setActive(true);
         Updater.get(this).checkIfStale();
     }
 
@@ -247,6 +249,7 @@ public class MainActivity extends Activity {
         RemoteKeys.learn(false); // never capture a button while another app is in front
         Beat.stop();
         HomeAssistant.get(this).setActive(false); // no polling and no camera stream behind another app
+        AdBlock.get(this).setActive(false);
         if (web != null) web.onPause(); // stops wallpaper rotation work while an app is open
         super.onPause();
     }
@@ -258,6 +261,7 @@ public class MainActivity extends Activity {
         if (topShelf != null) topShelf.setListener(null);
         Updater.get(this).setListener(null);
         HomeAssistant.get(this).setListener(null);
+        AdBlock.get(this).setListener(null);
         if (phone != null) { phone.setListener(null); phone.setCommands(null); phone.stop(); }
         if (RemoteKeys.listener == remoteListener) { RemoteKeys.listener = null; RemoteKeys.learn(false); }
         if (web != null) { web.removeJavascriptInterface("CleanFrameAndroid"); web.destroy(); web = null; }
