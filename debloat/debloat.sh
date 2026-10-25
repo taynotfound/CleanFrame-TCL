@@ -13,7 +13,7 @@ PKGS=$(sed 's/#.*//' packages.txt | tr -s ' \t' '\n' | grep -v '^$')
 case "${1:-status}" in
   disable) for p in $PKGS; do printf '%-36s ' "$p"; $ADB -s "$TV" shell pm disable-user --user 0 "$p" 2>&1 | tail -1; done ;;
   restore) for p in $PKGS; do printf '%-36s ' "$p"; $ADB -s "$TV" shell pm enable "$p" 2>&1 | tail -1; done ;;
-  status)  disabled=$($ADB -s "$TV" shell pm list packages -d | sed 's/package://' | tr -d '\r')
-           for p in $PKGS; do case " $(echo $disabled) " in *" $p "*) s=disabled;; *) s=enabled;; esac; printf '%-36s %s\n' "$p" "$s"; done ;;
+  status)  disabled=$($ADB -s "$TV" shell pm list packages -d | sed 's/package://' | tr '\r\n' '  ')
+           for p in $PKGS; do case " $disabled " in *" $p "*) s=disabled;; *) s=enabled;; esac; printf '%-36s %s\n' "$p" "$s"; done ;;
   *) echo "usage: TV=<ip>:5555 $0 disable|restore|status" >&2; exit 2 ;;
 esac
