@@ -414,7 +414,7 @@ final class Companion {
         String n = f.getName();
         String type = n.endsWith(".png") ? "image/png" : n.endsWith(".webp") ? "image/webp" : n.endsWith(".gif") ? "image/gif" : n.endsWith(".mp4") ? "video/mp4" : "image/jpeg";
         out.write(("HTTP/1.1 200 OK\r\nContent-Type: " + type + "\r\nContent-Length: " + f.length()
-                + "\r\nCache-Control: private, max-age=86400\r\nX-Content-Type-Options: nosniff\r\nConnection: close\r\n\r\n").getBytes(StandardCharsets.ISO_8859_1));
+                + "\r\nCache-Control: private, max-age=86400\r\nX-Content-Type-Options: nosniff\r\nX-Frame-Options: DENY\r\nContent-Security-Policy: sandbox\r\nConnection: close\r\n\r\n").getBytes(StandardCharsets.ISO_8859_1));
         try (InputStream in = new FileInputStream(f)) { byte[] buf = new byte[65536]; for (int n2; (n2 = in.read(buf)) > 0; ) out.write(buf, 0, n2); }
         out.flush();
     }
@@ -475,7 +475,7 @@ final class Companion {
     private static void send(OutputStream out, int code, String type, byte[] data) throws IOException {
         String status = code == 200 ? "OK" : code == 400 ? "Bad Request" : code == 503 ? "Unavailable" : code == 401 ? "Unauthorized" : code == 404 ? "Not Found" : code == 413 ? "Too Large" : code == 415 ? "Unsupported" : "Error";
         out.write(("HTTP/1.1 " + code + " " + status + "\r\nContent-Type: " + type + "\r\nContent-Length: " + data.length
-                + "\r\nCache-Control: no-cache\r\nX-Content-Type-Options: nosniff\r\nReferrer-Policy: no-referrer\r\nConnection: close\r\n\r\n").getBytes(StandardCharsets.ISO_8859_1));
+                + "\r\nCache-Control: no-cache\r\nX-Content-Type-Options: nosniff\r\nReferrer-Policy: no-referrer\r\nX-Frame-Options: DENY\r\nContent-Security-Policy: frame-ancestors 'none'\r\nConnection: close\r\n\r\n").getBytes(StandardCharsets.ISO_8859_1));
         out.write(data);
         out.flush();
     }

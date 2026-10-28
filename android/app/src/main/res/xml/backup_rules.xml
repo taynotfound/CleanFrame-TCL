@@ -6,4 +6,5 @@
     <include domain="database" path="." />
     <exclude domain="sharedpref" path="homeassistant.xml" />
         <exclude domain="sharedpref" path="adblock.xml" />
+        <exclude domain="sharedpref" path="phone-upload.xml" />
 </full-backup-content>
