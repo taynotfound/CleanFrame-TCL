@@ -13,3 +13,6 @@
 - Top Shelf: this product uses the TMDB API but is not endorsed or certified by TMDB. Recommendations and images come from [TMDB](https://www.themoviedb.org), [ARD Mediathek](https://www.ardmediathek.de), [ZDF](https://www.zdf.de), [ARTE](https://www.arte.tv), [YouTube](https://www.youtube.com) and [Twitch](https://www.twitch.tv) under their terms. Titles and artwork belong to their owners.
 
 Public-code licensing does not replace the terms in `THIRD_PARTY_NOTICES.md`.
+
+- Shore is unofficial and not affiliated with or endorsed by Google, TCL, Netflix, Disney, Apple, Amazon, YouTube, Twitch or any other service whose name or logo appears. Names and logos belong to their owners and only identify the apps. See also the [privacy notice and imprint](https://taynotfound.github.io/shore/privacy.html).
+- Free API plans: Open-Meteo's free API and the TMDB API are for non-commercial use. Shore is free and donations do not change that; if you build a commercial product from it, use their paid plans.
