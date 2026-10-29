@@ -7,7 +7,7 @@
 | Choice | What it does |
 | --- | --- |
 | **High end** | Keeps every animation and effect that is switched on. |
-| **Balanced** | Keeps the focus slides, but stops everything that animates while Home just sits there: drift, weather effects, animated and GIF wallpapers, the screensaver's slow pan and zoom, the beat pulse. |
+| **Balanced** | Keeps the focus slides, but stops everything that animates while Home just sits there: drift, weather effects, GIF wallpapers (MP4 clips keep playing), the screensaver's slow pan and zoom, the beat pulse. |
 | **Potato** | Also removes every transition: focus moves at once, and the fades at the ends of the app list and Dock go. |
 | **Auto** (default) | Starts from what the TV reports (a gigabyte of memory or less: Potato at most; two gigabytes or two cores or fewer: Balanced at most), then measures how long this TV takes to show key presses and settles on the tier it can draw smoothly. It steps up only with a clear margin and remembers the result. |
 

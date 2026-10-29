@@ -97,7 +97,7 @@ CleanFrameI18n.load("nl", {
       "Bookmark button": "Bladwijzerknop", "Weather": "Weer", "Now playing": "Speelt nu", "Under the clock": "Onder de klok",
       "Notification access": "Toegang tot meldingen",
       "Weather by Open-Meteo.": "Weer van Open-Meteo.", "My photos": "Mijn foto’s",
-      "Remove all my photos": "Al mijn foto’s verwijderen", "1 photo": "1 foto", "Send a photo from your phone first.": "Stuur eerst een foto vanaf je telefoon.",
+      "Remove all my photos": "Al mijn foto’s verwijderen", "1 photo": "1 foto", "Animated wallpapers are off in Potato. Choose Balanced or High end in Performance to play them.": "Bewegende achtergronden staan uit in Potato. Kies Gebalanceerd of Hoge prestaties onder Prestaties om ze af te spelen.", "GIF wallpapers only play on High end. Choose High end in Performance to play this one.": "GIF-achtergronden spelen alleen op Hoge prestaties. Kies dat onder Prestaties om deze af te spelen.", "Send a photo from your phone first.": "Stuur eerst een foto vanaf je telefoon.",
 
       "Open Notification access": "Toegang tot meldingen openen", "Clear": "Helder", "Partly cloudy": "Half bewolkt", "Cloudy": "Bewolkt",
       "Fog": "Mist", "Drizzle": "Motregen", "Rain": "Regen", "Snow": "Sneeuw", "Showers": "Buien", "Snow showers": "Sneeuwbuien", "Thunderstorm": "Onweer",

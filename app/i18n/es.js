@@ -100,7 +100,7 @@ CleanFrameI18n.load("es", {
       "Bookmark button": "Botón Favoritos", "Weather": "Tiempo", "Now playing": "Reproduciendo", "Under the clock": "Bajo el reloj",
       "Notification access": "Acceso a notificaciones",
       "Weather by Open-Meteo.": "Tiempo de Open-Meteo.", "My photos": "Mis fotos",
-      "Remove all my photos": "Quitar todas mis fotos", "1 photo": "1 foto", "Send a photo from your phone first.": "Envía primero una foto desde tu móvil.",
+      "Remove all my photos": "Quitar todas mis fotos", "1 photo": "1 foto", "Animated wallpapers are off in Potato. Choose Balanced or High end in Performance to play them.": "Los fondos animados están desactivados en Potato. Elige Equilibrado o Alto rendimiento en Rendimiento para reproducirlos.", "GIF wallpapers only play on High end. Choose High end in Performance to play this one.": "Los fondos GIF solo se reproducen en Alto rendimiento. Elígelo en Rendimiento para reproducir este.", "Send a photo from your phone first.": "Envía primero una foto desde tu móvil.",
 
       "Open Notification access": "Abrir Acceso a notificaciones",
       "Clear": "Despejado", "Partly cloudy": "Parcialmente nublado", "Cloudy": "Nublado", "Fog": "Niebla", "Drizzle": "Llovizna", "Rain": "Lluvia", "Snow": "Nieve",

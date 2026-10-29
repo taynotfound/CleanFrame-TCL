@@ -104,7 +104,7 @@ CleanFrameI18n.load("de", {
       "Weather": "Wetter", "Now playing": "Läuft gerade", "Under the clock": "Unter der Uhr", "Notification access": "Benachrichtigungszugriff",
 
       "Weather by Open-Meteo.": "Wetter von Open-Meteo.", "My photos": "Meine Fotos",
-      "Remove all my photos": "Alle meine Fotos entfernen", "1 photo": "1 Foto", "Send a photo from your phone first.": "Sende zuerst ein Foto von deinem Handy.",
+      "Remove all my photos": "Alle meine Fotos entfernen", "1 photo": "1 Foto", "Animated wallpapers are off in Potato. Choose Balanced or High end in Performance to play them.": "Animierte Hintergründe sind in Potato aus. Wähle in Leistung „Ausgewogen“ oder „Leistungsstark“, um sie abzuspielen.", "GIF wallpapers only play on High end. Choose High end in Performance to play this one.": "GIF-Hintergründe laufen nur bei „Leistungsstark“. Wähle es in Leistung, um diesen abzuspielen.", "Send a photo from your phone first.": "Sende zuerst ein Foto von deinem Handy.",
 
       "Open Notification access": "Benachrichtigungszugriff öffnen",
       "Clear": "Klar", "Partly cloudy": "Teils bewölkt", "Cloudy": "Bewölkt", "Fog": "Nebel", "Drizzle": "Niesel", "Rain": "Regen", "Snow": "Schnee",

@@ -74,8 +74,8 @@ Potato then removes the slide itself: one paint per key instead of about 11 anim
 | Tier | Keeps | Removes |
 | --- | --- | --- |
 | High end | Everything that is switched on | Nothing |
-| Balanced | Focus slides and crossfades, edge fades | Everything that animates while Home just sits there: drift, weather effects, video and GIF wallpapers, the screensaver's pan and zoom, the beat pulse |
-| Potato | A static, instant interface | Also every transition and CSS animation (`.perf-potato *`), the Dock and List edge fades (`mask-image`) and `will-change` layer hints. A focus move is one paint instead of about 11 animated frames |
+| Balanced | Focus slides and crossfades, edge fades, MP4 wallpapers | Everything that animates while Home just sits there: drift, weather effects, GIF wallpapers, the screensaver's pan and zoom, the beat pulse |
+| Potato | A static, instant interface | Also MP4 wallpapers, every transition and CSS animation (`.perf-potato *`), the Dock and List edge fades (`mask-image`) and `will-change` layer hints. A focus move is one paint instead of about 11 animated frames |
 
 ### How Auto decides
 

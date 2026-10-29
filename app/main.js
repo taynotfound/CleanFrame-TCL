@@ -2060,7 +2060,7 @@
     sections.push({ id: 'phoneuse', title: 'Wallpaper', items: [choice('source', 'phone', flat || !n)]
       .concat(n ? [{ action: 'phone.clear', label: 'Remove all my photos', description: n === 1 ? '1 photo' : n + ' photos' }] : [])
       .concat(p.enabled ? [{ action: 'phone.forget', label: 'Forget paired phones' }] : []),
-      reason: flat ? 'Choose Photo in Background to use online wallpapers.' : !n ? 'Send a photo from your phone first.' : sourceOn('phone') && S.onlineStatus ? ONLINE_STATUS[S.onlineStatus] || '' : '' });
+      reason: flat ? 'Choose Photo in Background to use online wallpapers.' : !n ? 'Send a photo from your phone first.' : stillNote() || (sourceOn('phone') && S.onlineStatus ? ONLINE_STATUS[S.onlineStatus] || '' : '') });
     return sections;
   }
   /* ---------- Setup and health: each step with its live status; OK opens the place that fixes it ---------- */
@@ -2380,7 +2380,7 @@
         { action: 'open.unsplash', label: pageCount('unsplash', 'Unsplash themes'), more: true, disabled: flat },
         { action: 'open.animated', label: pageCount('animated', 'Animated wallpapers'), more: true, disabled: flat }]);
       return [{ id: 'source', title: '', compact: t.group === 'online', items: items,
-        reason: flat ? 'Choose Photo in Background to use online wallpapers.' : sourceNote() || (missing.length ? keyNote(missing) : '') }];
+        reason: flat ? 'Choose Photo in Background to use online wallpapers.' : stillNote() || sourceNote() || (missing.length ? keyNote(missing) : '') }];
     }
     if (t.group === 'rotation') return [{ id: 'mode', title: '', items: options('mode', MODES.map(function (m) { return m.id; }), flat),
       reason: flat ? 'Choose Photo in Background to use rotation.' : '' }]
@@ -2476,6 +2476,14 @@
   }
   function pageCount(page, label) { var n = SOURCES.filter(function (o) { return o.page === page && sourceOn(o.id); }).length; return n ? T(label) + ' · ' + n : label; }
   /* What rotates now, and what could not be reached. */
+  /* Why the chosen wallpaper stands still: Performance holds animated ones back (clips only on Potato, GIFs unless High end). */
+  function stillNote() {
+    var w = S.c.bg === 'photo' ? wall(S.c.wall) : null;
+    if (!w) return '';
+    if (w.video && potato()) return T('Animated wallpapers are off in Potato. Choose Balanced or High end in Performance to play them.');
+    if (w.gif && calm()) return T('GIF wallpapers only play on High end. Choose High end in Performance to play this one.');
+    return '';
+  }
   function sourceNote() {
     var failed = String(ONLINE_INFO.failed || '').split(',').filter(function (id) { return id && sourceOn(id); }).map(function (id) { return T(sourceName(id)); });
     if (S.onlineStatus === 'loading') return ONLINE_STATUS.loading;
@@ -2789,7 +2797,7 @@
   function syncVideo(shown) {
     syncGif(shown);
     if (PHONE && shown && shown.id !== phoneWall) { phoneWall = shown.id; PHONE.wallpaper(shown.id); }
-    var src = S.c.bg === 'photo' && shown && shown.video && !calm() ? shown.video : '';
+    var src = S.c.bg === 'photo' && shown && shown.video && !potato() ? shown.video : ''; // clips are decoded by the TV's hardware, so Balanced keeps them; GIFs are not
     if (!VIDEO.parentNode && IMG.photo.parentNode) IMG.photo.parentNode.insertBefore(VIDEO, IMG.photo.nextSibling);
     if (VIDEO._src !== src) {
       VIDEO._src = src; VIDEO.className = 'photo-video';

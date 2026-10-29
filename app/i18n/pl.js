@@ -99,7 +99,7 @@ CleanFrameI18n.load("pl", {
       "Now playing": "Teraz odtwarzane", "Under the clock": "Pod zegarem", "Notification access": "Dostęp do powiadomień",
 
       "Weather by Open-Meteo.": "Pogoda z Open-Meteo.", "My photos": "Moje zdjęcia",
-      "Remove all my photos": "Usuń wszystkie moje zdjęcia", "1 photo": "1 zdjęcie", "Send a photo from your phone first.": "Najpierw wyślij zdjęcie z telefonu.",
+      "Remove all my photos": "Usuń wszystkie moje zdjęcia", "1 photo": "1 zdjęcie", "Animated wallpapers are off in Potato. Choose Balanced or High end in Performance to play them.": "Animowane tapety są wyłączone w trybie Potato. Wybierz w Wydajności tryb Zrównoważony lub Wysoka wydajność, aby je odtwarzać.", "GIF wallpapers only play on High end. Choose High end in Performance to play this one.": "Tapety GIF działają tylko w trybie Wysoka wydajność. Wybierz go w Wydajności, aby odtworzyć tę.", "Send a photo from your phone first.": "Najpierw wyślij zdjęcie z telefonu.",
 
       "Open Notification access": "Otwórz Dostęp do powiadomień", "Clear": "Bezchmurnie", "Partly cloudy": "Częściowe zachmurzenie",
       "Cloudy": "Pochmurno", "Fog": "Mgła", "Drizzle": "Mżawka", "Rain": "Deszcz", "Snow": "Śnieg", "Showers": "Przelotne opady", "Snow showers": "Przelotny śnieg",

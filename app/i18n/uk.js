@@ -359,7 +359,7 @@ CleanFrameI18n.load("uk", {
       'My photos': 'Мої фото',
       'Remove all my photos': 'Видалити всі мої фото',
       '1 photo': '1 фото',
-      'Send a photo from your phone first.': 'Спочатку надішліть фото з телефона.',
+      'Animated wallpapers are off in Potato. Choose Balanced or High end in Performance to play them.': 'Анімовані шпалери вимкнено в режимі Potato. Виберіть «Збалансований» або «Висока продуктивність» у Продуктивності, щоб їх відтворювати.', 'GIF wallpapers only play on High end. Choose High end in Performance to play this one.': 'GIF-шпалери відтворюються лише у режимі «Висока продуктивність». Виберіть його в Продуктивності, щоб відтворити ці.', 'Send a photo from your phone first.': 'Спочатку надішліть фото з телефона.',
 
 
       'Open Notification access': 'Відкрити доступ до сповіщень',

@@ -100,7 +100,7 @@ CleanFrameI18n.load("fr", {
       "Notification access": "Accès aux notifications",
       "Weather by Open-Meteo.": "Météo par Open-Meteo.", "My photos": "Mes photos",
       "Remove all my photos": "Supprimer toutes mes photos",
-      "1 photo": "1 photo", "Send a photo from your phone first.": "Envoyez d’abord une photo depuis votre téléphone.",
+      "1 photo": "1 photo", "Animated wallpapers are off in Potato. Choose Balanced or High end in Performance to play them.": "Les fonds animés sont désactivés en mode Potato. Choisissez Équilibré ou Haut de gamme dans Performances pour les lire.", "GIF wallpapers only play on High end. Choose High end in Performance to play this one.": "Les fonds GIF ne sont lus qu’en mode Haut de gamme. Choisissez-le dans Performances pour lire celui-ci.", "Send a photo from your phone first.": "Envoyez d’abord une photo depuis votre téléphone.",
 
       "Open Notification access": "Ouvrir Accès aux notifications",
       "Clear": "Dégagé", "Partly cloudy": "Partiellement nuageux", "Cloudy": "Nuageux", "Fog": "Brouillard", "Drizzle": "Bruine",

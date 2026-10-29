@@ -164,7 +164,7 @@ CleanFrameI18n.load("tr", {
       "Guide button": "Rehber tuşu", "Input button": "Giriş tuşu", "Settings button": "Ayarlar tuşu", "Menu button": "Menü tuşu",
       "Bookmark button": "Yer imi tuşu", "Weather": "Hava durumu", "Now playing": "Şimdi çalıyor", "Under the clock": "Saatin altında",
       "Notification access": "Bildirim erişimi", "Weather by Open-Meteo.": "Hava durumu: Open-Meteo.", "My photos": "Fotoğraflarım", "Remove all my photos": "Tüm fotoğraflarımı kaldır",
-      "1 photo": "1 fotoğraf", "Send a photo from your phone first.": "Önce telefondan bir fotoğraf gönder.", "Open Notification access": "Bildirim erişimini aç", "Clear": "Açık",
+      "1 photo": "1 fotoğraf", "Animated wallpapers are off in Potato. Choose Balanced or High end in Performance to play them.": "Hareketli duvar kağıtları Potato’da kapalıdır. Oynatmak için Performans’tan Dengeli veya Yüksek performans’ı seçin.", "GIF wallpapers only play on High end. Choose High end in Performance to play this one.": "GIF duvar kağıtları yalnızca Yüksek performans’ta oynar. Bunu oynatmak için Performans’tan seçin.", "Send a photo from your phone first.": "Önce telefondan bir fotoğraf gönder.", "Open Notification access": "Bildirim erişimini aç", "Clear": "Açık",
       "Partly cloudy": "Parçalı bulutlu", "Cloudy": "Bulutlu", "Fog": "Sis", "Drizzle": "Çisenti",
       "Rain": "Yağmur", "Snow": "Kar", "Showers": "Sağanak", "Snow showers": "Kar sağanağı",
       "Thunderstorm": "Gök gürültülü fırtına", "Sent from your phone": "Telefondan gönderilenler", "Notification access could not open.": "Bildirim erişimi açılamadı.", "Weather by Open-Meteo. Set your place in the phone companion.": "Hava durumu: Open-Meteo. Konumunu telefondaki companion’da ayarla.",
