@@ -2609,6 +2609,7 @@
     else if (item.action === 'health.remote' || item.action === 'health.keyboard') perform('Accessibility settings', REMOTE.openSettings);
     else if (item.action === 'health.phone') openPhone();
     else if (item.action === 'open.updates') { S.update = UPDATE.info(); openAppearance('updates'); }
+    else if (/^open\.\w+$/.test(item.action) && ADDONS.some(function (a) { return a.page === item.action.slice(5); })) openAppearance(item.action.slice(5)); // the Add-ons page's links: News, Weather effects, Widgets
     else if (item.action === 'update.check') UPDATE.check();
     else if (item.action === 'update.install') UPDATE.install();
     else if (item.action === 'update.auto') { UPDATE.auto(!S.update.auto); S.update = UPDATE.info(); }
