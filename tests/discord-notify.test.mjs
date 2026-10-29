@@ -1,7 +1,7 @@
 // Run with `npm test`. Pure functions only: no network, no webhook.
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { buildEmbed, clip, digestEmbed, isLastToFinish, latestRuns, payload } from '../scripts/discord-notify.mjs';
+import { buildEmbed, clip, digestEmbed, isLastToFinish, latestRuns, payload, releaseNotes } from '../scripts/discord-notify.mjs';
 
 const repository = { full_name: 'taynotfound/shore', html_url: 'https://github.com/taynotfound/shore', stargazers_count: 12, forks_count: 3 };
 const sender = { login: 'tay', html_url: 'https://github.com/tay', avatar_url: 'https://x/a.png' };
@@ -44,6 +44,14 @@ test('issues, comments, reviews', () => {
   assert.equal(buildEmbed('issue_comment', { action: 'created', issue, comment: { ...comment, user: { ...sender, type: 'Bot' } }, repository }), null);
   const review = { state: 'APPROVED', html_url: 'https://r', body: '', user: sender };
   assert.match(buildEmbed('pull_request_review', { action: 'submitted', review, pull_request: { number: 1, title: 't' }, repository }).title, /Approved/);
+});
+
+test('release notes lose their HTML banner and keep their markdown', () => {
+  const body = '<div align="center">\n\n<img src="https://x/banner.gif" width="100%">\n\n[Website](https://w)\n\n</div>\n\n## Behind the scenes\n\nNothing changes. **Skip it.**\n\n### Get it\n\n' + 'line [a](https://a)\n'.repeat(200);
+  const out = releaseNotes(body, 300);
+  assert.doesNotMatch(out, /<|banner/);
+  assert.match(out, /^## Behind the scenes\n\nNothing changes\. \*\*Skip it\.\*\*/);
+  assert.ok(out.length <= 302 && out.endsWith('\n…') && !/\[a\]\(https:\/\/a$/.test(out.slice(0, -2)));
 });
 
 test('stars, forks, releases', () => {

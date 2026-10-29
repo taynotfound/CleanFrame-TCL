@@ -33,10 +33,21 @@ function author(u) {
   return u && u.login ? { name: u.login, url: u.html_url, icon_url: u.avatar_url } : undefined;
 }
 
+/** Release notes are GitHub markdown with an HTML banner. Discord renders the markdown, so drop the HTML and cut at a line, not mid-link. */
+export function releaseNotes(body, max) {
+  const text = String(body == null ? '' : body).replace(/\r/g, '')
+    .replace(/<div\b[\s\S]*?<\/div>/gi, '') // the banner and its link row
+    .replace(/<!--[\s\S]*?-->/g, '').replace(/<\/?[a-z][^>]*>/gi, '')
+    .replace(/\n{3,}/g, '\n\n').trim();
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max), at = cut.lastIndexOf('\n');
+  return (at > max / 2 ? cut.slice(0, at) : cut.replace(/\s+\S*$/, '')).trimEnd() + '\n…';
+}
+
 function releaseEmbed(r, repo) {
   return embed({
     title: `🚀 ${clip(plain(r.name || r.tag_name), 200)} released`, url: r.html_url, color: COLORS.green, author: author(r.author),
-    description: plain(clip(r.body || '', 900)), footer: { text: repo },
+    description: releaseNotes(r.body, 1800), footer: { text: repo },
   });
 }
 
