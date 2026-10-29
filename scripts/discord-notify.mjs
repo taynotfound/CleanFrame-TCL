@@ -14,6 +14,7 @@ import { pathToFileURL } from 'node:url';
 const COLORS = { blue: 0x5865f2, green: 0x2ea043, red: 0xf85149, purple: 0xa371f7, yellow: 0xd29922, grey: 0x8b949e, gold: 0xf2c58b };
 const WORKFLOWS_IN_DIGEST = new Set(['push', 'pull_request', 'pull_request_target']);
 const SELF = 'Discord';
+const RELEASE_WORKFLOW = 'Android TV APK';
 
 export const clip = (text, max) => {
   const s = String(text == null ? '' : text).replace(/\r/g, '').trim();
@@ -30,6 +31,13 @@ function embed(base, extra) {
 }
 function author(u) {
   return u && u.login ? { name: u.login, url: u.html_url, icon_url: u.avatar_url } : undefined;
+}
+
+function releaseEmbed(r, repo) {
+  return embed({
+    title: `🚀 ${clip(plain(r.name || r.tag_name), 200)} released`, url: r.html_url, color: COLORS.green, author: author(r.author),
+    description: plain(clip(r.body || '', 900)), footer: { text: repo },
+  });
 }
 
 /** Pure: GitHub event -> Discord embed (or null to stay quiet). */
@@ -106,14 +114,8 @@ export function buildEmbed(name, e) {
     }
     case 'fork':
       return embed({ title: `🍴 ${e.sender.login} forked ${repo}`, url: e.forkee.html_url, description: `**${e.repository.forks_count}** forks now`, color: COLORS.blue, author: author(e.sender) });
-    case 'release': {
-      if (e.action !== 'published') return null;
-      const r = e.release;
-      return embed({
-        title: `🚀 ${clip(plain(r.name || r.tag_name), 200)} released`, url: r.html_url, color: COLORS.green, author: author(r.author),
-        description: plain(clip(r.body || '', 900)), footer: { text: repo },
-      });
-    }
+    case 'release':
+      return e.action === 'published' ? releaseEmbed(e.release, repo) : null;
     case 'workflow_dispatch':
       return embed({ title: '🔔 Test message', description: 'The Discord notifier is connected.', color: COLORS.gold, author: author(e.sender), footer: { text: repo } });
     default:
@@ -180,6 +182,11 @@ async function api(path) {
 async function workflowRun(e) {
   const run = e.workflow_run, repo = e.repository.full_name;
   if (run.name === SELF) return null;
+  if (run.name === RELEASE_WORKFLOW && run.conclusion === 'success') {
+    // A release made by a workflow with GITHUB_TOKEN never fires the `release` event, so announce it from the run.
+    const r = await api(`/repos/${repo}/releases/latest`);
+    return r && r.target_commitish && Date.parse(r.published_at) >= Date.parse(run.run_started_at) - 60000 ? releaseEmbed(r, repo) : null;
+  }
   if (!WORKFLOWS_IN_DIGEST.has(run.event)) {
     // Scheduled and manual runs (weekly scans, releases) only speak up when they fail.
     if (run.conclusion === 'success' || run.conclusion === 'cancelled' || run.conclusion === 'skipped') return null;
