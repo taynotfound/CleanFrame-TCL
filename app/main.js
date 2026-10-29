@@ -2609,6 +2609,7 @@
     else if (item.action === 'health.remote' || item.action === 'health.keyboard') perform('Accessibility settings', REMOTE.openSettings);
     else if (item.action === 'health.phone') openPhone();
     else if (item.action === 'open.updates') { S.update = UPDATE.info(); openAppearance('updates'); }
+    else if (/^open\.\w+$/.test(item.action) && ADDONS.some(function (a) { return a.page === item.action.slice(5); })) openAppearance(item.action.slice(5)); // the Add-ons page's links: News, Weather effects, Widgets
     else if (item.action === 'update.check') UPDATE.check();
     else if (item.action === 'update.install') UPDATE.install();
     else if (item.action === 'update.auto') { UPDATE.auto(!S.update.auto); S.update = UPDATE.info(); }
@@ -3442,13 +3443,19 @@
     if (f) {
       for (el = f; el && el !== rows; el = el.offsetParent) y += el.offsetTop;
       sec = f.parentNode && f.parentNode.parentNode && /setting-section/.test(f.parentNode.parentNode.className) ? f.parentNode.parentNode : null;
-      top = sec && sec.offsetParent === rows ? Math.min(y, sec.offsetTop) : y; bottom = y + f.offsetHeight;
+      bottom = y + f.offsetHeight;
+      // Keep the section title in view only while it fits with the focused row; a section taller than the screen follows the row.
+      top = sec && sec.offsetParent === rows && bottom - sec.offsetTop <= room - 32 ? Math.min(y, sec.offsetTop) : y;
       if (top < rows.scrollTop) rows.scrollTop = top;
       else if (bottom > rows.scrollTop + room - 8) rows.scrollTop = bottom - room + 24;
       // From the last row that can be selected, go all the way down: rows after it can be unavailable, and notes
       // (such as "Needs Night mode") sit below the rows.
       secs = rows.querySelectorAll('.setting-section');
       for (i = 0, end = !!sec; sec && i < secs.length; i++) if (secs[i].offsetTop > sec.offsetTop && secs[i].querySelector('.setting-choice:not(.is-disabled)')) end = false;
+      if (end && sec) { // a section taller than the screen goes to the end only from its last choice
+        secs = sec.querySelectorAll('.setting-choice:not(.is-disabled)');
+        end = sec.offsetHeight <= room || secs[secs.length - 1] === f;
+      }
       if (end) rows.scrollTop = rows.scrollHeight - room;
     } else rows.scrollTop = 0; // focus is on Back, above the list
     rows.className = rows.className.replace(/ ?is-clipped| ?is-more/g, '') + ' is-clipped' + (rows.scrollTop + room < rows.scrollHeight - 4 ? ' is-more' : '');
